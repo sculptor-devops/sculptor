@@ -1,10 +1,25 @@
 {
-    "name": "laravel/laravel",
+    "name": "sculptor-devops/sculptor",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Sculptur Devops Agent",
     "keywords": [
         "framework",
-        "laravel"
+        "laravel",
+        "laravel zero",
+        "console",
+        "cli",
+        "devops"
+    ],
+    "homepage": "https://github.com/sculptor-devops",
+    "support": {
+        "issues": "https://github.com/sculptor-devops/installer/issues",
+        "source": "https://github.com/sculptor-devops/installer"
+    },
+    "authors": [
+        {
+            "name": "Alessandro Cappellozza",
+            "email": "alessandro.cappellozza@gmail.com"
+        }
     ],
     "license": "MIT",
     "require": {
