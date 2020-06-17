@@ -1,0 +1,326 @@
+Log started: 2020-05-19  06:57:45
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 42173 files and directories currently installed.)
+Preparing to unpack .../libxml2_2.9.4+dfsg1-6.1ubuntu1.3_amd64.deb ...
+Unpacking libxml2:amd64 (2.9.4+dfsg1-6.1ubuntu1.3) over (2.9.4+dfsg1-6.1ubuntu1.2) ...
+Setting up libxml2:amd64 (2.9.4+dfsg1-6.1ubuntu1.3) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-05-19  06:57:49
+
+Log started: 2020-05-19  06:57:50
+Selecting previously unselected package linux-modules-4.15.0-99-generic.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 42173 files and directories currently installed.)
+Preparing to unpack .../linux-modules-4.15.0-99-generic_4.15.0-99.100_amd64.deb ...
+Unpacking linux-modules-4.15.0-99-generic (4.15.0-99.100) ...
+Selecting previously unselected package linux-image-4.15.0-99-generic.
+Preparing to unpack .../linux-image-4.15.0-99-generic_4.15.0-99.100_amd64.deb ...
+Unpacking linux-image-4.15.0-99-generic (4.15.0-99.100) ...
+Selecting previously unselected package linux-modules-extra-4.15.0-99-generic.
+Preparing to unpack .../linux-modules-extra-4.15.0-99-generic_4.15.0-99.100_amd64.deb ...
+Unpacking linux-modules-extra-4.15.0-99-generic (4.15.0-99.100) ...
+Preparing to unpack .../linux-image-generic_4.15.0.99.89_amd64.deb ...
+Unpacking linux-image-generic (4.15.0.99.89) over (4.15.0.45.47) ...
+Setting up linux-modules-4.15.0-99-generic (4.15.0-99.100) ...
+Setting up linux-image-4.15.0-99-generic (4.15.0-99.100) ...
+I: /vmlinuz is now a symlink to boot/vmlinuz-4.15.0-99-generic
+I: /initrd.img is now a symlink to boot/initrd.img-4.15.0-99-generic
+Setting up linux-modules-extra-4.15.0-99-generic (4.15.0-99.100) ...
+Setting up linux-image-generic (4.15.0.99.89) ...
+Processing triggers for linux-image-4.15.0-99-generic (4.15.0-99.100) ...
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-4.15.0-99-generic
+cryptsetup: WARNING: failed to detect canonical device of PARTUUID=fdeeaaeb-8a08-41e8-8d7f-6819b57171d4
+cryptsetup: WARNING: could not determine root device from /etc/fstab
+/etc/kernel/postinst.d/x-grub-legacy-ec2:
+Searching for GRUB installation directory ... found: /boot/grub
+Searching for default file ... found: /boot/grub/default
+Testing for an existing GRUB menu.lst file ... found: /boot/grub/menu.lst
+Searching for splash image ... none found, skipping ...
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Found kernel: /boot/vmlinuz-4.15.0-99-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Replacing config file /run/grub/menu.lst with new version
+Updating /boot/grub/menu.lst ... done
+
+/etc/kernel/postinst.d/zz-update-grub:
+Sourcing file `/etc/default/grub'
+Generating grub configuration file ...
+Warning: Requested serial terminal but GRUB_SERIAL_COMMAND is unspecified. Default parameters will be used.
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.15.0-99-generic
+Found initrd image: /boot/initrd.img-4.15.0-99-generic
+Found linux image: /boot/vmlinuz-4.15.0-45-generic
+Found initrd image: /boot/initrd.img-4.15.0-45-generic
+Adding boot menu entry for EFI firmware configuration
+done
+Log ended: 2020-05-19  06:58:31
+
+Log started: 2020-05-20  06:22:26
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 48467 files and directories currently installed.)
+Preparing to unpack .../libdns-export1100_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libdns-export1100 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Setting up libdns-export1100 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-05-20  06:22:31
+
+Log started: 2020-05-20  06:22:32
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 48467 files and directories currently installed.)
+Preparing to unpack .../libisc-export169_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libisc-export169:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Setting up libisc-export169:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-05-20  06:22:36
+
+Log started: 2020-05-20  06:22:37
+Selecting previously unselected package linux-modules-4.15.0-101-generic.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 48467 files and directories currently installed.)
+Preparing to unpack .../linux-modules-4.15.0-101-generic_4.15.0-101.102_amd64.deb ...
+Unpacking linux-modules-4.15.0-101-generic (4.15.0-101.102) ...
+Selecting previously unselected package linux-image-4.15.0-101-generic.
+Preparing to unpack .../linux-image-4.15.0-101-generic_4.15.0-101.102_amd64.deb ...
+Unpacking linux-image-4.15.0-101-generic (4.15.0-101.102) ...
+Selecting previously unselected package linux-modules-extra-4.15.0-101-generic.
+Preparing to unpack .../linux-modules-extra-4.15.0-101-generic_4.15.0-101.102_amd64.deb ...
+Unpacking linux-modules-extra-4.15.0-101-generic (4.15.0-101.102) ...
+Preparing to unpack .../linux-image-generic_4.15.0.101.91_amd64.deb ...
+Unpacking linux-image-generic (4.15.0.101.91) over (4.15.0.99.89) ...
+Setting up linux-modules-4.15.0-101-generic (4.15.0-101.102) ...
+Setting up linux-image-4.15.0-101-generic (4.15.0-101.102) ...
+I: /vmlinuz.old is now a symlink to boot/vmlinuz-4.15.0-99-generic
+I: /initrd.img.old is now a symlink to boot/initrd.img-4.15.0-99-generic
+I: /vmlinuz is now a symlink to boot/vmlinuz-4.15.0-101-generic
+I: /initrd.img is now a symlink to boot/initrd.img-4.15.0-101-generic
+Setting up linux-modules-extra-4.15.0-101-generic (4.15.0-101.102) ...
+Setting up linux-image-generic (4.15.0.101.91) ...
+Processing triggers for linux-image-4.15.0-101-generic (4.15.0-101.102) ...
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-4.15.0-101-generic
+cryptsetup: WARNING: failed to detect canonical device of PARTUUID=fdeeaaeb-8a08-41e8-8d7f-6819b57171d4
+cryptsetup: WARNING: could not determine root device from /etc/fstab
+/etc/kernel/postinst.d/x-grub-legacy-ec2:
+Searching for GRUB installation directory ... found: /boot/grub
+Searching for default file ... found: /boot/grub/default
+Testing for an existing GRUB menu.lst file ... found: /boot/grub/menu.lst
+Searching for splash image ... none found, skipping ...
+Found kernel: /boot/vmlinuz-4.15.0-99-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Found kernel: /boot/vmlinuz-4.15.0-101-generic
+Found kernel: /boot/vmlinuz-4.15.0-99-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Replacing config file /run/grub/menu.lst with new version
+Updating /boot/grub/menu.lst ... done
+
+/etc/kernel/postinst.d/zz-update-grub:
+Sourcing file `/etc/default/grub'
+Generating grub configuration file ...
+Warning: Requested serial terminal but GRUB_SERIAL_COMMAND is unspecified. Default parameters will be used.
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.15.0-101-generic
+Found initrd image: /boot/initrd.img-4.15.0-101-generic
+Found linux image: /boot/vmlinuz-4.15.0-99-generic
+Found initrd image: /boot/initrd.img-4.15.0-99-generic
+Found linux image: /boot/vmlinuz-4.15.0-45-generic
+Found initrd image: /boot/initrd.img-4.15.0-45-generic
+Adding boot menu entry for EFI firmware configuration
+done
+Log ended: 2020-05-20  06:23:24
+
+Log started: 2020-05-20  06:23:25
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 54708 files and directories currently installed.)
+Preparing to unpack .../0-libirs160_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libirs160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../1-dnsutils_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking dnsutils (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../2-bind9-host_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking bind9-host (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../3-libbind9-160_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libbind9-160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../4-libisccfg160_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libisccfg160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../5-libisccc160_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libisccc160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../6-libdns1100_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libdns1100:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../7-libisc169_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking libisc169:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Preparing to unpack .../8-liblwres160_1%3a9.11.3+dfsg-1ubuntu1.12_amd64.deb ...
+Unpacking liblwres160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) over (1:9.11.3+dfsg-1ubuntu1.11) ...
+Setting up libisc169:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up libisccc160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up libdns1100:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up liblwres160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up libisccfg160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up libirs160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up libbind9-160:amd64 (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up bind9-host (1:9.11.3+dfsg-1ubuntu1.12) ...
+Setting up dnsutils (1:9.11.3+dfsg-1ubuntu1.12) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-05-20  06:23:32
+
+Log started: 2020-05-30  06:57:28
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 59538 files and directories currently installed.)
+Preparing to unpack .../libjson-c3_0.12.1-1.3ubuntu0.3_amd64.deb ...
+Unpacking libjson-c3:amd64 (0.12.1-1.3ubuntu0.3) over (0.12.1-1.3ubuntu0.2) ...
+Setting up libjson-c3:amd64 (0.12.1-1.3ubuntu0.3) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-05-30  06:57:33
+
+Log started: 2020-06-03  06:59:52
+Preconfiguring packages ...
+Preconfiguring packages ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 59538 files and directories currently installed.)
+Preparing to unpack .../ca-certificates_20190110~18.04.1_all.deb ...
+Unpacking ca-certificates (20190110~18.04.1) over (20180409) ...
+Setting up ca-certificates (20190110~18.04.1) ...
+Updating certificates in /etc/ssl/certs...
+2 added, 8 removed; done.
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for ca-certificates (20190110~18.04.1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+Log ended: 2020-06-03  07:00:02
+
+Log started: 2020-06-10  06:30:28
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 65224 files and directories currently installed.)
+Preparing to unpack .../intel-microcode_3.20200609.0ubuntu0.18.04.0_amd64.deb ...
+Unpacking intel-microcode (3.20200609.0ubuntu0.18.04.0) over (3.20191115.1ubuntu0.18.04.2) ...
+Setting up intel-microcode (3.20200609.0ubuntu0.18.04.0) ...
+update-initramfs: deferring update (trigger activated)
+intel-microcode: microcode will be updated at next boot
+Processing triggers for initramfs-tools (0.130ubuntu3.9) ...
+update-initramfs: Generating /boot/initrd.img-4.15.0-101-generic
+cryptsetup: WARNING: failed to detect canonical device of PARTUUID=fdeeaaeb-8a08-41e8-8d7f-6819b57171d4
+cryptsetup: WARNING: could not determine root device from /etc/fstab
+Log ended: 2020-06-10  06:31:04
+
+Log started: 2020-06-10  06:31:06
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 65224 files and directories currently installed.)
+Preparing to unpack .../libjpeg-turbo8_1.5.2-0ubuntu5.18.04.4_amd64.deb ...
+Unpacking libjpeg-turbo8:amd64 (1.5.2-0ubuntu5.18.04.4) over (1.5.2-0ubuntu5.18.04.3) ...
+Setting up libjpeg-turbo8:amd64 (1.5.2-0ubuntu5.18.04.4) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-06-10  06:31:10
+
+Log started: 2020-06-10  06:31:11
+Selecting previously unselected package linux-modules-4.15.0-106-generic.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 65224 files and directories currently installed.)
+Preparing to unpack .../linux-modules-4.15.0-106-generic_4.15.0-106.107_amd64.deb ...
+Unpacking linux-modules-4.15.0-106-generic (4.15.0-106.107) ...
+Selecting previously unselected package linux-image-4.15.0-106-generic.
+Preparing to unpack .../linux-image-4.15.0-106-generic_4.15.0-106.107_amd64.deb ...
+Unpacking linux-image-4.15.0-106-generic (4.15.0-106.107) ...
+Selecting previously unselected package linux-modules-extra-4.15.0-106-generic.
+Preparing to unpack .../linux-modules-extra-4.15.0-106-generic_4.15.0-106.107_amd64.deb ...
+Unpacking linux-modules-extra-4.15.0-106-generic (4.15.0-106.107) ...
+Preparing to unpack .../linux-image-generic_4.15.0.106.94_amd64.deb ...
+Unpacking linux-image-generic (4.15.0.106.94) over (4.15.0.101.91) ...
+Setting up linux-modules-4.15.0-106-generic (4.15.0-106.107) ...
+Setting up linux-image-4.15.0-106-generic (4.15.0-106.107) ...
+I: /vmlinuz.old is now a symlink to boot/vmlinuz-4.15.0-101-generic
+I: /initrd.img.old is now a symlink to boot/initrd.img-4.15.0-101-generic
+I: /vmlinuz is now a symlink to boot/vmlinuz-4.15.0-106-generic
+I: /initrd.img is now a symlink to boot/initrd.img-4.15.0-106-generic
+Setting up linux-modules-extra-4.15.0-106-generic (4.15.0-106.107) ...
+Setting up linux-image-generic (4.15.0.106.94) ...
+Processing triggers for linux-image-4.15.0-106-generic (4.15.0-106.107) ...
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-4.15.0-106-generic
+cryptsetup: WARNING: failed to detect canonical device of PARTUUID=fdeeaaeb-8a08-41e8-8d7f-6819b57171d4
+cryptsetup: WARNING: could not determine root device from /etc/fstab
+/etc/kernel/postinst.d/x-grub-legacy-ec2:
+Searching for GRUB installation directory ... found: /boot/grub
+Searching for default file ... found: /boot/grub/default
+Testing for an existing GRUB menu.lst file ... found: /boot/grub/menu.lst
+Searching for splash image ... none found, skipping ...
+Found kernel: /boot/vmlinuz-4.15.0-101-generic
+Found kernel: /boot/vmlinuz-4.15.0-99-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Found kernel: /boot/vmlinuz-4.15.0-106-generic
+Found kernel: /boot/vmlinuz-4.15.0-101-generic
+Found kernel: /boot/vmlinuz-4.15.0-99-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Replacing config file /run/grub/menu.lst with new version
+Updating /boot/grub/menu.lst ... done
+
+/etc/kernel/postinst.d/zz-update-grub:
+Sourcing file `/etc/default/grub'
+Generating grub configuration file ...
+Warning: Requested serial terminal but GRUB_SERIAL_COMMAND is unspecified. Default parameters will be used.
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.15.0-106-generic
+Found initrd image: /boot/initrd.img-4.15.0-106-generic
+Found linux image: /boot/vmlinuz-4.15.0-101-generic
+Found initrd image: /boot/initrd.img-4.15.0-101-generic
+Found linux image: /boot/vmlinuz-4.15.0-99-generic
+Found initrd image: /boot/initrd.img-4.15.0-99-generic
+Found linux image: /boot/vmlinuz-4.15.0-45-generic
+Found initrd image: /boot/initrd.img-4.15.0-45-generic
+Adding boot menu entry for EFI firmware configuration
+done
+Log ended: 2020-06-10  06:32:01
+
+Log started: 2020-06-11  06:01:10
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 71466 files and directories currently installed.)
+Removing linux-modules-extra-4.15.0-99-generic (4.15.0-99.100) ...
+Log ended: 2020-06-11  06:01:17
+
+Log started: 2020-06-11  06:01:18
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 66501 files and directories currently installed.)
+Removing linux-image-4.15.0-99-generic (4.15.0-99.100) ...
+/etc/kernel/postrm.d/initramfs-tools:
+update-initramfs: Deleting /boot/initrd.img-4.15.0-99-generic
+/etc/kernel/postrm.d/x-grub-legacy-ec2:
+Searching for GRUB installation directory ... found: /boot/grub
+Searching for default file ... found: /boot/grub/default
+Testing for an existing GRUB menu.lst file ... found: /boot/grub/menu.lst
+Searching for splash image ... none found, skipping ...
+Found kernel: /boot/vmlinuz-4.15.0-106-generic
+Found kernel: /boot/vmlinuz-4.15.0-101-generic
+Found kernel: /boot/vmlinuz-4.15.0-99-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Replacing config file /run/grub/menu.lst with new version
+Found kernel: /boot/vmlinuz-4.15.0-106-generic
+Found kernel: /boot/vmlinuz-4.15.0-101-generic
+Found kernel: /boot/vmlinuz-4.15.0-45-generic
+Replacing config file /run/grub/menu.lst with new version
+Updating /boot/grub/menu.lst ... done
+
+/etc/kernel/postrm.d/zz-update-grub:
+Sourcing file `/etc/default/grub'
+Generating grub configuration file ...
+Warning: Requested serial terminal but GRUB_SERIAL_COMMAND is unspecified. Default parameters will be used.
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.15.0-106-generic
+Found initrd image: /boot/initrd.img-4.15.0-106-generic
+Found linux image: /boot/vmlinuz-4.15.0-101-generic
+Found initrd image: /boot/initrd.img-4.15.0-101-generic
+Found linux image: /boot/vmlinuz-4.15.0-45-generic
+Found initrd image: /boot/initrd.img-4.15.0-45-generic
+Adding boot menu entry for EFI firmware configuration
+done
+Removing linux-modules-4.15.0-99-generic (4.15.0-99.100) ...
+Log ended: 2020-06-11  06:01:28
+
+Log started: 2020-06-11  06:01:33
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 65228 files and directories currently installed.)
+Preparing to unpack .../intel-microcode_3.20200609.0ubuntu0.18.04.1_amd64.deb ...
+Unpacking intel-microcode (3.20200609.0ubuntu0.18.04.1) over (3.20200609.0ubuntu0.18.04.0) ...
+Setting up intel-microcode (3.20200609.0ubuntu0.18.04.1) ...
+update-initramfs: deferring update (trigger activated)
+intel-microcode: microcode will be updated at next boot
+Processing triggers for initramfs-tools (0.130ubuntu3.9) ...
+update-initramfs: Generating /boot/initrd.img-4.15.0-106-generic
+cryptsetup: WARNING: failed to detect canonical device of PARTUUID=fdeeaaeb-8a08-41e8-8d7f-6819b57171d4
+cryptsetup: WARNING: could not determine root device from /etc/fstab
+Log ended: 2020-06-11  06:02:10
+
+Log started: 2020-06-11  06:02:12
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 65228 files and directories currently installed.)
+Preparing to unpack .../libsqlite3-0_3.22.0-1ubuntu0.4_amd64.deb ...
+Unpacking libsqlite3-0:amd64 (3.22.0-1ubuntu0.4) over (3.22.0-1ubuntu0.3) ...
+Setting up libsqlite3-0:amd64 (3.22.0-1ubuntu0.4) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Log ended: 2020-06-11  06:02:17
+
