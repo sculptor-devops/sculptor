@@ -24,6 +24,6 @@ class Queue extends Model implements Transformable
 
     public function finished(): bool
     {
-        return in_array($this->status, QUEUE_FINISHED_STATUSE);
+        return in_array($this->status, QUEUE_FINISHED_STATUSES);
     }
 }

@@ -19,7 +19,8 @@ class CreateQueuesTable extends Migration
             $table->increments('id');
 	    $table->string('uuid')->unique();
 	    $table->string('status')->default(QUEUE_STATUS_WAITING);
-	    $table->text('error')->nullable();
+	    $table->longText('payload')->nullable();
+	    $table->longText('error')->nullable();
 
 
             $table->timestamps();

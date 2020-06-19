@@ -62,7 +62,7 @@ class Manager
             $waited += QUEUE_TASK_ROUND_TRIP;
 
             if ($waited > QUEUE_TASK_TIMEOUT) {
-                throw new Exception('Task Timeout');
+                throw new Exception('Job Timeout');
             }
         }
 

@@ -13,14 +13,16 @@ class JobOk implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
+    private $wait;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($wait = 0)
     {
-        //
+        $this->wait = $wait;
     }
 
     /**
@@ -30,6 +32,10 @@ class JobOk implements ShouldQueue
      */
     public function handle()
     {
+	if ($this->wait > 0) {
+	   sleep($this->wait);
+	}
+	
 	$this->finished();
     }
 }

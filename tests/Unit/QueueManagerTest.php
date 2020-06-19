@@ -38,10 +38,17 @@ class QueueManagerTest extends TestCase
         });
 
         Queue::assertPushedOn('events', JobOK::class);
-
-	dd($manager->find($ok->ref->uuid));
     }
 
 
-    
+    public function testJobOkWait()
+    {
+        $ok = new JobOK(2);
+
+	$manager = resolve(Manager::class);
+
+	$manager->await($ok);
+
+	$this->assertTrue($manager->find($ok->ref->uuid)->finished());
+    }
 }
