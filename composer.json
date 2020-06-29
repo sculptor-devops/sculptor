@@ -29,7 +29,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
-        "sculptor-devops/foundation": "^0.0.6",
+        "sculptor-devops/foundation": "^0.0.8",
         "prettus/l5-repository": "^2.6"
     },
     "require-dev": {

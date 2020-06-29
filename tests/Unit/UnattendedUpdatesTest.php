@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 // use PHPUnit\Framework\TestCase;
+use Exception;
 use Tests\TestCase;
 use Sculptor\Agent\Services\Security\Upgrades;
 
@@ -12,6 +13,7 @@ class UnattendedUpdatesTest extends TestCase
      * A basic unit test example.
      *
      * @return void
+     * @throws Exception
      */
     public function testEventList()
     {
@@ -20,7 +22,6 @@ class UnattendedUpdatesTest extends TestCase
 	$fixture = base_path() . '/tests/Fixtures/unattended-upgrades-dpkg.log';
 
 	$upgrades->filename($fixture);
-
         $this->assertCount(15, $upgrades->events());
     }
 }
