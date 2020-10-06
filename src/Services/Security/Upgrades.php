@@ -102,10 +102,10 @@ class Upgrades
 
     /**
      * @param Carbon|null $date
-     * @return SecurityLogs
+     * @return Logs
      * @throws Exception
      */
-    public function parse(Carbon $date = null): SecurityLogs
+    public function parse(Carbon $date = null): Logs
     {
         $result = [];
 
@@ -127,7 +127,7 @@ class Upgrades
             }
         }
 
-        return new SecurityLogs($result, $this->startDate, $this->endDate);
+        return new Logs($result, $this->startDate, $this->endDate);
     }
 
     /**
