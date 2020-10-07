@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Services\Queues;
 
 use Exception;
+use ReflectionClass;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Queue as Dispatcher;
 use Sculptor\Agent\Repositories\QueueRepository;
@@ -26,8 +27,19 @@ class Manager
         $this->repository = $repository;
     }
 
+    private function traceable(object $job): boolean
+    {
+    	$uses = array_keys((new ReflectionClass($job))->getTraits());
+
+	return in_array(Traceable::class, $uses);		
+    }
+
     public function insert(object $job, string $queue = 'events'): Queue
     {
+	if (!$this->traceable( $job)) {
+	    throw new Exception('Job does not implementsi traceable');
+	}
+
         $job->ref = $this->repository->insert();
 
         Dispatcher::pushOn($queue, $job);
