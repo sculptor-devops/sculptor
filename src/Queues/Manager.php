@@ -1,6 +1,6 @@
 <?php
 
-namespace Sculptor\Agent\Services\Queues;
+namespace Sculptor\Agent\Queues;
 
 use Exception;
 use ReflectionClass;

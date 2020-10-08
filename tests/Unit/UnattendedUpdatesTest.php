@@ -5,7 +5,7 @@ namespace Tests\Unit;
 // use PHPUnit\Framework\TestCase;
 use Exception;
 use Tests\TestCase;
-use Sculptor\Agent\Services\Security\Upgrades;
+use Sculptor\Agent\Security\Upgrades;
 
 class UnattendedUpdatesTest extends TestCase
 {

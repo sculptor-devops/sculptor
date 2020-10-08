@@ -8,9 +8,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sculptor\Agent\Services\Queues\Traceable;
+use Sculptor\Agent\Queues\ITraceable;
+use Sculptor\Agent\Queues\Traceable;
 
-class JobOk implements ShouldQueue
+class JobOk implements ShouldQueue, ITraceable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
@@ -19,21 +20,27 @@ class JobOk implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param int $wait
      */
-    public function __construct($wait = 0)
+    public function __construct(int $wait = 0)
     {
         $this->wait = $wait;
     }
 
-
     /**
      * @throws Exception
      */
-    public function do(): void
+    public function handle()
     {
-        if ($this->wait > 0) {
-           sleep($this->wait);
+        try {
+            if ($this->wait > 0) {
+                sleep($this->wait);
+            }
+
+            $this->finished();
+
+        } catch(Exception $e) {
+            $this->error($e->getMessage());
         }
     }
 }

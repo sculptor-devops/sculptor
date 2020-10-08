@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Queue;
-use Sculptor\Agent\Services\Queues\Manager;
+use Sculptor\Agent\Queues\Queues;
 use Tests\Stubs\JobOk;
 
 class QueueManagerTest extends TestCase
@@ -27,14 +27,14 @@ class QueueManagerTest extends TestCase
 
         Queue::fake();
 
-	$ok = new JobOK();
+        $ok = new JobOK();
 
-        $manager = resolve(Manager::class);
+        $manager = resolve(Queues::class);
 
         $manager->insert($ok);
 
-	Queue::assertPushed(function (JobOK $job) use ($ok) {
-            return $job->ref() === $ok->ref(); 
+        Queue::assertPushed(function (JobOK $job) use ($ok) {
+            return $job->ref() === $ok->ref();
         });
 
         Queue::assertPushedOn('events', JobOK::class);
@@ -43,12 +43,12 @@ class QueueManagerTest extends TestCase
 
     public function testJobOkWait()
     {
-        $ok = new JobOK(2);
+        $ok = new JobOK(1);
 
-	$manager = resolve(Manager::class);
+        $manager = resolve(Queues::class);
 
-	$manager->await($ok);
+        $manager->await($ok);
 
-	$this->assertTrue($manager->find($ok->ref()->uuid)->finished());
+        $this->assertTrue($manager->find($ok->ref()->uuid)->finished());
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sculptor\Agent\Services\Queues;
+namespace Sculptor\Agent\Queues;
 
 use Exception;
 use ReflectionClass;
@@ -15,7 +15,7 @@ use Sculptor\Agent\Repositories\Entities\Queue;
  *  file that was distributed with this source code.
 */
 
-class Manager
+class Queues
 {
     /**
      * @var QueueRepository
@@ -23,7 +23,7 @@ class Manager
     private $repository;
 
     /**
-     * Manager constructor.
+     * Queues constructor.
      * @param QueueRepository $repository
      */
     public function __construct(QueueRepository $repository)

@@ -28,8 +28,17 @@ class {{ class }} implements ShouldQueue, ITraceable
     /**
      * @throws Exception
      */
-    public function do(): void
+    public function handle()
     {
-        //
+        $this->running();
+
+        try {
+            //
+
+            $this->finished();
+
+        } catch(Exception $e) {
+            $this->error($e->getMessage());
+        }
     }
 }

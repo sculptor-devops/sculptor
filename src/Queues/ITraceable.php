@@ -1,6 +1,6 @@
 <?php
 
-namespace Sculptor\Agent\Services\Queues;
+namespace Sculptor\Agent\Queues;
 
 use Exception;
 use Sculptor\Agent\Repositories\Entities\Queue;
@@ -28,12 +28,6 @@ interface ITraceable
      * @throws Exception
      */
     public function finished(): void;
-
-
-    /**
-     * @throws Exception
-     */
-    public function do(): void;
 
     /**
      * @param string $error

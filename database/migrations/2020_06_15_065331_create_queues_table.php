@@ -17,11 +17,10 @@ class CreateQueuesTable extends Migration
 	{
 		Schema::create('queues', function(Blueprint $table) {
             $table->increments('id');
-	    $table->string('uuid')->unique();
-	    $table->string('status')->default(QUEUE_STATUS_WAITING);
-	    $table->longText('payload')->nullable();
-	    $table->longText('error')->nullable();
-
+	        $table->string('uuid')->unique();
+	        $table->string('status')->default(QUEUE_STATUS_WAITING);
+	        $table->longText('payload')->nullable();
+	        $table->longText('error')->nullable();
 
             $table->timestamps();
 		});

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sculptor\Agent\Services\Queues;
+namespace Sculptor\Agent\Queues;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -31,11 +31,11 @@ trait Traceable
      */
     public function ref(Queue $value = null): Queue
     {
-	if($value != null) {
-	    $this->ref = $value;
-	}
+        if ($value != null) {
+            $this->ref = $value;
+        }
 
-	return $this->ref;
+        return $this->ref;
     }
 
     /**
@@ -43,10 +43,13 @@ trait Traceable
      */
     public function running(): void
     {
+        if ($this->ref == null) {
+            throw new Exception('Queue ref is null');
+        }
 
-	if ($this->transaction) {
-	    DB::beginTransaction();
-	}
+        if ($this->transaction) {
+            DB::beginTransaction();
+        }
 
         $this->changeStatus(QUEUE_STATUS_RUNNING);
     }
@@ -57,7 +60,7 @@ trait Traceable
     public function finished(): void
     {
         if ($this->transaction) {
-	    DB::commit();
+            DB::commit();
         }
 
         $this->changeStatus(QUEUE_STATUS_OK);
@@ -70,31 +73,10 @@ trait Traceable
     public function error(string $error): void
     {
         if ($this->transaction) {
-	    DB::rollBack();
+            DB::rollBack();
         }
 
         $this->changeStatus(QUEUE_STATUS_ERROR, $error);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function handle()
-    {
-        if ($this->ref == null) {
-           throw new Exception('Queue ref is null');
-        }
-
-        try {
-            $this->running();
-
-            $this->do();
-
-            $this->finished();
-
-        } catch(Exception $e) {
-            $this->error($e->getMessage());
-        }
     }
 
     /**
