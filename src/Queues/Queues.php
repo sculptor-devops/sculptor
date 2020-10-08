@@ -94,7 +94,7 @@ class Queues
                 break;
             }
 
-            usleep(QUEUE_TASK_ROUND_TRIP);
+            (QUEUE_TASK_ROUND_TRIP);
 
             $waited += QUEUE_TASK_ROUND_TRIP;
 

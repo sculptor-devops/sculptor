@@ -1,7 +1,7 @@
 <?php
 
-define('QUEUE_TASK_ROUND_TRIP', 250);
-define('QUEUE_TASK_TIMEOUT', 10000);
+define('QUEUE_TASK_ROUND_TRIP', 250000);
+define('QUEUE_TASK_TIMEOUT', 10000000);
 define('QUEUE_STATUS_WAITING', 'waiting');
 define('QUEUE_STATUS_RUNNING', 'running');
 define('QUEUE_STATUS_ERROR', 'error');
