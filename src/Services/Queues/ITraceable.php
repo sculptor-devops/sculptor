@@ -27,6 +27,12 @@ interface ITraceable
      */
     public function finished(): void;
 
+
+    /**
+     * @throws Exception
+     */
+    public function do(): void;
+
     /**
      * @param string $error
      * @throws Exception

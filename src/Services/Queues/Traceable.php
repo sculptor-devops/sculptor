@@ -75,6 +75,24 @@ trait Traceable
         $this->changeStatus(QUEUE_STATUS_ERROR, $error);
     }
 
+    public function handle()
+    {
+        if ($this->ref == null) {
+           throw new Exception('Queue ref is null');
+        }
+
+        try {
+            $this->running();
+
+            $this->do(); 
+
+            $this->finished();
+
+        } catch(Exception $e) {
+            $this->error($e->getMessage());
+        }
+    }
+
     /**
      * @param string $status
      * @param string|null $error
