@@ -1,5 +1,5 @@
 <?php
-
+define('DB_SERVER_PASSWORD', '/home/sculptor/.db_password');
 define('QUEUE_TASK_ROUND_TRIP', 250000);
 define('QUEUE_TASK_TIMEOUT', 10000000);
 define('QUEUE_STATUS_WAITING', 'waiting');

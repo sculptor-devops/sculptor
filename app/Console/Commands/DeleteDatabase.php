@@ -1,26 +1,27 @@
 <?php
 
+
 namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
 
-class CreateDatabase extends Command
+class DeleteDatabase extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:create {name}';
+    protected $signature = 'db:delete {name}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a database';
+    protected $description = 'Delete a database';
 
     /**
      * Create a new command instance.
@@ -43,9 +44,9 @@ class CreateDatabase extends Command
     {
         $name = $this->argument('name');
 
-        $this->info("Creating {$name}...");
+        $this->info("Deleting {$name}...");
 
-        $result = $actions->createDatabase($name);
+        $result = $actions->deleteDatabase($name);
 
         if ($result) {
             $this->info("Done.");
@@ -57,4 +58,5 @@ class CreateDatabase extends Command
 
         return 1;
     }
+
 }

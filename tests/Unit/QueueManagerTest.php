@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use Sculptor\Foundation\Contracts\Database;
+use Sculptor\Foundation\Database\MySql;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Queue;
@@ -24,7 +26,6 @@ class QueueManagerTest extends TestCase
      */
     public function testJobOkInsert()
     {
-
         Queue::fake();
 
         $ok = new JobOK();

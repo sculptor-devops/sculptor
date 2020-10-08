@@ -13,7 +13,7 @@ use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
-class CreateDatabase implements ShouldQueue, ITraceable
+class DeleteDatabase implements ShouldQueue, ITraceable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
@@ -46,11 +46,11 @@ class CreateDatabase implements ShouldQueue, ITraceable
         $this->running();
 
         try {
-            if (!$driver->db($this->name)) {
+            if (!$driver->drop($this->name)) {
                 throw new Exception($driver->error());
             }
 
-            $repository->create(['name' => $this->name]);
+            $repository->deleteWhere(['name' => $this->name]);
 
             $this->finished();
 

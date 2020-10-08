@@ -17,11 +17,12 @@ class UnattendedUpdatesTest extends TestCase
      */
     public function testEventList()
     {
-	$upgrades = resolve(Upgrades::class);
+        $upgrades = resolve(Upgrades::class);
 
-	$fixture = base_path() . '/tests/Fixtures/unattended-upgrades-dpkg.log';
+        $fixture = base_path() . '/tests/Fixtures/unattended-upgrades-dpkg.log';
 
-	$upgrades->filename($fixture);
+        $upgrades->filename($fixture);
+        
         $this->assertCount(15, $upgrades->events());
     }
 }

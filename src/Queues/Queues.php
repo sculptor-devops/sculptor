@@ -90,11 +90,11 @@ class Queues
         while (true) {
             $entity = $this->find($entity->uuid);
 
-            if ($entity->finished()) {
+            if ($entity->finished() || $entity->error()) {
                 break;
             }
 
-            (QUEUE_TASK_ROUND_TRIP);
+            usleep(QUEUE_TASK_ROUND_TRIP);
 
             $waited += QUEUE_TASK_ROUND_TRIP;
 

@@ -13,7 +13,7 @@ use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
-class CreateDatabase implements ShouldQueue, ITraceable
+class DatabaseCreate implements ShouldQueue, ITraceable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 

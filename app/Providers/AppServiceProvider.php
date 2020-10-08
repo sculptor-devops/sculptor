@@ -17,13 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        app()->bind(Runner::class, function() {
-            return new RunnerImplementation();
-        });
-
-        app()->bind(Database::class, function() {
-            return new MySql();
-        });    
+    //
     }
 
     /**

@@ -17,6 +17,8 @@ class CreateDatabasesTable extends Migration
 	{
 		Schema::create('databases', function(Blueprint $table) {
             $table->increments('id');
+            $table->string('name', 30)->index();
+            $table->string('driver', 30)->default('mysql');
 
             $table->timestamps();
 		});
