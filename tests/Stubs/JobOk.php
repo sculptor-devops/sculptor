@@ -2,6 +2,7 @@
 
 namespace Tests\Stubs;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,6 +33,10 @@ class JobOk implements ShouldQueue
      */
     public function handle()
     {
+	if ($this->ref == null) {
+	   throw new Exception('Queue ref is null');
+	}
+
 	if ($this->wait > 0) {
 	   sleep($this->wait);
 	}

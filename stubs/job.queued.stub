@@ -9,8 +9,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 use Sculptor\Agent\Services\Queues\Traceable;
+use Sculptor\Agent\Services\Queues\ITraceable;
 
-class {{ class }} implements ShouldQueue
+class {{ class }} implements ShouldQueue, ITraceable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
@@ -31,6 +32,15 @@ class {{ class }} implements ShouldQueue
      */
     public function handle()
     {
-        //
+        try {
+	    $this->running();
+
+            //
+
+            $this->finished();
+
+        } catch(Exception $e) {
+            $this->error($e->getMessage());
+        }
     }
 }

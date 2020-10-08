@@ -34,7 +34,7 @@ class QueueManagerTest extends TestCase
         $manager->insert($ok);
 
 	Queue::assertPushed(function (JobOK $job) use ($ok) {
-            return $job->ref === $ok->ref; 
+            return $job->ref() === $ok->ref(); 
         });
 
         Queue::assertPushedOn('events', JobOK::class);
@@ -49,6 +49,6 @@ class QueueManagerTest extends TestCase
 
 	$manager->await($ok);
 
-	$this->assertTrue($manager->find($ok->ref->uuid)->finished());
+	$this->assertTrue($manager->find($ok->ref()->uuid)->finished());
     }
 }

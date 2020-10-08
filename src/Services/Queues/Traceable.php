@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Services\Queues;
 
+use DB;
 use Exception;
 use Sculptor\Agent\Repositories\Entities\Queue;
 
@@ -16,21 +17,48 @@ trait Traceable
     /**
      * @var Queue
      */
-    public $ref;
+    protected $ref;
+
+
+    /**
+     * @var bool
+     */
+    protected $transaction = true;
+
+    /**
+     * @var Queue
+     */
+    public function ref(Queue $value = null): Queue
+    {
+	if($value != null) {
+	    $this->ref = $value;
+	}
+
+	return $this->ref;
+    }
 
     /**
      * @throws Exception
      */
-    protected function running()
+    public function running(): void
     {
+
+	if ($this->transaction) {
+	    DB::beginTransaction();
+	}
+
         $this->changeStatus(QUEUE_STATUS_RUNNING);
     }
 
     /**
      * @throws Exception
      */
-    protected function finished()
+    public function finished(): void
     {
+        if ($this->transaction) {
+	    DB::commit();
+        }
+
         $this->changeStatus(QUEUE_STATUS_OK);
     }
 
@@ -38,8 +66,12 @@ trait Traceable
      * @param string $error
      * @throws Exception
      */
-    protected function error(string $error)
+    public function error(string $error): void
     {
+        if ($this->transaction) {
+	    DB::rollBack();
+        }
+
         $this->changeStatus(QUEUE_STATUS_ERROR, $error);
     }
 

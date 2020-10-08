@@ -27,7 +27,7 @@ class Manager
         $this->repository = $repository;
     }
 
-    private function traceable(object $job): boolean
+    private function traceable(object $job): bool
     {
     	$uses = array_keys((new ReflectionClass($job))->getTraits());
 
@@ -40,11 +40,11 @@ class Manager
 	    throw new Exception('Job does not implementsi traceable');
 	}
 
-        $job->ref = $this->repository->insert();
+        $job->ref($this->repository->insert());
 
         Dispatcher::pushOn($queue, $job);
 
-        return $job->ref;
+        return $job->ref();
     }
 
     public function find(string $uuid): Queue
