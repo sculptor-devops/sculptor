@@ -6,6 +6,9 @@ use Exception;
 use ReflectionClass;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Queue as Dispatcher;
+use Sculptor\Agent\Exceptions\QueueJobCreateException;
+use Sculptor\Agent\Exceptions\QueueJobNotTraceableException;
+use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
 use Sculptor\Agent\Repositories\QueueRepository;
 use Sculptor\Agent\Repositories\Entities\Queue;
 
@@ -52,7 +55,7 @@ class Queues
     public function insert(ITraceable $job, string $queue = 'events'): Queue
     {
         if (!$this->traceable($job)) {
-            throw new Exception('Job does not implements traceable');
+            throw new QueueJobNotTraceableException();
         }
 
         $job->ref($this->repository->insert());
@@ -84,7 +87,7 @@ class Queues
         $entity = $this->insert($job, $queue);
 
         if (!$entity) {
-            throw new Exception('Cannot create job');
+            throw new QueueJobCreateException();
         }
 
         while (true) {
@@ -99,7 +102,7 @@ class Queues
             $waited += QUEUE_TASK_ROUND_TRIP;
 
             if ($waited > QUEUE_TASK_TIMEOUT) {
-                throw new Exception('Job Timeout');
+                throw new QueueJobTimeoutException();
             }
         }
 

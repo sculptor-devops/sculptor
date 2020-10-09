@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Sculptor\Agent\Exceptions\DatabaseDriverException;
 use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
@@ -69,7 +70,7 @@ class DatabaseUserPassword implements ShouldQueue, ITraceable
 
         try {
             if (!$driver->password($this->user, $this->password, $this->db, $this->host)) {
-                throw new Exception($driver->error());
+                throw new DatabaseDriverException($driver->error());
             }
 
             $this->finished();

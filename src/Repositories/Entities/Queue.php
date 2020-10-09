@@ -11,6 +11,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  *
  * @property mixed error
  * @property mixed status
+ * @property mixed uuid
  * @package namespace Sculptor\Agent\Entities;
  */
 class Queue extends Model implements Transformable

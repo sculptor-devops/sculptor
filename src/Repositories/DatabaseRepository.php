@@ -6,6 +6,7 @@ use Exception;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
+use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Repositories\Contracts\DatabaseRepository as DatabaseRepositoryInterface;
 use Sculptor\Agent\Repositories\Entities\Database;
 
@@ -35,17 +36,26 @@ class DatabaseRepository extends BaseRepository implements DatabaseRepositoryInt
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    /**
+     * @param string $name
+     * @return Database
+     * @throws DatabaseNotFoundException
+     */
     public function byName(string $name): Database
     {
         $database = $this->findByField(['name' => $name]);
 
         if ($database->count() == 0) {
-            throw new Exception("Cannot find database {$name}");
+            throw new DatabaseNotFoundException($name);
         }
 
         return $database->first();
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function exists(string $name): bool
     {
         $database = $this->findByField(['name' => $name]);

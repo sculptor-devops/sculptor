@@ -4,6 +4,8 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Prettus\Validator\Exceptions\ValidatorException;
+use Sculptor\Agent\Exceptions\DatabaseAlreadyExistsException;
+use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Jobs\DatabaseCreate;
 use Sculptor\Agent\Jobs\DatabaseDelete;
 use Sculptor\Agent\Jobs\DatabaseUserCreate;
@@ -43,7 +45,6 @@ class Database extends Actions
     /**
      * @param string $name
      * @return bool
-     * @throws Exception
      */
     public function create(string $name): bool
     {
@@ -51,7 +52,7 @@ class Database extends Actions
 
         try {
             if ($this->database->exists($name)) {
-                throw new Exception("Database {$name} already exists");
+                throw new DatabaseAlreadyExistsException($name);
             }
 
             $this->run(new DatabaseCreate($name));

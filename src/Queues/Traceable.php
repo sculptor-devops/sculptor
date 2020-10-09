@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Queues;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Sculptor\Agent\Exceptions\QueueJobRefUndefinedException;
 use Sculptor\Agent\Repositories\Entities\Queue;
 
 /*
@@ -43,10 +44,6 @@ trait Traceable
      */
     public function running(): void
     {
-        if ($this->ref == null) {
-            throw new Exception('Queue ref is null');
-        }
-
         if ($this->transaction) {
             DB::beginTransaction();
         }
@@ -87,7 +84,7 @@ trait Traceable
     private function changeStatus(string $status, string $error = null): void
     {
         if ($this->ref === null) {
-            throw new Exception('Queue ref is null');
+            throw new QueueJobRefUndefinedException();
         }
 
         $this->ref->update(['status' => $status, 'error' => $error]);

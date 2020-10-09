@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
+use Sculptor\Agent\Exceptions\ActionJobRunException;
 use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Queues;
 
@@ -40,7 +41,7 @@ class Actions
             return true;
         }
 
-        throw new Exception($result->error);
+        throw new ActionJobRunException($result->error);
     }
 
     /**
