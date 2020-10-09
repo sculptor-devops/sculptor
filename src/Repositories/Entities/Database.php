@@ -9,6 +9,8 @@ use Prettus\Repository\Traits\TransformableTrait;
 /**
  * Class Database.
  *
+ * @property mixed id
+ * @property mixed users
  * @package namespace Sculptor\Agent\Entities;
  */
 class Database extends Model implements Transformable
@@ -20,6 +22,10 @@ class Database extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [ 'name' ];
+    protected $fillable = [ 'name', 'driver' ];
 
+    public function users()
+    {
+        return $this->hasMany(DatabaseUser::class);
+    }
 }

@@ -9,6 +9,8 @@ use Prettus\Repository\Traits\TransformableTrait;
 /**
  * Class Queue.
  *
+ * @property mixed error
+ * @property mixed status
  * @package namespace Sculptor\Agent\Entities;
  */
 class Queue extends Model implements Transformable
@@ -35,5 +37,15 @@ class Queue extends Model implements Transformable
     public function finished(): bool
     {
         return in_array($this->status, QUEUE_FINISHED_STATUSES);
+    }
+
+    public function running(): bool
+    {
+        return $this->status == QUEUE_STATUS_RUNNING;
+    }
+
+    public function waiting(): bool
+    {
+        return $this->status == QUEUE_STATUS_WAITING;
     }
 }

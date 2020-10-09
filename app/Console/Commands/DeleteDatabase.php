@@ -36,7 +36,7 @@ class DeleteDatabase extends Command
     /**
      * Execute the console command.
      *
-     * @param Actions $actions
+     * @param Database $actions
      * @return int
      * @throws Exception
      */
@@ -46,17 +46,19 @@ class DeleteDatabase extends Command
 
         $this->info("Deleting {$name}...");
 
-        $result = $actions->deleteDatabase($name);
+        try {
+            $result = $actions->delete($name);
 
-        if ($result) {
-            $this->info("Done.");
+            if ($result) {
+                $this->info("Done.");
 
-            return 0;
+                return 0;
+            }
+
+        } catch (\Exception $e) {
+            $this->error("Error: {$e->getMessage()}");
         }
-
-        $this->error("Error: {$actions->error()}");
 
         return 1;
     }
-
 }

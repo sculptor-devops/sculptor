@@ -8,53 +8,65 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
-class CreateDatabase implements ShouldQueue, ITraceable
+class DatabaseUserDelete implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var string
      */
-    private $name;
+    private $user;
+    /**
+     * @var string
+     */
+    private $db;
+    /**
+     * @var string
+     */
+    private $host;
 
     /**
      * Create a new job instance.
      *
-     * @param string $name
-     * @throws Exception
+     * @param string $db
+     * @param string $user
+     * @param string $host
      */
-    public function __construct(string $name)
+    public function __construct(string $db, string $user, string $host = 'localhost')
     {
-        $this->name = $name;
+        $this->user = $user;
+
+        $this->db = $db;
+
+        $this->host = $host;
     }
 
     /**
      * Execute the job.
      *
      * @param Driver $driver
-     * @param DatabaseRepository $repository
      * @return void
      * @throws Exception
      */
-    public function handle(Driver $driver, DatabaseRepository $repository)
+    public function handle(Driver $driver)
     {
         $this->running();
 
         try {
-            if (!$driver->db($this->name)) {
+            if (!$driver->dropUser($this->user, $this->host)) {
                 throw new Exception($driver->error());
             }
 
-            $repository->create(['name' => $this->name]);
-
             $this->finished();
-
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->error($e->getMessage());
         }
     }

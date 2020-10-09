@@ -12,7 +12,7 @@ use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
-class DatabaseCreate implements ShouldQueue, ITraceable
+class DatabaseUserPassword implements ShouldQueue, ITraceable
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -23,17 +23,37 @@ class DatabaseCreate implements ShouldQueue, ITraceable
     /**
      * @var string
      */
-    private $name;
+    private $user;
+    /**
+     * @var string
+     */
+    private $password;
+    /**
+     * @var string
+     */
+    private $db;
+    /**
+     * @var string
+     */
+    private $host;
 
     /**
      * Create a new job instance.
      *
-     * @param string $name
-     * @throws Exception
+     * @param string $user
+     * @param string $db
+     * @param string $password
+     * @param string $host
      */
-    public function __construct(string $name)
+    public function __construct(string $user, string $db, string $password, string $host)
     {
-        $this->name = $name;
+        $this->user = $user;
+
+        $this->db = $db;
+
+        $this->password = $password;
+
+        $this->host = $host;
     }
 
     /**
@@ -48,7 +68,7 @@ class DatabaseCreate implements ShouldQueue, ITraceable
         $this->running();
 
         try {
-            if (!$driver->db($this->name)) {
+            if (!$driver->password($this->user, $this->password, $this->db, $this->host)) {
                 throw new Exception($driver->error());
             }
 

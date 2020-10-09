@@ -1,7 +1,9 @@
 <?php
+
 define('DB_SERVER_PASSWORD', '/home/sculptor/.db_password');
-define('QUEUE_TASK_ROUND_TRIP', 250000);
-define('QUEUE_TASK_TIMEOUT', 10000000);
+define('QUEUE_TASK_MILLISECOND', 1000);
+define('QUEUE_TASK_ROUND_TRIP', 250 * QUEUE_TASK_MILLISECOND);
+define('QUEUE_TASK_TIMEOUT', 10000 * QUEUE_TASK_MILLISECOND);
 define('QUEUE_STATUS_WAITING', 'waiting');
 define('QUEUE_STATUS_RUNNING', 'running');
 define('QUEUE_STATUS_ERROR', 'error');
@@ -18,4 +20,3 @@ define('QUEUE_FINISHED_STATUSES', [
     QUEUE_STATUS_ERROR,
     QUEUE_STATUS_OK
 ]);
-

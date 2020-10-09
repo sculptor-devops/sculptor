@@ -17,15 +17,7 @@ class SculptorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        config([
-            'database.connections.db_server' => [
-                'driver' => 'mysql',
-                'host' => '127.0.0.1',
-                'database' => 'mysql',
-                'username' => 'root',
-                'password' => $this->password()
-            ]
-        ]);
+        $this->connection();
 
         app()->bind(Runner::class, function () {
             return new RunnerImplementation();
@@ -53,5 +45,18 @@ class SculptorServiceProvider extends ServiceProvider
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    private function connection(): void
+    {
+        config([
+            'database.connections.db_server' => [
+                'driver' => 'mysql',
+                'host' => '127.0.0.1',
+                'database' => 'mysql',
+                'username' => 'root',
+                'password' => $this->password()
+            ]
+        ]);
     }
 }

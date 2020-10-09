@@ -40,6 +40,6 @@ class MySql implements Database
 
     public function error(): string
     {
-        return 'no error';
+        return 'error';
     }
 }

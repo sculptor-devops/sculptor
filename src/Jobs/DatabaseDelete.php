@@ -8,14 +8,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Queues\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
 class DatabaseDelete implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var string
@@ -37,11 +40,10 @@ class DatabaseDelete implements ShouldQueue, ITraceable
      * Execute the job.
      *
      * @param Driver $driver
-     * @param DatabaseRepository $repository
      * @return void
      * @throws Exception
      */
-    public function handle(Driver $driver, DatabaseRepository $repository)
+    public function handle(Driver $driver)
     {
         $this->running();
 
@@ -50,11 +52,8 @@ class DatabaseDelete implements ShouldQueue, ITraceable
                 throw new Exception($driver->error());
             }
 
-            $repository->deleteWhere(['name' => $this->name]);
-
             $this->finished();
-
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->error($e->getMessage());
         }
     }

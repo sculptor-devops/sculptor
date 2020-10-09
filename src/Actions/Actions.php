@@ -1,4 +1,5 @@
 <?php
+
 namespace Sculptor\Agent\Actions;
 
 use Exception;
@@ -26,6 +27,10 @@ class Actions
         $this->queues = $queues;
     }
 
+    /**
+     * @param ITraceable $job
+     * @return bool
+     */
     protected function run(ITraceable $job): bool
     {
         try {
@@ -38,7 +43,6 @@ class Actions
             $this->error = $result->error;
 
             return false;
-
         } catch (Exception $e) {
             $this->error = $e->getMessage();
 
