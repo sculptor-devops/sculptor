@@ -16,7 +16,7 @@ use Sculptor\Agent\Queues\Queues;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 
-class Database extends Actions
+class Database extends Base
 {
     /**
      * @var DatabaseRepository
@@ -28,7 +28,7 @@ class Database extends Actions
     private $users;
 
     /**
-     * Actions constructor.
+     * Base constructor.
      * @param Queues $queues
      * @param DatabaseRepository $database
      * @param DatabaseUserRepository $users

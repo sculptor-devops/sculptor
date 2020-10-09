@@ -50,6 +50,7 @@ class Queues
      * @param ITraceable $job
      * @param string $queue
      * @return Queue
+     * @throws QueueJobNotTraceableException
      * @throws Exception
      */
     public function insert(ITraceable $job, string $queue = 'events'): Queue
@@ -77,10 +78,13 @@ class Queues
     /**
      * @param ITraceable $job
      * @param string $queue
+     * @param float|int $timeout
      * @return Queue
-     * @throws Exception
+     * @throws QueueJobCreateException
+     * @throws QueueJobTimeoutException
+     * @throws QueueJobNotTraceableException
      */
-    public function await(ITraceable $job, string $queue = 'events'): Queue
+    public function await(ITraceable $job, string $queue = 'events', int $timeout = QUEUE_TASK_TIMEOUT): Queue
     {
         $waited = 0;
 
@@ -101,7 +105,7 @@ class Queues
 
             $waited += QUEUE_TASK_ROUND_TRIP;
 
-            if ($waited > QUEUE_TASK_TIMEOUT) {
+            if ($waited > $timeout) {
                 throw new QueueJobTimeoutException();
             }
         }
