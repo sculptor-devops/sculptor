@@ -45,18 +45,13 @@ class CreateDatabase extends Command
 
         $this->info("Creating {$name}...");
 
-        try {
-            $result = $actions->create($name);
+        if ($actions->create($name)) {
+            $this->info("Done.");
 
-            if ($result) {
-                $this->info("Done.");
-
-                return 0;
-            }
-
-        } catch (\Exception $e) {
-            $this->error("Error: {$e->getMessage()}");
+            return 0;
         }
+
+        $this->error("Error: {$actions->error()}");
 
         return 1;
     }

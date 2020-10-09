@@ -49,18 +49,13 @@ class DeleteUser extends Command
 
         $this->info("Creating {$name}@{$host} on {$database}...");
 
-        try {
-            $result = $actions->drop($name, $database, $host);
+        if ($actions->drop($name, $database, $host)) {
+            $this->info("Done.");
 
-            if ($result) {
-                $this->info("Done.");
-
-                return 0;
-            }
-
-        } catch (\Exception $e) {
-            $this->error("Error: {$e->getMessage()}");
+            return 0;
         }
+
+        $this->error("Error: {$actions->error()}");
 
         return 1;
     }

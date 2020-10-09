@@ -5,7 +5,7 @@ namespace Tests\Unit;
 // use PHPUnit\Framework\TestCase;
 use Exception;
 use Tests\TestCase;
-use Sculptor\Agent\Security\Upgrades;
+use Sculptor\Agent\Logs\Upgrades;
 
 class UnattendedUpdatesTest extends TestCase
 {
@@ -22,7 +22,7 @@ class UnattendedUpdatesTest extends TestCase
         $fixture = base_path() . '/tests/Fixtures/unattended-upgrades-dpkg.log';
 
         $upgrades->filename($fixture);
-        
+
         $this->assertCount(15, $upgrades->events());
     }
 }

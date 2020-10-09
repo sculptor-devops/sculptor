@@ -46,18 +46,13 @@ class DeleteDatabase extends Command
 
         $this->info("Deleting {$name}...");
 
-        try {
-            $result = $actions->delete($name);
+        if ($actions->delete($name)) {
+            $this->info("Done.");
 
-            if ($result) {
-                $this->info("Done.");
-
-                return 0;
-            }
-
-        } catch (\Exception $e) {
-            $this->error("Error: {$e->getMessage()}");
+            return 0;
         }
+
+        $this->error("Error: {$actions->error()}");
 
         return 1;
     }

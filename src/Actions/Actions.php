@@ -30,24 +30,17 @@ class Actions
     /**
      * @param ITraceable $job
      * @return bool
+     * @throws Exception
      */
     protected function run(ITraceable $job): bool
     {
-        try {
-            $result = $this->queues->await($job, 'system');
+        $result = $this->queues->await($job, 'system');
 
-            if ($result->ok()) {
-                return true;
-            }
-
-            $this->error = $result->error;
-
-            return false;
-        } catch (Exception $e) {
-            $this->error = $e->getMessage();
-
-            return false;
+        if ($result->ok()) {
+            return true;
         }
+
+        throw new Exception($result->error);
     }
 
     /**

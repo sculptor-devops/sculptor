@@ -9,6 +9,7 @@ use Sculptor\Agent\Jobs\DatabaseDelete;
 use Sculptor\Agent\Jobs\DatabaseUserCreate;
 use Sculptor\Agent\Jobs\DatabaseUserDelete;
 use Sculptor\Agent\Jobs\DatabaseUserPassword;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Queues;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
@@ -46,17 +47,23 @@ class Database extends Actions
      */
     public function create(string $name): bool
     {
-        if ($this->database->exists($name)) {
-            throw new Exception("Database {$name} already exists");
-        }
+        Logs::actions()->info("Create database {$name}");
 
-        if ($this->run(new DatabaseCreate($name))) {
+        try {
+            if ($this->database->exists($name)) {
+                throw new Exception("Database {$name} already exists");
+            }
+
+            $this->run(new DatabaseCreate($name));
+
             $this->database->create(['name' => $name]);
 
             return true;
-        }
+        } catch (Exception $e) {
+            $this->report("Create database: {$e->getMessage()}");
 
-        return false;
+            return false;
+        }
     }
 
     /**
@@ -66,9 +73,13 @@ class Database extends Actions
      */
     public function delete(string $name): bool
     {
-        $database = $this->database->byName($name);
+        Logs::actions()->info("Delete database {$name}");
 
-        if ($this->run(new DatabaseDelete($name))) {
+        try {
+            $database = $this->database->byName($name);
+
+            $this->run(new DatabaseDelete($name));
+
             foreach ($database->users as $user) {
                 $this->drop($user->name, $name);
             }
@@ -76,9 +87,11 @@ class Database extends Actions
             $database->delete();
 
             return true;
-        }
+        } catch (Exception $e) {
+            $this->report("Delete database: {$e->getMessage()}");
 
-        return false;
+            return false;
+        }
     }
 
     /**
@@ -87,14 +100,17 @@ class Database extends Actions
      * @param string $db
      * @param string $host
      * @return bool
-     * @throws ValidatorException
      * @throws Exception
      */
     public function user(string $name, string $password, string $db, string $host = 'localhost'): bool
     {
-        $database = $this->database->byName($db);
+        Logs::actions()->info("Create user {$name}@{$host} on {$name}");
 
-        if ($this->run(new DatabaseUserCreate($name, $password, $db, $host))) {
+        try {
+            $database = $this->database->byName($db);
+
+            $this->run(new DatabaseUserCreate($name, $password, $db, $host));
+
             $this->users->create([
                 'name' => $name,
                 'database_id' => $database->id,
@@ -103,9 +119,11 @@ class Database extends Actions
             ]);
 
             return true;
-        }
+        } catch (Exception $e) {
+            $this->report("Create user: {$e->getMessage()}");
 
-        return false;
+            return false;
+        }
     }
 
     /**
@@ -118,17 +136,23 @@ class Database extends Actions
      */
     public function password(string $name, string $password, string $db, string $host = 'localhost'): bool
     {
-        $database = $this->database->byName($db);
+        Logs::actions()->info("Change password to {$name}@{$host} on {$name}");
 
-        $user = $this->users->byName($database, $name);
+        try {
+            $database = $this->database->byName($db);
 
-        if ($this->run(new DatabaseUserPassword($name, $db, $password, $host))) {
+            $user = $this->users->byName($database, $name);
+
+            $this->run(new DatabaseUserPassword($name, $db, $password, $host));
+
             $user->update([ 'password' => $password]);
 
             return true;
-        }
+        } catch (Exception $e) {
+            $this->report("Change password to: {$e->getMessage()}");
 
-        return false;
+            return false;
+        }
     }
 
     /**
@@ -140,16 +164,29 @@ class Database extends Actions
      */
     public function drop(string $name, string $db, string $host = 'localhost'): bool
     {
-        $database = $this->database->byName($db);
+        Logs::actions()->info("Drop user {$name}@{$host} on {$name}");
 
-        $user = $this->users->byName($database, $name);
+        try {
+            $database = $this->database->byName($db);
 
-        if ($this->run(new DatabaseUserDelete($db, $name, $host))) {
+            $user = $this->users->byName($database, $name);
+
+            $this->run(new DatabaseUserDelete($db, $name, $host));
+
             $user->delete();
 
             return true;
-        }
+        } catch (Exception $e) {
+            $this->report("Drop user: {$e->getMessage()}");
 
-        return false;
+            return false;
+        }
+    }
+
+    private function report(string $message): void
+    {
+        Logs::actions()->error($message);
+
+        $this->error = "Error {$message}";
     }
 }
