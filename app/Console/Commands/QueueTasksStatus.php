@@ -51,7 +51,7 @@ class QueueTasksStatus extends Command
                 'created_at' => $item->created_at,
                 'uuid' => $verbose ? $item->uuid : Str::limit($item->uuid, 25),
                 'status' => $item->status,
-                'type' => $item->type,
+                'type' => Str::afterLast($item->type, '\\'),
                 'error' => $item->error ?? 'None'
             ];
         });
@@ -59,8 +59,8 @@ class QueueTasksStatus extends Command
         $this->table([
             'created_at' => 'Start',
             'uuid' => 'ID',
-            'status' => 'Status',
             'type' => 'Type',
+            'status' => 'Status',
             'error' => 'Error'
         ], $map);
 
