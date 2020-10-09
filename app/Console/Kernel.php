@@ -7,6 +7,7 @@ use App\Console\Commands\CreateDatabase;
 use App\Console\Commands\CreateUser;
 use App\Console\Commands\DeleteDatabase;
 use App\Console\Commands\DeleteUser;
+use App\Console\Commands\QueueTasksStatus;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -22,7 +23,8 @@ class Kernel extends ConsoleKernel
         DeleteDatabase::class,
         CreateUser::class,
         DeleteUser::class,
-        ChangeDatabaseUserPassword::class
+        ChangeDatabaseUserPassword::class,
+        QueueTasksStatus::class
     ];
 
     /**

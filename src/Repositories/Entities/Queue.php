@@ -23,7 +23,7 @@ class Queue extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [ 'uuid', 'status', 'error' ];
+    protected $fillable = [ 'uuid', 'status', 'type', 'error' ];
 
     public function ok(): bool
     {

@@ -39,11 +39,12 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
     }
 
     /**
+     * @param string $type
      * @return LengthAwarePaginator|Collection|mixed
      * @throws ValidatorException
      */
-    public function insert()
+    public function insert(string $type = 'unknown')
     {
-        return $this->create([ 'uuid' => Str::uuid(), 'status' => QUEUE_STATUS_WAITING ]);
+        return $this->create([ 'uuid' => Str::uuid(), 'type' => $type, 'status' => QUEUE_STATUS_WAITING ]);
     }
 }
