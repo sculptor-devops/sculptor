@@ -8,8 +8,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-use Sculptor\Agent\Services\Queues\Traceable;
-use Sculptor\Agent\Services\Queues\ITraceable;
+use Sculptor\Agent\Queues\Traceable;
+use Sculptor\Agent\Contracts\ITraceable;
 
 class {{ class }} implements ShouldQueue, ITraceable
 {
@@ -35,7 +35,7 @@ class {{ class }} implements ShouldQueue, ITraceable
         try {
             //
 
-            $this->finished();
+            $this->ok();
 
         } catch(Exception $e) {
             $this->error($e->getMessage());

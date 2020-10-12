@@ -8,18 +8,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sculptor\Agent\Exceptions\DatabaseDriverException;
-use Sculptor\Agent\Contracts\ITraceable;
-use Sculptor\Agent\Queues\Traceable;
-use Sculptor\Foundation\Contracts\Database as Driver;
 
-class DatabaseCreate implements ShouldQueue, ITraceable
+use Sculptor\Agent\Queues\Traceable;
+use Sculptor\Agent\Contracts\ITraceable;
+use Sculptor\Foundation\Services\Daemons;
+
+class DaemonReload implements ShouldQueue, ITraceable
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-    use Traceable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
     /**
      * @var string
@@ -30,7 +26,6 @@ class DatabaseCreate implements ShouldQueue, ITraceable
      * Create a new job instance.
      *
      * @param string $name
-     * @throws Exception
      */
     public function __construct(string $name)
     {
@@ -38,23 +33,23 @@ class DatabaseCreate implements ShouldQueue, ITraceable
     }
 
     /**
-     * Execute the job.
-     *
-     * @param Driver $driver
-     * @return void
+     * @param Daemons $daemons
      * @throws Exception
      */
-    public function handle(Driver $driver)
+    public function handle(Daemons $daemons)
     {
         $this->running();
 
         try {
-            if (!$driver->db($this->name)) {
-                throw new DatabaseDriverException($driver->error());
+            if (!$daemons->reload($this->name)) {
+                $this->error("Unable to reload {$this->name}: {$daemons->error()}");
+
+                return;
             }
 
             $this->ok();
-        } catch (Exception $e) {
+
+        } catch(Exception $e) {
             $this->error($e->getMessage());
         }
     }

@@ -1,27 +1,26 @@
 <?php
 
-
 namespace App\Console\Commands;
 
 
 use Illuminate\Console\Command;
-use Sculptor\Agent\Repositories\QueueRepository;
+use Sculptor\Agent\Actions\Daemons;
 
-class ShowQueueStatus extends Command
+class DaemonsStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tasks:show {verbose=false}';
+    protected $signature = 'daemons:status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Show queue';
+    protected $description = 'Daemons status';
 
     /**
      * Create a new command instance.
@@ -36,18 +35,13 @@ class ShowQueueStatus extends Command
     /**
      * Execute the console command.
      *
-     * @param QueueRepository $queue
+     * @param Daemons $actions
      * @return int
      */
-    public function handle(QueueRepository $queue)
+    public function handle(Daemons $actions)
     {
-        $verbose = $this->argument('verbose');
+        $this->table(['group' => 'Group', 'name' => 'Service', 'active' => 'Active'], $actions->status());
 
-        $tasks = $queue->all();
-
-        dd($tasks);
-
-
-        return 1;
+        return 0;
     }
 }

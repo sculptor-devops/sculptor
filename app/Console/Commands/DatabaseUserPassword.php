@@ -1,26 +1,27 @@
 <?php
 
+
 namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
 
-class CreateDatabase extends Command
+class DatabaseUserPassword extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:create {name}';
+    protected $signature = 'database:password {database} {name} {password} {host=localhost}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a database';
+    protected $description = 'Change a database user password';
 
     /**
      * Create a new command instance.
@@ -41,11 +42,17 @@ class CreateDatabase extends Command
      */
     public function handle(Database $actions)
     {
+        $database = $this->argument('database');
+
         $name = $this->argument('name');
 
-        $this->info("Creating {$name}...");
+        $password = $this->argument('password');
 
-        if ($actions->create($name)) {
+        $host = $this->argument('host');
+
+        $this->info("Creating {$name}@{$host} on {$database}...");
+
+        if ($actions->password($name, $password, $database, $host)) {
             $this->info("Done.");
 
             return 0;

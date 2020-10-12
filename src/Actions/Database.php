@@ -3,9 +3,7 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
-use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Exceptions\DatabaseAlreadyExistsException;
-use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Jobs\DatabaseCreate;
 use Sculptor\Agent\Jobs\DatabaseDelete;
 use Sculptor\Agent\Jobs\DatabaseUserCreate;
@@ -182,12 +180,5 @@ class Database extends Base
 
             return false;
         }
-    }
-
-    private function report(string $message): void
-    {
-        Logs::actions()->error($message);
-
-        $this->error = "Error {$message}";
     }
 }

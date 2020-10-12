@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sculptor\Agent\Queues\ITraceable;
+use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 
 class JobOk implements ShouldQueue, ITraceable
@@ -37,7 +37,7 @@ class JobOk implements ShouldQueue, ITraceable
                 sleep($this->wait);
             }
 
-            $this->finished();
+            $this->ok();
 
         } catch(Exception $e) {
             $this->error($e->getMessage());

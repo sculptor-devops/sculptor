@@ -2,11 +2,12 @@
 
 namespace App\Console;
 
-use App\Console\Commands\ChangeDatabaseUserPassword;
-use App\Console\Commands\CreateDatabase;
-use App\Console\Commands\CreateUser;
-use App\Console\Commands\DeleteDatabase;
-use App\Console\Commands\DeleteUser;
+use App\Console\Commands\DaemonsManage;
+use App\Console\Commands\DatabaseUserPassword;
+use App\Console\Commands\DatabaseCreate;
+use App\Console\Commands\DatabaseUserCreate;
+use App\Console\Commands\DatabaseDelete;
+use App\Console\Commands\DatabaseUserDelete;
 use App\Console\Commands\QueueTasksStatus;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -19,12 +20,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        CreateDatabase::class,
-        DeleteDatabase::class,
-        CreateUser::class,
-        DeleteUser::class,
-        ChangeDatabaseUserPassword::class,
-        QueueTasksStatus::class
     ];
 
     /**

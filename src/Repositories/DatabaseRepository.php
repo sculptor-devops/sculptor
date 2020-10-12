@@ -7,7 +7,7 @@ use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
-use Sculptor\Agent\Repositories\Contracts\DatabaseRepository as DatabaseRepositoryInterface;
+use Sculptor\Agent\Contracts\DatabaseRepository as DatabaseRepositoryInterface;
 use Sculptor\Agent\Repositories\Entities\Database;
 
 /**

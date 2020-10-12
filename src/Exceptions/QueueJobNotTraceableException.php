@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Sculptor\Agent\Exceptions;
 
 use Exception;

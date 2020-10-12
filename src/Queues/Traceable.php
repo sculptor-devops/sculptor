@@ -54,7 +54,7 @@ trait Traceable
     /**
      * @throws Exception
      */
-    public function finished(): void
+    public function ok(): void
     {
         if ($this->transaction) {
             DB::commit();

@@ -4,7 +4,8 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Exceptions\ActionJobRunException;
-use Sculptor\Agent\Queues\ITraceable;
+use Sculptor\Agent\Contracts\ITraceable;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Queues;
 
 class Base
@@ -50,5 +51,12 @@ class Base
     public function error(): ?string
     {
         return $this->error;
+    }
+
+    protected function report(string $message): void
+    {
+        Logs::actions()->error($message);
+
+        $this->error = "Error {$message}";
     }
 }

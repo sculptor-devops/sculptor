@@ -7,14 +7,14 @@ use Exception;
 use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
 
-class DeleteDatabase extends Command
+class DatabaseDelete extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:delete {name}';
+    protected $signature = 'database:delete {name}';
 
     /**
      * The console command description.

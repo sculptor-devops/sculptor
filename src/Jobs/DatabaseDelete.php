@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Exceptions\DatabaseDriverException;
-use Sculptor\Agent\Queues\ITraceable;
+use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
@@ -53,7 +53,7 @@ class DatabaseDelete implements ShouldQueue, ITraceable
                 throw new DatabaseDriverException($driver->error());
             }
 
-            $this->finished();
+            $this->ok();
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }

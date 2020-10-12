@@ -1,26 +1,27 @@
 <?php
 
+
 namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
 
-class DeleteUser extends Command
+class DatabaseUserCreate extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:delete_user {database} {name} {host=localhost}';
+    protected $signature = 'database:user {database} {name} {password} {host=localhost}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete a database user';
+    protected $description = 'Create a database user';
 
     /**
      * Create a new command instance.
@@ -45,11 +46,13 @@ class DeleteUser extends Command
 
         $name = $this->argument('name');
 
+        $password = $this->argument('password');
+
         $host = $this->argument('host');
 
         $this->info("Creating {$name}@{$host} on {$database}...");
 
-        if ($actions->drop($name, $database, $host)) {
+        if ($actions->user($name, $password, $database, $host)) {
             $this->info("Done.");
 
             return 0;

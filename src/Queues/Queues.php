@@ -4,8 +4,8 @@ namespace Sculptor\Agent\Queues;
 
 use Exception;
 use ReflectionClass;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Queue as Dispatcher;
+use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Exceptions\QueueJobCreateException;
 use Sculptor\Agent\Exceptions\QueueJobNotTraceableException;
 use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
