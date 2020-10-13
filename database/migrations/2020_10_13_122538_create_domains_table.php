@@ -23,6 +23,7 @@ class CreateDomainsTable extends Migration
             $table->string('home')->default('public');
             $table->string('vcs_tye')->default('git');
             $table->string('vcs')->nullable();
+            $table->string('deployer')->default('deploy');
             $table->unsignedInteger('database_id')->nullable();
             $table->timestamps();
         });
