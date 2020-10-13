@@ -17,13 +17,16 @@ class CreateDomainsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('alias')->nullable();
-            $table->string('user')->default('www');
             $table->string('type')->default('laravel');
             $table->string('certificate')->default('self-signed');
+
+            $table->string('user')->default('www');
             $table->string('home')->default('public');
+
+            $table->string('deployer')->default('deploy');
             $table->string('vcs_tye')->default('git');
             $table->string('vcs')->nullable();
-            $table->string('deployer')->default('deploy');
+
             $table->unsignedInteger('database_id')->nullable();
             $table->timestamps();
         });

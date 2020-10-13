@@ -1,5 +1,5 @@
 <?php
-
+define('SITES_USER', 'www');
 define('DB_SERVER_PASSWORD', '/home/sculptor/.db_password');
 define('QUEUE_TASK_MILLISECOND', 1000);
 define('QUEUE_TASK_ROUND_TRIP', 250 * QUEUE_TASK_MILLISECOND);
@@ -8,6 +8,7 @@ define('QUEUE_STATUS_WAITING', 'waiting');
 define('QUEUE_STATUS_RUNNING', 'running');
 define('QUEUE_STATUS_ERROR', 'error');
 define('QUEUE_STATUS_OK', 'ok');
+
 
 define('QUEUE_STATUSES', [
     QUEUE_STATUS_WAITING,
