@@ -40,6 +40,13 @@ class MySql implements Database
 
     public function error(): string
     {
-        return 'error';
+        return 'MySql Mock Error';
+    }
+
+    public function response(bool $response): bool
+    {
+        $this->result = $response;
+
+        return $this->result;
     }
 }

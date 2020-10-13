@@ -11,20 +11,16 @@ use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Queues\Traceable;
 
-class JobOk implements ShouldQueue, ITraceable
+class JobError implements ShouldQueue, ITraceable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
-    private $wait;
-
     /**
      * Create a new job instance.
-     *
-     * @param int $wait
      */
-    public function __construct(int $wait = 0)
+    public function __construct()
     {
-        $this->wait = $wait;
+        //
     }
 
     /**
@@ -34,15 +30,6 @@ class JobOk implements ShouldQueue, ITraceable
     {
         $this->running();
 
-        try {
-            if ($this->wait > 0) {
-                sleep($this->wait);
-            }
-
-            $this->ok();
-
-        } catch(Exception $e) {
-            $this->error($e->getMessage());
-        }
+        $this->error('Mock job error');
     }
 }

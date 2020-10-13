@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Exceptions\DatabaseAlreadyExistsException;
+use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
 use Sculptor\Agent\Jobs\DatabaseCreate;
 use Sculptor\Agent\Jobs\DatabaseDelete;
 use Sculptor\Agent\Jobs\DatabaseUserCreate;
@@ -68,7 +69,6 @@ class Database extends Base
     /**
      * @param string $name
      * @return bool
-     * @throws Exception
      */
     public function delete(string $name): bool
     {
@@ -144,7 +144,7 @@ class Database extends Base
 
             $this->run(new DatabaseUserPassword($name, $db, $password, $host));
 
-            $user->update([ 'password' => $password]);
+            $user->update(['password' => $password]);
 
             return true;
         } catch (Exception $e) {

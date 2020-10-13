@@ -57,6 +57,6 @@ class Base
     {
         Logs::actions()->error($message);
 
-        $this->error = "Error {$message}";
+        $this->error = $message;
     }
 }

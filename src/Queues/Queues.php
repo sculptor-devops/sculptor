@@ -59,7 +59,9 @@ class Queues
             throw new QueueJobNotTraceableException();
         }
 
-        $job->ref($this->repository->insert(get_class($job)));
+        $class = get_class($job);
+
+        $job->ref($this->repository->insert($class));
 
         Dispatcher::pushOn($queue, $job);
 

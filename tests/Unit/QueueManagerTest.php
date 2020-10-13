@@ -2,8 +2,7 @@
 
 namespace Tests\Unit;
 
-use Sculptor\Foundation\Contracts\Database;
-use Sculptor\Foundation\Database\MySql;
+use Tests\Stubs\JobError;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Queue;
@@ -24,7 +23,7 @@ class QueueManagerTest extends TestCase
      *
      * @return void
      */
-    public function testJobOkInsert()
+    public function testJobOkInsert(): void
     {
         Queue::fake();
 
@@ -41,8 +40,7 @@ class QueueManagerTest extends TestCase
         Queue::assertPushedOn('events', JobOK::class);
     }
 
-
-    public function testJobOkWait()
+    public function testJobOkWait(): void
     {
         $ok = new JobOK(1);
 
@@ -51,5 +49,31 @@ class QueueManagerTest extends TestCase
         $manager->await($ok);
 
         $this->assertTrue($manager->find($ok->ref()->uuid)->finished());
+    }
+
+    public function testJobErrorInsert(): void
+    {
+        $error = new JobError();
+
+        $manager = resolve(Queues::class);
+
+        $manager->insert($error);
+
+        $task = $manager->find($error->ref()->uuid);
+
+        $this->assertTrue($task->finished() && $task->error() && !$task->ok());
+    }
+
+    public function testJobErrorWait(): void
+    {
+        $error = new JobError();
+
+        $manager = resolve(Queues::class);
+
+        $manager->await($error);
+
+        $task = $manager->find($error->ref()->uuid);
+
+        $this->assertTrue($task->finished() && $task->error() && !$task->ok());
     }
 }
