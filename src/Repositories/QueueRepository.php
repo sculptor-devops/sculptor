@@ -24,7 +24,7 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
      *
      * @return string
      */
-    public function model()
+    public function model(): string
     {
         return Queue::class;
     }
@@ -33,7 +33,7 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
      * Boot up the repository, pushing criteria
      * @throws RepositoryException
      */
-    public function boot()
+    public function boot(): void
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }

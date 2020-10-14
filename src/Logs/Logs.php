@@ -32,7 +32,13 @@ class Logs
      */
     private function from(): string
     {
-        return Request::ip();
+        $from = Request::ip();
+
+        if ($from == null) {
+            return 'unknown';
+        }
+
+        return $from;
     }
 
     /**

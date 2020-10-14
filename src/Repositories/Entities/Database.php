@@ -3,14 +3,15 @@
 namespace Sculptor\Agent\Repositories\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * Class Database.
  *
- * @property mixed id
- * @property mixed users
+ * @property int id
+ * @property HasMany users
  * @package namespace Sculptor\Agent\Entities;
  */
 class Database extends Model implements Transformable
@@ -24,7 +25,7 @@ class Database extends Model implements Transformable
      */
     protected $fillable = [ 'name', 'driver' ];
 
-    public function users()
+    public function users(): HasMany
     {
         return $this->hasMany(DatabaseUser::class);
     }

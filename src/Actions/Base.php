@@ -16,7 +16,7 @@ class Base
     protected $queues;
 
     /**
-     * @var
+     * @var string
      */
     protected $error;
 

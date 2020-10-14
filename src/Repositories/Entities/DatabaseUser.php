@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Repositories\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Crypt;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -18,7 +19,7 @@ class DatabaseUser extends Model implements Transformable
      */
     protected $fillable = [ 'name', 'database_id', 'host', 'password' ];
 
-    public function database()
+    public function database(): BelongsTo
     {
         return $this->belongsTo(Database::class);
     }
@@ -26,16 +27,15 @@ class DatabaseUser extends Model implements Transformable
     /**
      * @param string $value
      */
-    public function setPasswordAttribute(string $value)
+    public function setPasswordAttribute(string $value): void
     {
         $this->attributes['password'] =  Crypt::encryptString($value);
     }
 
     /**
-     * @param string $value
      * @return string
      */
-    public function getPasswordAttribute()
+    public function getPasswordAttribute(): string
     {
         return Crypt::decryptString($this->attributes['password']);
     }

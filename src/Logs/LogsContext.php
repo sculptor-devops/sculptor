@@ -8,6 +8,9 @@ use Psr\Log\LoggerInterface;
 
 class LogsContext implements LoggerInterface
 {
+    /**
+     * @var array
+     */
     private $context;
 
     public function __construct(array $context)
@@ -77,7 +80,6 @@ class LogsContext implements LoggerInterface
     /**
      * @param string $message
      * @param array $context
-     * @return $this
      */
     public function info($message, array $context = array())
     {

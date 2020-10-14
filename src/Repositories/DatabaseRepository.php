@@ -22,7 +22,7 @@ class DatabaseRepository extends BaseRepository implements DatabaseRepositoryInt
      *
      * @return string
      */
-    public function model()
+    public function model(): string
     {
         return Database::class;
     }
@@ -31,7 +31,7 @@ class DatabaseRepository extends BaseRepository implements DatabaseRepositoryInt
      * Boot up the repository, pushing criteria
      * @throws RepositoryException
      */
-    public function boot()
+    public function boot(): void
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }

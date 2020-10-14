@@ -18,7 +18,7 @@ class DatabaseUserRepository extends BaseRepository implements QueueRepositoryIn
      *
      * @return string
      */
-    public function model()
+    public function model(): string
     {
         return DatabaseUser::class;
     }
@@ -27,7 +27,7 @@ class DatabaseUserRepository extends BaseRepository implements QueueRepositoryIn
      * Boot up the repository, pushing criteria
      * @throws RepositoryException
      */
-    public function boot()
+    public function boot(): void
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
@@ -40,12 +40,14 @@ class DatabaseUserRepository extends BaseRepository implements QueueRepositoryIn
      */
     public function byName(Database $database, string $name): DatabaseUser
     {
-        $user = $database->users->where('name', $name);
+        $user = $database->users
+            ->where('name', $name)
+            ->first();
 
-        if ($user->count() == 0) {
+        if ($user == null) {
             throw new DatabaseUserNotFoundException("Cannot find user {$name}");
         }
 
-        return $user->first();
+        return $user;
     }
 }

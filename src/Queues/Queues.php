@@ -80,7 +80,7 @@ class Queues
     /**
      * @param ITraceable $job
      * @param string $queue
-     * @param float|int $timeout
+     * @param int $timeout
      * @return Queue
      * @throws QueueJobCreateException
      * @throws QueueJobTimeoutException
@@ -92,7 +92,7 @@ class Queues
 
         $entity = $this->insert($job, $queue);
 
-        if (!$entity) {
+        if ($entity == null) {
             throw new QueueJobCreateException();
         }
 

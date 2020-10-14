@@ -4,24 +4,29 @@ namespace Sculptor\Agent\Actions\Domains;
 
 use Exception;
 use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Repositories\Entities\Domain;
 
 class Structure
 {
     /**
-     * @var string
+     * @var Domain
      */
-    private $name;
+    private $domain;
 
-    public function __construct(string $name)
+    /**
+     * Certificates constructor.
+     * @param Domain $domain
+     */
+    public function __construct(Domain $domain)
     {
-        $this->name = $name;
+        $this->domain = $domain;
     }
 
     /**
      * @throws Exception
      */
     public function create(): void {
-        $root = '/home/' . SITES_USER . "/sites/{$this->name}";
+        $root = "/home/{$this->domain->user}/sites/{$this->domain->name}";
 
         foreach ([
                      $root,

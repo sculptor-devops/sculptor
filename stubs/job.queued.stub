@@ -28,7 +28,7 @@ class {{ class }} implements ShouldQueue, ITraceable
     /**
      * @throws Exception
      */
-    public function handle()
+    public function handle(): void
     {
         $this->running();
 

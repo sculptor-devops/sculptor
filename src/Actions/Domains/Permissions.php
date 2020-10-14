@@ -1,10 +1,12 @@
 <?php
 
+
 namespace Sculptor\Agent\Actions\Domains;
+
 
 use Sculptor\Agent\Repositories\Entities\Domain;
 
-class WebServer
+class Permissions
 {
     /**
      * @var Domain

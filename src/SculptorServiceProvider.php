@@ -41,7 +41,13 @@ class SculptorServiceProvider extends ServiceProvider
     private function password(): ?string
     {
         try {
-            return file_get_contents(DB_SERVER_PASSWORD);
+            $password = file_get_contents(DB_SERVER_PASSWORD);
+
+            if (!$password) {
+                return null;
+            }
+
+            return $password;
         } catch (\Exception $e) {
             return null;
         }

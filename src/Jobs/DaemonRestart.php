@@ -36,7 +36,7 @@ class DaemonRestart implements ShouldQueue, ITraceable
      * @param Daemons $daemons
      * @throws Exception
      */
-    public function handle(Daemons $daemons)
+    public function handle(Daemons $daemons): void
     {
         $this->running();
 
