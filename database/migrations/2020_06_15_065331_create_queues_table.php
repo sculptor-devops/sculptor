@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Sculptor\Agent\Enums\QueueStatusType;
 
 /**
  * Class CreateQueuesTable.
@@ -19,7 +20,7 @@ class CreateQueuesTable extends Migration
             $table->increments('id');
 	        $table->string('uuid')->unique();
             $table->string('type');
-            $table->string('status')->default(QUEUE_STATUS_WAITING);
+            $table->string('status')->default(QueueStatusType::WAITING);
 	        $table->longText('payload')->nullable();
 	        $table->longText('error')->nullable();
 

@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Repositories\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Sculptor\Agent\Enums\QueueStatusType;
 
 /**
  * Class Queue.
@@ -27,26 +28,26 @@ class Queue extends Model implements Transformable
 
     public function ok(): bool
     {
-        return $this->status == QUEUE_STATUS_OK;
+        return $this->status == QueueStatusType::OK;
     }
 
     public function error(): bool
     {
-        return $this->status == QUEUE_STATUS_ERROR;
+        return $this->status == QueueStatusType::ERROR;
     }
 
     public function finished(): bool
     {
-        return in_array($this->status, QUEUE_FINISHED_STATUSES);
+        return in_array($this->status, QueueStatusType::FINISHED_STATUSES);
     }
 
     public function running(): bool
     {
-        return $this->status == QUEUE_STATUS_RUNNING;
+        return $this->status == QueueStatusType::RUNNING;
     }
 
     public function waiting(): bool
     {
-        return $this->status == QUEUE_STATUS_WAITING;
+        return $this->status == QueueStatusType::WAITING;
     }
 }

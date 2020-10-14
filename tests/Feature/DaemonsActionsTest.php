@@ -28,7 +28,7 @@ class DaemonsActionsTest extends TestCase
     {
         // DaemonsStub::error();
 
-        dd( $this->actions->start('web'));
+        //dd( $this->actions->start('web'));
 
     }
 }

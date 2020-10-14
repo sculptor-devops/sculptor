@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Queues;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Sculptor\Agent\Enums\QueueStatusType;
 use Sculptor\Agent\Exceptions\QueueJobRefUndefinedException;
 use Sculptor\Agent\Repositories\Entities\Queue;
 
@@ -48,7 +49,7 @@ trait Traceable
             DB::beginTransaction();
         }
 
-        $this->changeStatus(QUEUE_STATUS_RUNNING);
+        $this->changeStatus(QueueStatusType::RUNNING);
     }
 
     /**
@@ -60,7 +61,7 @@ trait Traceable
             DB::commit();
         }
 
-        $this->changeStatus(QUEUE_STATUS_OK);
+        $this->changeStatus(QueueStatusType::OK);
     }
 
     /**
@@ -73,7 +74,7 @@ trait Traceable
             DB::rollBack();
         }
 
-        $this->changeStatus(QUEUE_STATUS_ERROR, $error);
+        $this->changeStatus(QueueStatusType::ERROR, $error);
     }
 
     /**

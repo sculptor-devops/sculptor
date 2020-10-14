@@ -10,6 +10,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Contracts\QueueRepository as QueueRepositoryInterface;
+use Sculptor\Agent\Enums\QueueStatusType;
 use Sculptor\Agent\Repositories\Entities\Queue;
 
 /**
@@ -45,6 +46,6 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
      */
     public function insert(string $type = 'unknown')
     {
-        return $this->create([ 'uuid' => Str::uuid(), 'type' => $type, 'status' => QUEUE_STATUS_WAITING ]);
+        return $this->create([ 'uuid' => Str::uuid(), 'type' => $type, 'status' => QueueStatusType::WAITING ]);
     }
 }

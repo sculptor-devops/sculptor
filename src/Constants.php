@@ -1,23 +1,11 @@
 <?php
 define('SITES_USER', 'www');
+define('SITES_PUBLIC', 'public');
+
+define('BACKUP_CRON', '0 0 * * *');
+define('BACKUP_ROTATE', 7);
+
 define('DB_SERVER_PASSWORD', '/home/sculptor/.db_password');
 define('QUEUE_TASK_MILLISECOND', 1000);
 define('QUEUE_TASK_ROUND_TRIP', 250 * QUEUE_TASK_MILLISECOND);
 define('QUEUE_TASK_TIMEOUT', 10000 * QUEUE_TASK_MILLISECOND);
-define('QUEUE_STATUS_WAITING', 'waiting');
-define('QUEUE_STATUS_RUNNING', 'running');
-define('QUEUE_STATUS_ERROR', 'error');
-define('QUEUE_STATUS_OK', 'ok');
-
-
-define('QUEUE_STATUSES', [
-    QUEUE_STATUS_WAITING,
-    QUEUE_STATUS_RUNNING,
-    QUEUE_STATUS_ERROR,
-    QUEUE_STATUS_OK
-]);
-
-define('QUEUE_FINISHED_STATUSES', [
-    QUEUE_STATUS_ERROR,
-    QUEUE_STATUS_OK
-]);
