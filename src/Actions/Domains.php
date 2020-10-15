@@ -3,21 +3,27 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
+use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Jobs\DomainCreate;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Queues;
 use Sculptor\Agent\Repositories\DomainRepository;
+use Sculptor\Agent\Contracts\Action as ActionInterface;
 
-class Domains extends Base
+class Domains implements ActionInterface
 {
     /**
      * @var DomainRepository
      */
     private $domains;
+    /**
+     * @var Action
+     */
+    private $action;
 
-    public function __construct(Queues $queues, DomainRepository $domains)
+    public function __construct(Action $action, DomainRepository $domains)
     {
-        parent::__construct($queues);
+        $this->action = $action;
 
         $this->domains = $domains;
     }
@@ -41,11 +47,11 @@ class Domains extends Base
                 'user' => $user
             ]);
 
-            $this->run(new DomainCreate($domain));
+            $this->action->run(new DomainCreate($domain));
 
             return true;
         } catch (Exception $e) {
-            $this->report("Drop user: {$e->getMessage()}");
+            $this->action->report("Drop user: {$e->getMessage()}");
 
             return false;
         }
@@ -64,5 +70,20 @@ class Domains extends Base
     public function deploy(string $name): bool
     {
         return true;
+    }
+
+    public function enable(string $name): bool
+    {
+        return true;
+    }
+
+    public function disable(string $name): bool
+    {
+        return true;
+    }
+
+    public function error(): ?string
+    {
+        return $this->action->error();
     }
 }

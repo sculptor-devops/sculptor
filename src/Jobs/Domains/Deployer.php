@@ -5,11 +5,46 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Repositories\Entities\Domain;
-use Sculptor\Foundation\Support\Replacer;
+use Sculptor\Foundation\Contracts\Runner;
 
 class Deployer implements DomainAction
 {
+    /**
+     * @var Runner
+     */
+    private $runner;
+    /**
+     * @var Compiler
+     */
+    private $compiler;
+
+    public function __construct(Runner $runner, Compiler $compiler)
+    {
+        $this->runner = $runner;
+
+        $this->compiler = $compiler;
+    }
+
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function compile(Domain $domain): bool
+    {
+        $template = File::get("{$domain->configs()}/deployer.php");
+
+        $compiled = $this->compiler
+            ->replace($template, $domain)
+            ->replace('{REPOSITORY}', $domain->vcs)
+            ->value();
+
+        return $this->compiler
+            ->save("{$domain->root()}/deploy.php", $compiled);
+    }
+
     /**
      * @param Domain $domain
      * @return bool
@@ -17,21 +52,15 @@ class Deployer implements DomainAction
      */
     public function run(Domain $domain): bool
     {
-        $filename = "{$domain->configs()}/deployer.php";
+        $deploy = $this->runner
+            ->from($domain->root())
+            ->run([
+                'dep',
+                $domain->deployer ?? 'deploy'
+            ]);
 
-        $template = File::get($filename);
-
-        $root = $domain->root();
-
-        $compiled = Replacer::make($template)
-            ->replace('{NAME}', $domain->name)
-            ->replace('{REPOSITORY}', $domain->vcs)
-            ->replace('{USER}', $domain->user)
-            ->replace('{PATH}', $root)
-            ->value();
-
-        if (!File::put("{$root}/deploy.php", $compiled)) {
-            throw new Exception("Cannot create deploy configuration in {$root}");
+        if (!$deploy->success()) {
+            throw new Exception("Error deploy: {$deploy->error()}");
         }
 
         return true;

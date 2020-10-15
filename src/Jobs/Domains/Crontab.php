@@ -5,9 +5,9 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
-use Sculptor\Foundation\Support\Replacer;
 
 class Crontab implements DomainAction
 {
@@ -15,10 +15,16 @@ class Crontab implements DomainAction
      * @var Runner
      */
     private $runner;
+    /**
+     * @var Compiler
+     */
+    private $compiler;
 
-    public function __construct(Runner $runner)
+    public function __construct(Runner $runner, Compiler $compiler)
     {
         $this->runner = $runner;
+
+        $this->compiler = $compiler;
     }
 
     /**
@@ -26,23 +32,15 @@ class Crontab implements DomainAction
      * @return bool
      * @throws Exception
      */
-    public function run(Domain $domain): bool
+    public function compile(Domain $domain): bool
     {
-        $filename = "{$domain->configs()}/cron.conf";
+        $template = File::get("{$domain->configs()}/cron.conf");
 
-        $template = File::get($filename);
-
-        $root = $domain->root();
-
-        $compiled = Replacer::make($template)
-            ->replace('{PATH}', $root)
+        $compiled = $this->compiler->replace($template, $domain)
             ->value();
 
-        if (!File::put("{$root}/cron.conf", $compiled)) {
-            throw new Exception("Cannot create crontab configuration from {$filename}");
-        }
-
-        return true;
+        return $this->compiler
+            ->save("{$domain->root()}/cron.conf", $compiled);
     }
 
     /* private function add(string $filename, string $destination, string $user): bool

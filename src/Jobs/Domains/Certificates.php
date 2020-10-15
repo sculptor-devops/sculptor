@@ -29,7 +29,7 @@ class Certificates implements DomainAction
      * @return bool
      * @throws Exception
      */
-    public function run(Domain $domain): bool
+    public function compile(Domain $domain): bool
     {
         switch ($domain->certificate) {
             case CertificatesTypes::CUSTOM:

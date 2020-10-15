@@ -8,12 +8,14 @@ use Sculptor\Agent\Actions\Daemons as Actions;
 
 class DaemonsStub
 {
+    public const operations = ['start', 'stop', 'restart', 'status', 'reload', 'enable', 'disable'];
+
     public static function ok(): void
     {
         app()->bind(Daemons::class, function () {
             return Mockery::mock(Daemons::class, function ($mock) {
                 foreach (collect(Actions::SERVICES)->flatten() as $service) {
-                    foreach (['start', 'stop', 'restart', 'status', 'reload'] as $action) {
+                    foreach (DaemonsStub::operations as $action) {
                         $mock->shouldReceive($action)
                             ->with($service)
                             ->andReturnTrue();
@@ -28,7 +30,7 @@ class DaemonsStub
         app()->bind(Daemons::class, function () {
             return Mockery::mock(Daemons::class, function ($mock) {
                 foreach (collect(Actions::SERVICES)->flatten() as $service) {
-                    foreach (['start', 'stop', 'restart', 'status', 'reload'] as $action) {
+                    foreach (DaemonsStub::operations as $action) {
                         $mock->shouldReceive($action)
                             ->with($service)
                             ->andReturnFalse();

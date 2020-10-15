@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Services\Daemons;
@@ -20,12 +21,18 @@ class Worker implements DomainAction
      * @var Runner
      */
     private $runner;
+    /**
+     * @var Compiler
+     */
+    private $compiler;
 
-    public function __construct(Daemons $daemons, Runner $runner)
+    public function __construct(Daemons $daemons, Runner $runner, Compiler $compiler)
     {
         $this->daemons = $daemons;
 
         $this->runner = $runner;
+
+        $this->compiler = $compiler;
     }
 
     /**
@@ -33,25 +40,16 @@ class Worker implements DomainAction
      * @return bool
      * @throws Exception
      */
-    public function run(Domain $domain): bool
+    public function compile(Domain $domain): bool
     {
-        $filename = "{$domain->configs()}/worker.conf";
+        $template = File::get("{$domain->configs()}/worker.conf");
 
-        $template = File::get($filename);
-
-        $root = $domain->root();
-
-        $compiled = Replacer::make($template)
-            ->replace('{NAME}', $domain->name)
-            ->replace('{USER}', $domain->user)
+        $compiled = $this->compiler
+            ->replace($template, $domain)
             ->replace('{COUNT}', 1)
-            ->replace('{PATH}', $root)
             ->value();
 
-        if (!File::put("{$root}/worker.conf", $compiled)) {
-            throw new Exception("Cannot create worker configuration in {$root}");
-        }
-
-        return true;
+        return $this->compiler
+            ->save("{$domain->root()}/worker.conf", $compiled);
     }
 }

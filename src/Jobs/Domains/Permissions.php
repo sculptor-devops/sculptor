@@ -28,7 +28,7 @@ class Permissions implements DomainAction
      * @return bool
      * @throws Exception
      */
-    public function run(Domain $domain): bool
+    public function compile(Domain $domain): bool
     {
         $user = $domain->user;
 

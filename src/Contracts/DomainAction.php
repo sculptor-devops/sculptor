@@ -6,5 +6,5 @@ use Sculptor\Agent\Repositories\Entities\Domain;
 
 interface DomainAction
 {
-    public function run(Domain $domain): bool;
+    public function compile(Domain $domain): bool;
 }

@@ -14,7 +14,7 @@ class Structure implements DomainAction
      * @return bool
      * @throws Exception
      */
-    public function run(Domain $domain): bool
+    public function compile(Domain $domain): bool
     {
         $root = $domain->root();
 
@@ -42,7 +42,8 @@ class Structure implements DomainAction
             "{$domain->type}.cron" => 'cron.conf',
             "{$domain->type}.worker" => 'worker.conf',
             "{$domain->type}.env" => 'env',
-            "{$domain->type}.nginx.conf" => 'nginx.conf'
+            "{$domain->type}.nginx.conf" => 'nginx.conf',
+            "{$domain->type}.logrotate.conf" => 'logrotate.conf',
                  ] as $filename => $destination) {
 
             if (!File::copy("{$templates}/{$filename}",

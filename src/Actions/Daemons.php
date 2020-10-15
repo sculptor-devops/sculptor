@@ -3,18 +3,19 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
+use Sculptor\Agent\Actions\Support\Action;
+use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Exceptions\DaemonInvalidException;
-use Sculptor\Agent\Jobs\DaemonDisable;
-use Sculptor\Agent\Jobs\DaemonEnable;
-use Sculptor\Agent\Jobs\DaemonReload;
-use Sculptor\Agent\Jobs\DaemonRestart;
-use Sculptor\Agent\Jobs\DaemonStart;
-use Sculptor\Agent\Jobs\DaemonStop;
+use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Logs\Logs;
-use Sculptor\Agent\Queues\Queues;
+use Sculptor\Foundation\Services\Daemons as Services;
+use Sculptor\Agent\Contracts\Action as ActionInterface;
 
-class Daemons extends Base
+class Daemons implements ActionInterface
 {
+    /**
+     *
+     */
     public const SERVICES = [
         'database' => [
             'mysql'
@@ -31,14 +32,19 @@ class Daemons extends Base
             'ssh'
         ]
     ];
+
     /**
-     * @var \Sculptor\Foundation\Services\Daemons
+     * @var Services
      */
     private $daemons;
+    /**
+     * @var Action
+     */
+    private $action;
 
-    public function __construct(Queues $queues, \Sculptor\Foundation\Services\Daemons $daemons)
+    public function __construct(Action $action, Services $daemons)
     {
-        parent::__construct($queues);
+        $this->action = $action;
 
         $this->daemons = $daemons;
     }
@@ -50,32 +56,32 @@ class Daemons extends Base
 
     public function disable(string $name): bool
     {
-        return $this->operation(DaemonDisable::class, $name, 'Disable service');
+        return $this->operation($name, DaemonOperationsType::DISABLE, 'Disable service');
     }
 
     public function enable(string $name): bool
     {
-        return $this->operation(DaemonEnable::class, $name, 'Enable service');
+        return $this->operation($name, DaemonOperationsType::ENABLE, 'Enable service');
     }
 
     public function restart(string $name): bool
     {
-        return $this->operation(DaemonRestart::class, $name, 'Restart service');
+        return $this->operation($name, DaemonOperationsType::RESTART, 'Restart service');
     }
 
     public function start(string $name): bool
     {
-        return $this->operation(DaemonStart::class, $name, 'Start service');
+        return $this->operation($name, DaemonOperationsType::START, 'Start service');
     }
 
     public function stop(string $name): bool
     {
-        return $this->operation(DaemonStop::class, $name, 'Stop service');
+        return $this->operation($name, DaemonOperationsType::STOP, 'Stop service');
     }
 
     public function reload(string $name): bool
     {
-        return $this->operation(DaemonReload::class, $name, 'Reload service');
+        return $this->operation($name, DaemonOperationsType::RELOAD, 'Reload service');
     }
 
     public function status(): array
@@ -86,14 +92,14 @@ class Daemons extends Base
             foreach ($group as $daemon) {
                 $active = $this->daemons->active($daemon) ? 'YES' : 'NO';
 
-                $result[] = ['group' => $key, 'name' => $daemon, 'active' => $active ];
+                $result[] = ['group' => $key, 'name' => $daemon, 'active' => $active];
             }
         }
 
         return $result;
     }
 
-    private function operation(string $job, string $name, string $message): bool
+    private function operation(string $name, string $operation, string $message): bool
     {
         Logs::actions()->info("{$message} group {$name}");
 
@@ -103,16 +109,21 @@ class Daemons extends Base
             }
 
             foreach (Daemons::SERVICES[$name] as $daemon) {
-                Logs::actions()->info("{$message} {$daemon}");
+                Logs::actions()->debug("{$message} {$daemon}");
 
-                $this->run(new $job($daemon));
+                $this->action->run(new DaemonService($daemon, $operation));
             }
 
             return true;
         } catch (Exception $e) {
-            $this->report("{$message}: {$e->getMessage()}");
+            $this->action->report("{$message}: {$e->getMessage()}");
 
             return false;
         }
+    }
+
+    public function error(): ?string
+    {
+        return $this->action->error();
     }
 }

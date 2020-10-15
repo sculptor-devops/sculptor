@@ -18,7 +18,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property Database database
  * @property DatabaseUser databaseUser
  * @property int database_user_id
-  */
+ * @property string deployer
+ */
 class Domain extends Model implements Transformable
 {
     use TransformableTrait;

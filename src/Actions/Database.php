@@ -3,19 +3,19 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
+use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Exceptions\DatabaseAlreadyExistsException;
-use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
 use Sculptor\Agent\Jobs\DatabaseCreate;
 use Sculptor\Agent\Jobs\DatabaseDelete;
 use Sculptor\Agent\Jobs\DatabaseUserCreate;
 use Sculptor\Agent\Jobs\DatabaseUserDelete;
 use Sculptor\Agent\Jobs\DatabaseUserPassword;
 use Sculptor\Agent\Logs\Logs;
-use Sculptor\Agent\Queues\Queues;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
+use Sculptor\Agent\Contracts\Action as ActionInterface;
 
-class Database extends Base
+class Database implements ActionInterface
 {
     /**
      * @var DatabaseRepository
@@ -25,16 +25,20 @@ class Database extends Base
      * @var DatabaseUserRepository
      */
     private $users;
+    /**
+     * @var Action
+     */
+    private $action;
 
     /**
-     * Base constructor.
-     * @param Queues $queues
+     * Action constructor.
+     * @param Action $action
      * @param DatabaseRepository $database
      * @param DatabaseUserRepository $users
      */
-    public function __construct(Queues $queues, DatabaseRepository $database, DatabaseUserRepository $users)
+    public function __construct(Action $action, DatabaseRepository $database, DatabaseUserRepository $users)
     {
-        parent::__construct($queues);
+        $this->action = $action;
 
         $this->database = $database;
 
@@ -54,13 +58,13 @@ class Database extends Base
                 throw new DatabaseAlreadyExistsException($name);
             }
 
-            $this->run(new DatabaseCreate($name));
+            $this->action->run(new DatabaseCreate($name));
 
             $this->database->create(['name' => $name]);
 
             return true;
         } catch (Exception $e) {
-            $this->report("Create database: {$e->getMessage()}");
+            $this->action->report("Create database: {$e->getMessage()}");
 
             return false;
         }
@@ -77,7 +81,7 @@ class Database extends Base
         try {
             $database = $this->database->byName($name);
 
-            $this->run(new DatabaseDelete($name));
+            $this->action->run(new DatabaseDelete($name));
 
             foreach ($database->users as $user) {
                 $this->drop($user->name, $name);
@@ -87,7 +91,7 @@ class Database extends Base
 
             return true;
         } catch (Exception $e) {
-            $this->report("Delete database: {$e->getMessage()}");
+            $this->action->report("Delete database: {$e->getMessage()}");
 
             return false;
         }
@@ -108,7 +112,7 @@ class Database extends Base
         try {
             $database = $this->database->byName($db);
 
-            $this->run(new DatabaseUserCreate($name, $password, $db, $host));
+            $this->action->run(new DatabaseUserCreate($name, $password, $db, $host));
 
             $this->users->create([
                 'name' => $name,
@@ -119,7 +123,7 @@ class Database extends Base
 
             return true;
         } catch (Exception $e) {
-            $this->report("Create user: {$e->getMessage()}");
+            $this->action->report("Create user: {$e->getMessage()}");
 
             return false;
         }
@@ -142,13 +146,13 @@ class Database extends Base
 
             $user = $this->users->byName($database, $name);
 
-            $this->run(new DatabaseUserPassword($name, $db, $password, $host));
+            $this->action->run(new DatabaseUserPassword($name, $db, $password, $host));
 
             $user->update(['password' => $password]);
 
             return true;
         } catch (Exception $e) {
-            $this->report("Change password to: {$e->getMessage()}");
+            $this->action->report("Change password to: {$e->getMessage()}");
 
             return false;
         }
@@ -170,15 +174,20 @@ class Database extends Base
 
             $user = $this->users->byName($database, $name);
 
-            $this->run(new DatabaseUserDelete($db, $name, $host));
+            $this->action->run(new DatabaseUserDelete($db, $name, $host));
 
             $user->delete();
 
             return true;
         } catch (Exception $e) {
-            $this->report("Drop user: {$e->getMessage()}");
+            $this->action->report("Drop user: {$e->getMessage()}");
 
             return false;
         }
+    }
+
+    public function error(): ?string
+    {
+        return $this->action->error();
     }
 }

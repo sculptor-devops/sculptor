@@ -52,6 +52,8 @@ class DomainCreate implements ShouldQueue, ITraceable
                          Structure::class,
                          Certificates::class,
                          Env::class,
+                         Worker::class,
+                         Crontab::class,
                          Deployer::class,
                          WebServer::class,
                          Permissions::class
