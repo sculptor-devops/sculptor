@@ -2,6 +2,9 @@
 
 namespace Sculptor\Agent\Actions;
 
+use Exception;
+use Sculptor\Agent\Jobs\DomainCreate;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Queues;
 use Sculptor\Agent\Repositories\DomainRepository;
 
@@ -27,16 +30,25 @@ class Domains extends Base
         string $user = 'www'
     ): bool {
 
-        $domain = $this->domains->create([
-            'name' => $name,
-            'aliases' => $aliases,
-            'type' => $type,
-            'certificate' => $certificate,
-            'user' => $user
-        ]);
+        Logs::actions()->info("Create domain {$name}");
 
+        try {
+            $domain = $this->domains->create([
+                'name' => $name,
+                'aliases' => $aliases,
+                'type' => $type,
+                'certificate' => $certificate,
+                'user' => $user
+            ]);
 
-        return true;
+            $this->run(new DomainCreate($domain));
+
+            return true;
+        } catch (Exception $e) {
+            $this->report("Drop user: {$e->getMessage()}");
+
+            return false;
+        }
     }
 
     public function delete(string $name): bool

@@ -1,4 +1,5 @@
 <?php
+define('SITES_HOME', '/home/sites/');
 define('SITES_USER', 'www');
 define('SITES_PUBLIC', 'public');
 

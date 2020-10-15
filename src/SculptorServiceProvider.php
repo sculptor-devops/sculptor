@@ -24,7 +24,7 @@ class SculptorServiceProvider extends ServiceProvider
         });
 
         app()->bind(Database::class, function () {
-                return new MySql();
+            return new MySql();
         });
     }
 

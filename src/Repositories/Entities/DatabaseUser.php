@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Crypt;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
+/**
+ * @property string name
+ * @property string host
+ * @property string password
+ * @property Database database
+ */
 class DatabaseUser extends Model implements Transformable
 {
     use TransformableTrait;

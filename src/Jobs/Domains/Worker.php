@@ -10,7 +10,7 @@ use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Services\Daemons;
 use Sculptor\Foundation\Support\Replacer;
 
-class WebServer implements DomainAction
+class Worker implements DomainAction
 {
     /**
      * @var Daemons
@@ -35,21 +35,21 @@ class WebServer implements DomainAction
      */
     public function run(Domain $domain): bool
     {
-        $filename = "{$domain->configs()}/nginx.conf";
+        $filename = "{$domain->configs()}/worker.conf";
 
         $template = File::get($filename);
 
         $root = $domain->root();
 
         $compiled = Replacer::make($template)
-            ->replace('{DOMAINS}', $domain->serverNames())
             ->replace('{NAME}', $domain->name)
-            ->replace('{PATH}',  $root)
-            ->replace('{USER}',  $domain->user)
+            ->replace('{USER}', $domain->user)
+            ->replace('{COUNT}', 1)
+            ->replace('{PATH}', $root)
             ->value();
 
-        if (!File::put("/etc/nginx/sites-available/{$domain->name}.conf", $compiled)) {
-            throw new Exception("Cannot create nginx configuration from {$filename}");
+        if (!File::put("{$root}/worker.conf", $compiled)) {
+            throw new Exception("Cannot create worker configuration in {$root}");
         }
 
         return true;

@@ -2,26 +2,38 @@
 
 namespace Sculptor\Agent\Jobs\Domains;
 
+use Exception;
+use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Repositories\Entities\Domain;
+use Sculptor\Foundation\Support\Replacer;
 
-class Deployer
+class Deployer implements DomainAction
 {
     /**
-     * @var Domain
-     */
-    private $domain;
-
-    /**
-     * Certificates constructor.
      * @param Domain $domain
+     * @return bool
+     * @throws Exception
      */
-    public function __construct(Domain $domain)
+    public function run(Domain $domain): bool
     {
-        $this->domain = $domain;
-    }
+        $filename = "{$domain->configs()}/deployer.php";
 
-    public function create(): void
-    {
+        $template = File::get($filename);
 
+        $root = $domain->root();
+
+        $compiled = Replacer::make($template)
+            ->replace('{NAME}', $domain->name)
+            ->replace('{REPOSITORY}', $domain->vcs)
+            ->replace('{USER}', $domain->user)
+            ->replace('{PATH}', $root)
+            ->value();
+
+        if (!File::put("{$root}/deploy.php", $compiled)) {
+            throw new Exception("Cannot create deploy configuration in {$root}");
+        }
+
+        return true;
     }
 }

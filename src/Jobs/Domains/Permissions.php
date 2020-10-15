@@ -2,26 +2,50 @@
 
 namespace Sculptor\Agent\Jobs\Domains;
 
+use Exception;
+use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Repositories\Entities\Domain;
+use Sculptor\Foundation\Contracts\Runner;
 
-class Permissions
+class Permissions implements DomainAction
 {
     /**
-     * @var Domain
+     * @var Runner
      */
-    private $domain;
+    private $runner;
 
     /**
      * Certificates constructor.
-     * @param Domain $domain
+     * @param Runner $runner
      */
-    public function __construct(Domain $domain)
+    public function __construct(Runner $runner)
     {
-        $this->domain = $domain;
+        $this->runner = $runner;
     }
 
-    public function create(): void
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function run(Domain $domain): bool
     {
+        $user = $domain->user;
 
+        $root = $domain->root();
+
+        if (!$this->runner
+            ->from($root)
+            ->run(['chmod', '-R', '755'])) {
+            throw new Exception("Cannot change {$root} permissions to {$user}");
+        }
+
+        if (!$this->runner
+            ->from($root)
+            ->run(['chown', '-R', "{$user}:{$user}"])) {
+            throw new Exception("Cannot change {$root} ownership to {$user}");
+        }
+
+        return true;
     }
 }

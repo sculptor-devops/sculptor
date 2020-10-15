@@ -9,15 +9,16 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Jobs\Domains\Certificates;
+use Sculptor\Agent\Jobs\Domains\Crontab;
 use Sculptor\Agent\Jobs\Domains\Deployer;
 use Sculptor\Agent\Jobs\Domains\Env;
 use Sculptor\Agent\Jobs\Domains\Permissions;
 use Sculptor\Agent\Jobs\Domains\Structure;
 use Sculptor\Agent\Jobs\Domains\WebServer;
 use Sculptor\Agent\Contracts\ITraceable;
+use Sculptor\Agent\Jobs\Domains\Worker;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
-use Sculptor\Foundation\Services\Daemons;
 
 class DomainCreate implements ShouldQueue, ITraceable
 {
@@ -27,30 +28,6 @@ class DomainCreate implements ShouldQueue, ITraceable
      * @var Domain
      */
     private $domain;
-    /**
-     * @var Structure
-     */
-    private $structure;
-    /**
-     * @var Certificates
-     */
-    private $certificates;
-    /**
-     * @var Env
-     */
-    private $env;
-    /**
-     * @var Deployer
-     */
-    private $deploy;
-    /**
-     * @var WebServer
-     */
-    private $web;
-    /**
-     * @var Permissions
-     */
-    private $permissions;
 
     /**
      * Create a new job instance.
@@ -61,42 +38,32 @@ class DomainCreate implements ShouldQueue, ITraceable
         Domain $domain
     ) {
         $this->domain = $domain;
-
-        $this->structure = new Structure($domain);
-
-        $this->certificates = new Certificates($domain);
-
-        $this->env = new Env($domain);
-
-        $this->deploy = new Deployer($domain);
-
-        $this->web = new WebServer($domain);
-
-        $this->permissions = new Permissions($domain);
     }
 
     /**
-     * @param Daemons $daemons
      * @throws Exception
      */
-    public function handle(Daemons $daemons): void
+    public function handle(): void
     {
         $this->running();
 
         try {
-            $this->structure->create();
+            foreach ([
+                         Structure::class,
+                         Certificates::class,
+                         Env::class,
+                         Deployer::class,
+                         WebServer::class,
+                         Permissions::class
+                     ] as $step) {
 
-            $this->certificates->create();
+                $stage = resolve($step);
 
-            $this->env->create();
-
-            $this->deploy->create();
-
-            $this->web->create();
-
-            $this->permissions->create();
+                $stage->run($this->domain);
+            }
 
             $this->ok();
+
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }
