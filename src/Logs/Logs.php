@@ -5,16 +5,10 @@ namespace Sculptor\Agent\Logs;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Psr\Log\LoggerInterface;
+use Sculptor\Agent\Enums\LogContextType;
 
 class Logs
 {
-    public const ACTIONS = 'actions';
-    public const SECURITY = 'security';
-    public const BACKUP = 'backup';
-    public const LOGIN = 'login';
-    public const BATCH = 'batch';
-    public const JOB = 'job';
-
     /*
      * @var string
      */
@@ -23,7 +17,7 @@ class Logs
      */
     private $tag;
 
-    public function __construct(string $tag = Logs::ACTIONS)
+    public function __construct(string $tag = LogContextType::ACTIONS)
     {
         $this->tag = $tag;
     }
@@ -76,7 +70,7 @@ class Logs
      */
     public static function security(): LogsContext
     {
-        $logs =  new Logs(Logs::SECURITY);
+        $logs =  new Logs(LogContextType::SECURITY);
 
         return new LogsContext($logs->context());
     }
@@ -86,7 +80,7 @@ class Logs
      */
     public static function backup(): LogsContext
     {
-        $logs =  new Logs(Logs::BACKUP);
+        $logs =  new Logs(LogContextType::BACKUP);
 
         return new LogsContext($logs->context());
     }
@@ -96,7 +90,7 @@ class Logs
      */
     public static function batch(): LogsContext
     {
-        $logs =  new Logs(Logs::BATCH);
+        $logs =  new Logs(LogContextType::BATCH);
 
         return new LogsContext($logs->context());
     }
@@ -106,7 +100,7 @@ class Logs
      */
     public static function login(): LogsContext
     {
-        $logs =  new Logs(Logs::LOGIN);
+        $logs =  new Logs(LogContextType::LOGIN);
 
         return new LogsContext($logs->context());
     }
@@ -116,7 +110,7 @@ class Logs
      */
     public static function job(): LogsContext
     {
-        $logs =  new Logs(Logs::JOB);
+        $logs =  new Logs(LogContextType::JOB);
 
         return new LogsContext($logs->context());
     }
