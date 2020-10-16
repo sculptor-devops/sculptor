@@ -6,7 +6,9 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Sculptor\Agent\Enums\QueueStatusType;
 use Sculptor\Agent\Exceptions\QueueJobRefUndefinedException;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Queue;
+use Throwable;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -65,6 +67,21 @@ trait Traceable
     }
 
     /**
+     * @param Throwable $error
+     * @throws Exception
+     */
+    public function report(Throwable $error): void
+    {
+        if ($this->transaction) {
+            DB::rollBack();
+        }
+
+        Logs::job()->report($error);
+
+        $this->changeStatus(QueueStatusType::ERROR, $error->getMessage());
+    }
+
+    /**
      * @param string $error
      * @throws Exception
      */
@@ -86,6 +103,14 @@ trait Traceable
     {
         if ($this->ref === null) {
             throw new QueueJobRefUndefinedException();
+        }
+
+        $name = get_class($this);
+
+        Logs::job()->debug("Job {$name} status changed to {$status}", [ 'uuid' => $this->ref->uuid ]);
+
+        if ($error) {
+            Logs::job()->debug("Job {$name} error: {$error}", [ 'uuid' => $this->ref->uuid ]);
         }
 
         $this->ref->update(['status' => $status, 'error' => $error]);

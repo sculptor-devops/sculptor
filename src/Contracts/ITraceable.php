@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Contracts;
 
 use Exception;
 use Sculptor\Agent\Repositories\Entities\Queue;
+use Throwable;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -34,4 +35,10 @@ interface ITraceable
      * @throws Exception
      */
     public function error(string $error): void;
+
+    /**
+     * @param Throwable $error
+     * @throws Exception
+     */
+    public function report(Throwable $error): void;
 }

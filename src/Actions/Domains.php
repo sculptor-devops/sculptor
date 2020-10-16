@@ -11,7 +11,6 @@ use Sculptor\Agent\Jobs\DomainCreate;
 use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Logs\Logs;
-use Sculptor\Agent\Queues\Queues;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\DomainRepository;

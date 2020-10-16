@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Logs;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class LogsContext implements LoggerInterface
 {
@@ -103,5 +104,13 @@ class LogsContext implements LoggerInterface
     public function log($level, $message, array $context = array())
     {
         Log::log($level, $message, $this->merge($context));
+    }
+
+    /**
+     * @param Throwable $e
+     */
+    public function report(Throwable $e): void
+    {
+        report($e);
     }
 }
