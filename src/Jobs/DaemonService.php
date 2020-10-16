@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
@@ -17,7 +16,11 @@ use Sculptor\Foundation\Services\Daemons;
 
 class DaemonService implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var string
@@ -57,8 +60,7 @@ class DaemonService implements ShouldQueue, ITraceable
             }
 
             $this->ok();
-
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->error($e->getMessage());
         }
     }

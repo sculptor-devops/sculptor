@@ -34,28 +34,15 @@ class Action
 
     /**
      * @param ITraceable $job
-     * @param bool $wait
-     * @param bool $indefinite
+     * @param int $timeout
      * @return bool
      * @throws ActionJobRunException
      * @throws QueueJobCreateException
      * @throws QueueJobNotTraceableException
      * @throws QueueJobTimeoutException
      */
-    public function run(ITraceable $job, bool $wait = true, bool $indefinite = false): bool
+    public function run(ITraceable $job, int $timeout = QUEUE_TASK_TIMEOUT): bool
     {
-        if (!$wait) {
-            $this->queues->insert($job, 'system');
-
-            return true;
-        }
-
-        $timeout = QUEUE_TASK_TIMEOUT;
-
-        if ($indefinite) {
-            $timeout = QUEUE_TASK_NO_TIMEOUT;
-        }
-
         $result = $this->queues->await($job, 'system', $timeout);
 
         if ($result->ok()) {
@@ -66,6 +53,37 @@ class Action
     }
 
     /**
+     * @param ITraceable $job
+     * @return bool
+     * @throws ActionJobRunException
+     * @throws QueueJobCreateException
+     * @throws QueueJobNotTraceableException
+     * @throws QueueJobTimeoutException
+     */
+    public function runIndefinite(ITraceable $job): bool
+    {
+        $result = $this->queues->await($job, 'system', QUEUE_TASK_NO_TIMEOUT);
+
+        if ($result->ok()) {
+            return true;
+        }
+
+        throw new ActionJobRunException($result->error);
+    }
+
+    /**
+     * @param ITraceable $job
+     * @return bool
+     * @throws QueueJobNotTraceableException
+     */
+    public function runAndExit(ITraceable $job): bool
+    {
+        $this->queues->insert($job, 'system');
+
+        return true;
+    }
+
+    /**
      * @return string|null
      */
     public function error(): ?string
@@ -73,6 +91,9 @@ class Action
         return $this->error;
     }
 
+    /**
+     * @param string $message
+     */
     public function report(string $message): void
     {
         Logs::actions()->error($message);

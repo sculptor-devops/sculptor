@@ -74,7 +74,7 @@ class Deployer implements DomainAction
      */
     public function run(Domain $domain, string $command = null): bool
     {
-        $this->deploy('deploy:unlock', $domain, false);
+        $this->deploy('deploy:unlock', $domain);
 
         $deploy = $domain->deployer ?? SITES_DEPLOY;
 
@@ -94,11 +94,10 @@ class Deployer implements DomainAction
     /**
      * @param string $command
      * @param Domain $domain
-     * @param bool $check
      * @return bool
      * @throws Exception
      */
-    private function deploy(string $command, Domain $domain, bool $check = true): bool
+    private function deploy(string $command, Domain $domain): bool
     {
         Logs::actions()->debug("Deploy run {$command} on {$domain->name}");
 
@@ -112,7 +111,7 @@ class Deployer implements DomainAction
                 $command
             ]);
 
-        if (!$deploy->success() && $check) {
+        if (!$deploy->success()) {
             throw new Exception("Error deploy: {$deploy->error()}");
         }
 

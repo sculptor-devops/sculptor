@@ -1,14 +1,12 @@
 <?php
 
-
 namespace Sculptor\Agent\Enums;
-
 
 class BackupStatusType
 {
-    const NEVER = 'never';
+    public const NEVER = 'never';
 
-    const OK = 'ok';
+    public const OK = 'ok';
 
-    const ERROR = 'error';
+    public const ERROR = 'error';
 }

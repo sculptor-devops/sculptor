@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Sculptor\Agent\Jobs;
-
 
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -23,7 +21,11 @@ use Sculptor\Agent\Repositories\Entities\Domain;
 
 class DomainConfigure implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var Domain
@@ -51,22 +53,22 @@ class DomainConfigure implements ShouldQueue, ITraceable
         Logs::job()->info("Domain configure {$this->domain->name}");
 
         try {
-            foreach ([
+            foreach (
+                [
                          Env::class,
                          Worker::class,
                          Crontab::class,
                          Deployer::class,
                          WebServer::class,
                          Permissions::class
-                     ] as $step) {
-
+                     ] as $step
+            ) {
                 $stage = resolve($step);
 
                 $stage->compile($this->domain);
             }
 
             $this->ok();
-
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }

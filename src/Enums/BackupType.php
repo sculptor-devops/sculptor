@@ -4,7 +4,7 @@ namespace Sculptor\Agent\Enums;
 
 class BackupType
 {
-    const DATABASE = 'database';
+    public const DATABASE = 'database';
 
-    const DOMAIN = 'domain';
+    public const DOMAIN = 'domain';
 }

@@ -4,13 +4,13 @@ namespace Sculptor\Agent\Enums;
 
 class QueueStatusType
 {
-    const WAITING = 'waiting';
+    public const WAITING = 'waiting';
 
-    const RUNNING = 'running';
+    public const RUNNING = 'running';
 
-    const ERROR = 'error';
+    public const ERROR = 'error';
 
-    const OK = 'ok';
+    public const OK = 'ok';
 
-    const FINISHED_STATUSES =  [ QueueStatusType::ERROR, QueueStatusType::OK ];
+    public const FINISHED_STATUSES =  [ QueueStatusType::ERROR, QueueStatusType::OK ];
 }

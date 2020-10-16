@@ -119,7 +119,8 @@ class Daemons implements ActionInterface
             foreach (Daemons::SERVICES[$name] as $daemon) {
                 Logs::actions()->debug("{$message} {$daemon}");
 
-                $this->action->run(new DaemonService($daemon, $operation));
+                $this->action
+                    ->run(new DaemonService($daemon, $operation));
             }
 
             return true;

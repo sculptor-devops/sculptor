@@ -49,7 +49,7 @@ class Worker implements DomainAction
 
         $compiled = $this->compiler
             ->replace($template, $domain)
-            ->replace('{COUNT}', 1)
+            ->replace('{COUNT}', "1")
             ->value();
 
         return $this->compiler

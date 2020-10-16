@@ -14,14 +14,14 @@ class LogsContext implements LoggerInterface
      */
     private $context;
 
-    public function __construct(array $context)
-    {
-        $this->context = $context;
-    }
-
     private function merge(array $context = []): array
     {
         return array_merge($context, $this->context);
+    }
+
+    public function __construct(array $context)
+    {
+        $this->context = $context;
     }
 
     /**

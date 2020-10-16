@@ -60,7 +60,8 @@ class Database implements ActionInterface
 
             $this->action->run(new DatabaseCreate($name));
 
-            $this->database->create(['name' => $name]);
+            $this->database
+                ->create(['name' => $name]);
 
             return true;
         } catch (Exception $e) {
@@ -81,7 +82,8 @@ class Database implements ActionInterface
         try {
             $database = $this->database->byName($name);
 
-            $this->action->run(new DatabaseDelete($name));
+            $this->action
+                ->run(new DatabaseDelete($name));
 
             foreach ($database->users as $user) {
                 $this->drop($user->name, $name);
@@ -91,7 +93,8 @@ class Database implements ActionInterface
 
             return true;
         } catch (Exception $e) {
-            $this->action->report("Delete database: {$e->getMessage()}");
+            $this->action
+                ->report("Delete database: {$e->getMessage()}");
 
             return false;
         }
@@ -112,7 +115,8 @@ class Database implements ActionInterface
         try {
             $database = $this->database->byName($db);
 
-            $this->action->run(new DatabaseUserCreate($name, $password, $db, $host));
+            $this->action
+                ->run(new DatabaseUserCreate($name, $password, $db, $host));
 
             $this->users->create([
                 'name' => $name,
@@ -123,7 +127,8 @@ class Database implements ActionInterface
 
             return true;
         } catch (Exception $e) {
-            $this->action->report("Create user: {$e->getMessage()}");
+            $this->action
+                ->report("Create user: {$e->getMessage()}");
 
             return false;
         }
@@ -142,17 +147,21 @@ class Database implements ActionInterface
         Logs::actions()->info("Change password to {$name}@{$host} on {$name}");
 
         try {
-            $database = $this->database->byName($db);
+            $database = $this->database
+                ->byName($db);
 
-            $user = $this->users->byName($database, $name);
+            $user = $this->users
+                ->byName($database, $name);
 
-            $this->action->run(new DatabaseUserPassword($name, $db, $password, $host));
+            $this->action
+                ->run(new DatabaseUserPassword($name, $db, $password, $host));
 
             $user->update(['password' => $password]);
 
             return true;
         } catch (Exception $e) {
-            $this->action->report("Change password to: {$e->getMessage()}");
+            $this->action
+                ->report("Change password to: {$e->getMessage()}");
 
             return false;
         }
@@ -170,17 +179,21 @@ class Database implements ActionInterface
         Logs::actions()->info("Drop user {$name}@{$host} on {$name}");
 
         try {
-            $database = $this->database->byName($db);
+            $database = $this->database
+                ->byName($db);
 
-            $user = $this->users->byName($database, $name);
+            $user = $this->users
+                ->byName($database, $name);
 
-            $this->action->run(new DatabaseUserDelete($db, $name, $host));
+            $this->action
+                ->run(new DatabaseUserDelete($db, $name, $host));
 
             $user->delete();
 
             return true;
         } catch (Exception $e) {
-            $this->action->report("Drop user: {$e->getMessage()}");
+            $this->action
+                ->report("Drop user: {$e->getMessage()}");
 
             return false;
         }

@@ -1,12 +1,10 @@
 <?php
 
-
 namespace Sculptor\Agent\Enums;
-
 
 class VersionControlType
 {
-    const GIT = 'git';
+    public const GIT = 'git';
 
-    const NONE = 'none';
+    public const NONE = 'none';
 }

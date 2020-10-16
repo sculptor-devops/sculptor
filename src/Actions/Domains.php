@@ -50,8 +50,12 @@ class Domains implements ActionInterface
      */
     private $users;
 
-    public function __construct(Action $action, DomainRepository $domains, DatabaseRepository $databases, DatabaseUserRepository $users)
-    {
+    public function __construct(
+        Action $action,
+        DomainRepository $domains,
+        DatabaseRepository $databases,
+        DatabaseUserRepository $users
+    ) {
         $this->action = $action;
 
         $this->domains = $domains;
@@ -98,13 +102,16 @@ class Domains implements ActionInterface
         Logs::actions()->info("Delete domain {$name}");
 
         try {
-            $domain = $this->domains->byName($name);
+            $domain = $this->domains
+                ->byName($name);
 
-            $this->action->run(new DomainDelete($domain), true, true);
+            $this->action
+                ->run(new DomainDelete($domain));
 
             $domain->delete();
         } catch (Exception $e) {
-            $this->action->report("Deploy domain: {$e->getMessage()}");
+            $this->action
+                ->report("Deploy domain: {$e->getMessage()}");
 
             return false;
         }
@@ -117,12 +124,15 @@ class Domains implements ActionInterface
         Logs::actions()->info("Configure domain {$name}");
 
         try {
-            $domain = $this->domains->byName($name);
+            $domain = $this->domains
+                ->byName($name);
 
-            $this->action->run(new DomainConfigure($domain));
+            $this->action
+                ->run(new DomainConfigure($domain));
 
             foreach (Daemons::SERVICES[Daemons::WEB] as $service) {
-                $this->action->run(new DaemonService($service, DaemonOperationsType::RELOAD));
+                $this->action
+                    ->run(new DaemonService($service, DaemonOperationsType::RELOAD));
             }
 
             $domain->delete();
@@ -135,17 +145,37 @@ class Domains implements ActionInterface
         return true;
     }
 
-    public function deploy(string $name, string $command = null, bool $wait = true): bool
+    public function deploy(string $name, string $command = null): bool
     {
         Logs::actions()->info("Deploy domain {$name}");
 
         try {
-            $domain = $this->domains->byName($name);
+            $domain = $this->domains
+                ->byName($name);
 
-            $this->action->run(new DomainDeploy($domain, $command), $wait, true);
+            $this->action
+                ->runIndefinite(new DomainDeploy($domain, $command));
 
             return true;
+        } catch (Exception $e) {
+            $this->action->report("Deploy domain: {$e->getMessage()}");
 
+            return false;
+        }
+    }
+
+    public function deployBatch(string $name, string $command = null): bool
+    {
+        Logs::actions()->info("Deploy domain {$name}");
+
+        try {
+            $domain = $this->domains
+                ->byName($name);
+
+            $this->action
+                ->runAndExit(new DomainDeploy($domain, $command));
+
+            return true;
         } catch (Exception $e) {
             $this->action->report("Deploy domain: {$e->getMessage()}");
 
@@ -168,10 +198,12 @@ class Domains implements ActionInterface
             throw new Exception("Invalid parameter {$parameter}");
         }
 
-        $domain = $this->domains->byName($name);
+        $domain = $this->domains
+            ->byName($name);
 
         if ($parameter == 'database') {
-            $database = $this->databases->byName($value);
+            $database = $this->databases
+                ->byName($value);
 
             $domain->database()
                 ->associate($database)
@@ -181,7 +213,8 @@ class Domains implements ActionInterface
         }
 
         if ($parameter == 'user') {
-            $user = $this->users->byName($domain->database, $value);
+            $user = $this->users
+                ->byName($domain->database, $value);
 
             $domain->databaseUser()
                 ->associate($user)
@@ -201,12 +234,12 @@ class Domains implements ActionInterface
      */
     public function enable(string $name): bool
     {
-        return true;
+        return $name != null;
     }
 
     public function disable(string $name): bool
     {
-        return true;
+        return $name != null;
     }
 
     public function error(): ?string

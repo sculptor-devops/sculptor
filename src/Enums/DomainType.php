@@ -4,7 +4,7 @@ namespace Sculptor\Agent\Enums;
 
 class DomainType
 {
-    const LARAVEL = 'laravel';
+    public const LARAVEL = 'laravel';
 
-    const GENERIC = 'generic';
+    public const GENERIC = 'generic';
 }

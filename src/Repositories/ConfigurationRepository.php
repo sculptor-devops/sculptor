@@ -1,14 +1,12 @@
 <?php
 
-
 namespace Sculptor\Agent\Repositories;
-
 
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Sculptor\Agent\Repositories\Entities\Configuration;
-use \Sculptor\Agent\Contracts\ConfigurationRepository as ConfigurationRepositoryInterface;
+use Sculptor\Agent\Contracts\ConfigurationRepository as ConfigurationRepositoryInterface;
 
 class ConfigurationRepository extends BaseRepository implements ConfigurationRepositoryInterface
 {

@@ -17,7 +17,11 @@ use Sculptor\Agent\Repositories\Entities\Domain;
 
 class DomainDeploy implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var Domain
@@ -34,7 +38,8 @@ class DomainDeploy implements ShouldQueue, ITraceable
      * @param Domain $domain
      * @param string $command
      */
-    public function __construct(Domain $domain, string $command) {
+    public function __construct(Domain $domain, string $command)
+    {
         $this->domain = $domain;
 
         $this->command = $command;
@@ -59,7 +64,6 @@ class DomainDeploy implements ShouldQueue, ITraceable
             $permission->run($this->domain);
 
             $this->ok();
-
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }

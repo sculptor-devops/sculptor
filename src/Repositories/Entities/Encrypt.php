@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Crypt;
 
 trait Encrypt
 {
-    public function encrypt(string $attribute, string $value): void
+    public function encrypt(string $attribute, ?string $value): void
     {
         if ($value) {
             $this->attributes[$attribute] = Crypt::encryptString($value);

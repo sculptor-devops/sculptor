@@ -4,15 +4,15 @@ namespace Sculptor\Agent\Enums;
 
 class DaemonOperationsType
 {
-    const START = 'start';
+    public const START = 'start';
 
-    const STOP = 'stop';
+    public const STOP = 'stop';
 
-    const RELOAD = 'reload';
+    public const RELOAD = 'reload';
 
-    const RESTART = 'restart';
+    public const RESTART = 'restart';
 
-    const ENABLE = 'enable';
+    public const ENABLE = 'enable';
 
-    const DISABLE = 'disable';
+    public const DISABLE = 'disable';
 }

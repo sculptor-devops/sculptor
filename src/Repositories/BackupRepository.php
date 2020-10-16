@@ -1,14 +1,12 @@
 <?php
 
-
 namespace Sculptor\Agent\Repositories;
-
 
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Sculptor\Agent\Repositories\Entities\Backup;
-use \Sculptor\Agent\Contracts\BackupRepository as BackupRepositoryInterface;
+use Sculptor\Agent\Contracts\BackupRepository as BackupRepositoryInterface;
 
 class BackupRepository extends BaseRepository implements BackupRepositoryInterface
 {

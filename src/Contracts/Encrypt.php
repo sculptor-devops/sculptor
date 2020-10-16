@@ -4,6 +4,6 @@ namespace Sculptor\Agent\Contracts;
 
 interface Encrypt
 {
-    function encrypt(string $attribute, string $value): void;
-    function decrypt(string $attribute): ?string;
+    public function encrypt(string $attribute, string $value): void;
+    public function decrypt(string $attribute): ?string;
 }

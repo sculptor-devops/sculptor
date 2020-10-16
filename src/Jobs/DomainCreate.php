@@ -23,7 +23,11 @@ use Sculptor\Agent\Repositories\Entities\Domain;
 
 class DomainCreate implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var Domain
@@ -51,7 +55,8 @@ class DomainCreate implements ShouldQueue, ITraceable
         Logs::job()->info("Domain create {$this->domain->name}");
 
         try {
-            foreach ([
+            foreach (
+                [
                          Structure::class,
                          Certificates::class,
                          Env::class,
@@ -60,15 +65,14 @@ class DomainCreate implements ShouldQueue, ITraceable
                          Deployer::class,
                          WebServer::class,
                          Permissions::class
-                     ] as $step) {
-
+                     ] as $step
+            ) {
                 $stage = resolve($step);
 
                 $stage->compile($this->domain);
             }
 
             $this->ok();
-
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }

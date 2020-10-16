@@ -20,6 +20,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property int database_user_id
  * @property string deployer
  * @property string home
+ * @property string alias
  */
 class Domain extends Model implements Transformable, EncryptInterface
 {
@@ -77,10 +78,10 @@ class Domain extends Model implements Transformable, EncryptInterface
 
     public function serverNames(): string
     {
-        if ($this->aliases == null) {
+        if ($this->alias == null) {
             return $this->name;
         }
 
-        return "{$this->name}, {$this->aliases}";
+        return "{$this->name}, {$this->alias}";
     }
 }

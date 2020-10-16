@@ -36,7 +36,6 @@ class Certificates implements DomainAction
 
         switch ($domain->certificate) {
             case CertificatesTypes::CUSTOM:
-
             case CertificatesTypes::SELF_SIGNED:
                 $this->selfSigned($domain);
 

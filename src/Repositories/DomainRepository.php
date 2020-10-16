@@ -1,15 +1,13 @@
 <?php
 
-
 namespace Sculptor\Agent\Repositories;
-
 
 use Exception;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Sculptor\Agent\Repositories\Entities\Domain;
-use \Sculptor\Agent\Contracts\DomainRepository as DomainRepositoryInterface;
+use Sculptor\Agent\Contracts\DomainRepository as DomainRepositoryInterface;
 
 class DomainRepository extends BaseRepository implements DomainRepositoryInterface
 {

@@ -10,7 +10,7 @@ use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Services\Daemons;
-use \Sculptor\Agent\Actions\Daemons as ServiceActions;
+use Sculptor\Agent\Actions\Daemons as ServiceActions;
 
 class WebServer implements DomainAction
 {
@@ -56,7 +56,7 @@ class WebServer implements DomainAction
 
         $logrotate = $this->compiler
             ->replace($logrotate, $domain)
-            ->replace('{RETAIN}', 366)
+            ->replace('{RETAIN}', "366")
             ->value();
 
         return $this->compiler
@@ -87,7 +87,7 @@ class WebServer implements DomainAction
                 '/etc/nginx/sites-enabled/'
             ]);
 
-        if (!$enabled->success() ) {
+        if (!$enabled->success()) {
             throw new Exception("Error enabling {$domain->name}: {$enabled->error()}");
         }
 
@@ -109,7 +109,7 @@ class WebServer implements DomainAction
             ->from($from)
             ->run([ 'rm', $filename ]);
 
-        if (!$deleted->success() ) {
+        if (!$deleted->success()) {
             throw new Exception("Error deleting configuration {$filename}: {$deleted->error()}");
         }
     }
@@ -123,9 +123,9 @@ class WebServer implements DomainAction
     {
         Logs::actions()->debug("Disabling www domain root {$domain->name}");
 
-        $this->remove('/etc/nginx/sites-enabled/',  "/etc/nginx/sites-enabled/{$domain->name}.conf");
+        $this->remove('/etc/nginx/sites-enabled/', "/etc/nginx/sites-enabled/{$domain->name}.conf");
 
-        $this->remove('/etc/logrotate.d/',  "/etc/logrotate.d/{$domain->name}.conf");
+        $this->remove('/etc/logrotate.d/', "/etc/logrotate.d/{$domain->name}.conf");
 
         return $this->reload();
     }

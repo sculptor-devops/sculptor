@@ -45,8 +45,10 @@ class Permissions implements DomainAction
             ->from($root)
             ->run(['chown', '-R', "{$user}:{$user}", "{$root}"]);
 
-        if (!$permissions
-            ->success()) {
+        if (
+            !$permissions
+            ->success()
+        ) {
             throw new Exception("Cannot change {$root} permissions to {$user}: {$permissions->error()}");
         }
 

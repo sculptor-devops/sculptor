@@ -2,7 +2,6 @@
 
 namespace Sculptor\Agent\Jobs;
 
-
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,7 +23,11 @@ use Sculptor\Agent\Repositories\Entities\Domain;
 
 class DomainDelete implements ShouldQueue, ITraceable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Traceable;
 
     /**
      * @var Domain
@@ -52,20 +55,20 @@ class DomainDelete implements ShouldQueue, ITraceable
         Logs::job()->info("Domain delete {$this->domain->name}");
 
         try {
-            foreach ([
+            foreach (
+                [
                          Worker::class,
                          Crontab::class,
                          WebServer::class,
                          Structure::class,
-                     ] as $step) {
-
+                     ] as $step
+            ) {
                 $stage = resolve($step);
 
                 $stage->delete($this->domain);
             }
 
             $this->ok();
-
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }

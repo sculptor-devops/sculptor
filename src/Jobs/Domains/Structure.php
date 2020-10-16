@@ -34,15 +34,16 @@ class Structure implements DomainAction
 
         Logs::actions()->debug("Structuring {$domain->name} root {$root}");
 
-        foreach ([
+        foreach (
+            [
                      $root,
                      // "{$domain->home()}",
                      "{$root}/certs",
                      "{$root}/configs",
                      "{$root}/logs",
                      "{$root}/shared"
-                 ] as $folder) {
-
+                 ] as $folder
+        ) {
             if (File::exists($folder)) {
                 continue;
             }
@@ -52,15 +53,16 @@ class Structure implements DomainAction
             }
         }
 
-        foreach ([
+        foreach (
+            [
             "{$domain->type}.deployer.php" => 'deployer.php',
             "{$domain->type}.cron" => 'cron.conf',
             "{$domain->type}.worker" => 'worker.conf',
             "{$domain->type}.env" => 'env',
             "{$domain->type}.nginx.conf" => 'nginx.conf',
             "{$domain->type}.logrotate.conf" => 'logrotate.conf',
-                 ] as $filename => $destination) {
-
+                 ] as $filename => $destination
+        ) {
             $source = "{$templates}/{$filename}";
 
             $to = "{$domain->configs()}/{$destination}";
@@ -85,7 +87,7 @@ class Structure implements DomainAction
         Logs::actions()->debug("Deleting domain root {$domain->root()}");
 
         $deleted = $this->runner
-            ->from(SITES_HOME. "/{$domain->user}")
+            ->from(SITES_HOME . "/{$domain->user}")
             ->run([
                 'rm',
                 '-rf',
