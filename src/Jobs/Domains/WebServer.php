@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Services\Daemons;
@@ -42,6 +43,8 @@ class WebServer implements DomainAction
      */
     public function compile(Domain $domain): bool
     {
+        Logs::actions()->debug("Webserver setup for {$domain->name}");
+
         $nginx = File::get("{$domain->configs()}/nginx.conf");
 
         $logrotate = File::get("{$domain->configs()}/logrotate.conf");
@@ -69,10 +72,17 @@ class WebServer implements DomainAction
      */
     public function enable(Domain $domain): bool
     {
+        Logs::actions()->debug("Enabling www domain root {$domain->name}");
+
+        if (!File::exists($domain->home())) {
+            throw new Exception("Public directory {$domain->home()} not exists");
+        }
+
         $enabled = $this->runner
             ->from('/etc/nginx/sites-enabled/')
             ->run([
                 'ln',
+                "-s",
                 "/etc/nginx/sites-available/{$domain->name}.conf",
                 '/etc/nginx/sites-enabled/'
             ]);
@@ -85,22 +95,37 @@ class WebServer implements DomainAction
     }
 
     /**
+     * @param string $from
+     * @param string $filename
+     * @throws Exception
+     */
+    private function remove(string $from, string $filename): void
+    {
+        if (!File::exists($filename)) {
+            return;
+        }
+
+        $deleted = $this->runner
+            ->from($from)
+            ->run([ 'rm', $filename ]);
+
+        if (!$deleted->success() ) {
+            throw new Exception("Error deleting configuration {$filename}: {$deleted->error()}");
+        }
+    }
+
+    /**
      * @param Domain $domain
      * @return bool
      * @throws Exception
      */
     public function disable(Domain $domain): bool
     {
-        $disabled = $this->runner
-            ->from('/etc/nginx/sites-enabled/')
-            ->run([
-                'rm',
-                "/etc/nginx/sites-enabled/{$domain->name}.conf"
-            ]);
+        Logs::actions()->debug("Disabling www domain root {$domain->name}");
 
-        if (!$disabled->success() ) {
-            throw new Exception("Error disabling {$domain->name}: {$disabled->error()}");
-        }
+        $this->remove('/etc/nginx/sites-enabled/',  "/etc/nginx/sites-enabled/{$domain->name}.conf");
+
+        $this->remove('/etc/logrotate.d/',  "/etc/logrotate.d/{$domain->name}.conf");
 
         return $this->reload();
     }
@@ -111,6 +136,8 @@ class WebServer implements DomainAction
      */
     private function reload(): bool
     {
+        Logs::actions()->debug("Reloading services for www");
+
         foreach (ServiceActions::SERVICES['web'] as $service) {
             if (!$this->daemons->reload($service)) {
                 throw new Exception("Cannot reload service {$service}");
@@ -118,5 +145,15 @@ class WebServer implements DomainAction
         }
 
         return true;
+    }
+
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function delete(Domain $domain): bool
+    {
+        return $this->disable($domain);
     }
 }

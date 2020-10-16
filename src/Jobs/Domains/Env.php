@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Support\Replacer;
@@ -35,6 +36,8 @@ class Env implements DomainAction
      */
     public function compile(Domain $domain): bool
     {
+        Logs::actions()->debug("Env setup for {$domain->name}");
+
         $filename = "{$domain->configs()}/env";
 
         $template = File::get($filename);
@@ -75,5 +78,15 @@ class Env implements DomainAction
             ->replace('{DATABASE}', $database)
             ->replace('{DATABASE_USERNAME}', $username)
             ->replace('{DATABASE_PASSWORD}', $password);
+    }
+
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function delete(Domain $domain): bool
+    {
+        throw new Exception("Delete not implemented");
     }
 }

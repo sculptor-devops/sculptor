@@ -26,7 +26,8 @@ class CreateDomainsTable extends Migration
             $table->string('user')->default(SITES_USER);
             $table->string('home')->default(SITES_PUBLIC);
 
-            $table->string('deployer')->nullable();
+            $table->string('deployer')->default(SITES_DEPLOY);
+            $table->string('install')->default(SITES_INSTALL);
             $table->string('vcs_tye')->default(VersionControlType::GIT);
             $table->string('vcs')->nullable();
 

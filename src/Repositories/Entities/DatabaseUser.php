@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Crypt;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 
 /**
  * @property string name
@@ -14,9 +15,11 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string password
  * @property Database database
  */
-class DatabaseUser extends Model implements Transformable
+class DatabaseUser extends Model implements Transformable, EncryptInterface
 {
     use TransformableTrait;
+
+    use Encrypt;
 
     /**
      * The attributes that are mass assignable.
@@ -35,14 +38,14 @@ class DatabaseUser extends Model implements Transformable
      */
     public function setPasswordAttribute(string $value): void
     {
-        $this->attributes['password'] =  Crypt::encryptString($value);
+        $this->encrypt('password', $value);
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPasswordAttribute(): string
+    public function getPasswordAttribute(): ?string
     {
-        return Crypt::decryptString($this->attributes['password']);
+        return $this->decrypt('password');
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
+
 namespace Sculptor\Agent\Jobs;
+
 
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -8,20 +10,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sculptor\Agent\Jobs\Domains\Certificates;
+use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Jobs\Domains\Crontab;
 use Sculptor\Agent\Jobs\Domains\Deployer;
 use Sculptor\Agent\Jobs\Domains\Env;
 use Sculptor\Agent\Jobs\Domains\Permissions;
-use Sculptor\Agent\Jobs\Domains\Structure;
 use Sculptor\Agent\Jobs\Domains\WebServer;
-use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Jobs\Domains\Worker;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
 
-class DomainCreate implements ShouldQueue, ITraceable
+class DomainConfigure implements ShouldQueue, ITraceable
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Traceable;
 
@@ -48,12 +48,10 @@ class DomainCreate implements ShouldQueue, ITraceable
     {
         $this->running();
 
-        Logs::job()->info("Domain create {$this->domain->name}");
+        Logs::job()->info("Domain configure {$this->domain->name}");
 
         try {
             foreach ([
-                         Structure::class,
-                         Certificates::class,
                          Env::class,
                          Worker::class,
                          Crontab::class,

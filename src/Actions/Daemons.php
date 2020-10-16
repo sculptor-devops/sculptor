@@ -13,22 +13,30 @@ use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Daemons implements ActionInterface
 {
+    public const WEB = 'web';
+
+    public const QUEUE = 'queue';
+
+    public const DATABASE = 'database';
+
+    public const REMOTE = 'remote';
+
     /**
-     *
+     * @var array
      */
     public const SERVICES = [
-        'database' => [
+        Daemons::DATABASE => [
             'mysql'
         ],
-        'web' => [
+        Daemons::WEB => [
             'nginx',
             'php7.4-fpm'
         ],
-        'queue' => [
+        Daemons::QUEUE => [
             'redis',
             'supervisor'
         ],
-        'remote' => [
+        Daemons::REMOTE => [
             'ssh'
         ]
     ];

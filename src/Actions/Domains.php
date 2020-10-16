@@ -4,14 +4,36 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
+use Sculptor\Agent\Enums\DaemonOperationsType;
+use Sculptor\Agent\Jobs\DaemonService;
+use Sculptor\Agent\Jobs\DomainConfigure;
 use Sculptor\Agent\Jobs\DomainCreate;
+use Sculptor\Agent\Jobs\DomainDelete;
+use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Queues;
+use Sculptor\Agent\Repositories\DatabaseRepository;
+use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Domains implements ActionInterface
 {
+    /**
+     * @const array
+     */
+    public const PARAMETERS = [
+        'alias',
+        'type',
+        'certificate',
+        'home',
+        'deployer',
+        'install',
+        'vcs',
+        'database',
+        'user'
+    ];
+
     /**
      * @var DomainRepository
      */
@@ -20,17 +42,28 @@ class Domains implements ActionInterface
      * @var Action
      */
     private $action;
+    /**
+     * @var DatabaseRepository
+     */
+    private $databases;
+    /**
+     * @var DatabaseUserRepository
+     */
+    private $users;
 
-    public function __construct(Action $action, DomainRepository $domains)
+    public function __construct(Action $action, DomainRepository $domains, DatabaseRepository $databases, DatabaseUserRepository $users)
     {
         $this->action = $action;
 
         $this->domains = $domains;
+
+        $this->databases = $databases;
+
+        $this->users = $users;
     }
 
     public function create(
         string $name,
-        string $aliases,
         string $type = 'laravel',
         string $certificate = 'self-signed',
         string $user = 'www'
@@ -39,9 +72,8 @@ class Domains implements ActionInterface
         Logs::actions()->info("Create domain {$name}");
 
         try {
-            $domain = $this->domains->create([
+            $domain = $this->domains->firstOrCreate([
                 'name' => $name,
-                'aliases' => $aliases,
                 'type' => $type,
                 'certificate' => $certificate,
                 'user' => $user
@@ -51,27 +83,123 @@ class Domains implements ActionInterface
 
             return true;
         } catch (Exception $e) {
-            $this->action->report("Drop user: {$e->getMessage()}");
+            $this->action->report("Create domain: {$e->getMessage()}");
 
             return false;
         }
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     * @throws Exception
+     */
     public function delete(string $name): bool
     {
+        Logs::actions()->info("Delete domain {$name}");
+
+        try {
+            $domain = $this->domains->byName($name);
+
+            $this->action->run(new DomainDelete($domain), true, true);
+
+            $domain->delete();
+        } catch (Exception $e) {
+            $this->action->report("Deploy domain: {$e->getMessage()}");
+
+            return false;
+        }
+
         return true;
     }
 
     public function configure(string $name): bool
     {
+        Logs::actions()->info("Configure domain {$name}");
+
+        try {
+            $domain = $this->domains->byName($name);
+
+            $this->action->run(new DomainConfigure($domain));
+
+            foreach (Daemons::SERVICES[Daemons::WEB] as $service) {
+                $this->action->run(new DaemonService($service, DaemonOperationsType::RELOAD));
+            }
+
+            $domain->delete();
+        } catch (Exception $e) {
+            $this->action->report("Configure domain: {$e->getMessage()}");
+
+            return false;
+        }
+
         return true;
     }
 
-    public function deploy(string $name): bool
+    public function deploy(string $name, string $command = null, bool $wait = true): bool
     {
+        Logs::actions()->info("Deploy domain {$name}");
+
+        try {
+            $domain = $this->domains->byName($name);
+
+            $this->action->run(new DomainDeploy($domain, $command), $wait, true);
+
+            return true;
+
+        } catch (Exception $e) {
+            $this->action->report("Deploy domain: {$e->getMessage()}");
+
+            return false;
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param string $parameter
+     * @param string $value
+     * @return bool
+     * @throws Exception
+     */
+    public function setup(string $name, string $parameter, string $value): bool
+    {
+        Logs::actions()->info("Setup domain {$name}: {$parameter}={$value}");
+
+        if (!in_array($parameter, Domains::PARAMETERS)) {
+            throw new Exception("Invalid parameter {$parameter}");
+        }
+
+        $domain = $this->domains->byName($name);
+
+        if ($parameter == 'database') {
+            $database = $this->databases->byName($value);
+
+            $domain->database()
+                ->associate($database)
+                ->save();
+
+            return true;
+        }
+
+        if ($parameter == 'user') {
+            $user = $this->users->byName($domain->database, $value);
+
+            $domain->databaseUser()
+                ->associate($user)
+                ->save();
+
+            return true;
+        }
+
+        $domain->update(["{$parameter}" => "{$value}"]);
+
         return true;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function enable(string $name): bool
     {
         return true;

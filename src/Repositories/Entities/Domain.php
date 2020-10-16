@@ -3,8 +3,8 @@
 namespace Sculptor\Agent\Repositories\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
@@ -19,10 +19,13 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property DatabaseUser databaseUser
  * @property int database_user_id
  * @property string deployer
+ * @property string home
  */
-class Domain extends Model implements Transformable
+class Domain extends Model implements Transformable, EncryptInterface
 {
     use TransformableTrait;
+
+    use Encrypt;
 
     /**
      * The attributes that are mass assignable.
@@ -36,36 +39,40 @@ class Domain extends Model implements Transformable
         return SITES_HOME . "/{$this->user}/sites/{$this->name}";
     }
 
+    public function home(): string
+    {
+        return "{$this->root()}/current/{$this->home}";
+    }
+
     public function configs(): string
     {
-        return "{$this->root()}/config";
+        return "{$this->root()}/configs";
     }
 
     /**
-     * @param string $value
+     * @param string|null $value
      */
-    public function setVcsAttribute(string $value): void
+    public function setVcsAttribute(?string $value): void
     {
-        $this->attributes['vcs'] =  Crypt::encryptString($value);
+        $this->encrypt('vcs', $value);
     }
 
     /**
-     * @param string $value
      * @return string
      */
-    public function getVcsAttribute(string $value): string
+    public function getVcsAttribute(): ?string
     {
-        return Crypt::decryptString($this->attributes['vcs']);
+        return $this->decrypt('vcs');
     }
 
-    public function database(): HasOne
+    public function database(): BelongsTo
     {
-        return $this->hasOne(Database::class);
+        return $this->belongsTo(Database::class);
     }
 
-    public function databaseUser(): HasOne
+    public function databaseUser(): belongsTo
     {
-        return $this->hasOne(DatabaseUser::class);
+        return $this->belongsTo(DatabaseUser::class);
     }
 
     public function serverNames(): string

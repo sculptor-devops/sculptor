@@ -107,7 +107,7 @@ class Queues
 
             $waited += QUEUE_TASK_ROUND_TRIP;
 
-            if ($waited > $timeout) {
+            if ($waited > $timeout && $timeout != 0) {
                 throw new QueueJobTimeoutException();
             }
         }

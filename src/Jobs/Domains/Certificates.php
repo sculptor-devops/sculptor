@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\CertificatesTypes;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
 
@@ -31,6 +32,8 @@ class Certificates implements DomainAction
      */
     public function compile(Domain $domain): bool
     {
+        Logs::actions()->debug("Certificate {$domain->name} type {$domain->certificate}");
+
         switch ($domain->certificate) {
             case CertificatesTypes::CUSTOM:
 
@@ -78,5 +81,15 @@ class Certificates implements DomainAction
         if (!$result->success()) {
             throw new Exception("Error creating self signed certificate: {$result->error()}");
         }
+    }
+
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function delete(Domain $domain): bool
+    {
+        throw new Exception("Delete not implemented");
     }
 }

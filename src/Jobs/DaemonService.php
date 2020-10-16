@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 use Sculptor\Agent\Enums\DaemonOperationsType;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Foundation\Services\Daemons;
@@ -69,6 +70,8 @@ class DaemonService implements ShouldQueue, ITraceable
      */
     private function run(Daemons $daemons): bool
     {
+        Logs::job()->info("Daemon domain {$this->name} {$this->operation}");
+
         switch ($this->operation) {
             case DaemonOperationsType::START:
                 return $daemons->start($this->name);

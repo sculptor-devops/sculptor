@@ -22,6 +22,8 @@ class Compiler
             ->replace('{USER}', $domain->user)
             ->replace('{NAME}', $domain->name)
             ->replace('{PATH}', $domain->root())
+            ->replace('{HOME}', $domain->home)
+            ->replace('{PUBLIC}', $domain->home())
             ->replace('{USER}', $domain->user);
     }
 

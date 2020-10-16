@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Exceptions\DatabaseDriverException;
 use Sculptor\Agent\Contracts\ITraceable;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
@@ -64,9 +65,11 @@ class DatabaseUserCreate implements ShouldQueue, ITraceable
      * @return void
      * @throws Exception
      */
-    public function handle(Driver $driver)
+    public function handle(Driver $driver): void
     {
         $this->running();
+
+        Logs::job()->info("Database user create {$this->user}@$this->host on {$this->db}");
 
         try {
             if (!$driver->user($this->user, $this->password, $this->db, $this->host)) {

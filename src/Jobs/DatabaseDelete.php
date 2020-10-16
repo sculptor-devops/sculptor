@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Exceptions\DatabaseDriverException;
 use Sculptor\Agent\Contracts\ITraceable;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 
@@ -44,9 +45,11 @@ class DatabaseDelete implements ShouldQueue, ITraceable
      * @return void
      * @throws Exception
      */
-    public function handle(Driver $driver)
+    public function handle(Driver $driver): void
     {
         $this->running();
+
+        Logs::job()->info("Database delete {$this->name}");
 
         try {
             if (!$driver->drop($this->name)) {

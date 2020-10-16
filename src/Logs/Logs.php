@@ -13,6 +13,7 @@ class Logs
     public const BACKUP = 'backup';
     public const LOGIN = 'login';
     public const BATCH = 'batch';
+    public const JOB = 'job';
 
     /*
      * @var string
@@ -106,6 +107,16 @@ class Logs
     public static function login(): LogsContext
     {
         $logs =  new Logs(Logs::LOGIN);
+
+        return new LogsContext($logs->context());
+    }
+
+    /**
+     * @return LogsContext
+     */
+    public static function job(): LogsContext
+    {
+        $logs =  new Logs(Logs::JOB);
 
         return new LogsContext($logs->context());
     }
