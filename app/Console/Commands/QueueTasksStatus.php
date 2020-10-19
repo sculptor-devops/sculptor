@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Console\Commands;
 
-
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Sculptor\Agent\Repositories\QueueRepository;
+use Sculptor\Agent\Support\CommandBase;
 
-class QueueTasksStatus extends Command
+class QueueTasksStatus extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -23,7 +21,6 @@ class QueueTasksStatus extends Command
      * @var string
      */
     protected $description = 'Show queue';
-
     /**
      * Create a new command instance.
      *

@@ -4,8 +4,14 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
+use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
+use Sculptor\Agent\Exceptions\ActionJobRunException;
 use Sculptor\Agent\Exceptions\DaemonInvalidException;
+use Sculptor\Agent\Exceptions\QueueJobCreateException;
+use Sculptor\Agent\Exceptions\QueueJobNotTraceableException;
+use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
 use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Foundation\Services\Daemons as Services;
@@ -13,42 +19,12 @@ use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Daemons implements ActionInterface
 {
-    public const WEB = 'web';
-
-    public const QUEUE = 'queue';
-
-    public const DATABASE = 'database';
-
-    public const REMOTE = 'remote';
-
-    /**
-     * @var array
-     */
-    public const SERVICES = [
-        Daemons::DATABASE => [
-            'mysql'
-        ],
-        Daemons::WEB => [
-            'nginx',
-            'php7.4-fpm'
-        ],
-        Daemons::QUEUE => [
-            'redis',
-            'supervisor'
-        ],
-        Daemons::REMOTE => [
-            'ssh'
-        ]
-    ];
+    use Report;
 
     /**
      * @var Services
      */
     private $daemons;
-    /**
-     * @var Action
-     */
-    private $action;
 
     public function __construct(Action $action, Services $daemons)
     {
@@ -59,7 +35,7 @@ class Daemons implements ActionInterface
 
     private function valid(string $name): bool
     {
-        return array_key_exists($name, Daemons::SERVICES);
+        return array_key_exists($name, config('sculptor.services'));
     }
 
     public function disable(string $name): bool
@@ -96,9 +72,9 @@ class Daemons implements ActionInterface
     {
         $result = [];
 
-        foreach (Daemons::SERVICES as $key => $group) {
+        foreach (config('sculptor.services') as $key => $group) {
             foreach ($group as $daemon) {
-                $active = $this->daemons->active($daemon) ? 'YES' : 'NO';
+                $active = $this->daemons->active($daemon);
 
                 $result[] = ['group' => $key, 'name' => $daemon, 'active' => $active];
             }
@@ -116,11 +92,10 @@ class Daemons implements ActionInterface
                 throw new DaemonInvalidException($name);
             }
 
-            foreach (Daemons::SERVICES[$name] as $daemon) {
+            foreach (config('sculptor.services')[$name] as $daemon) {
                 Logs::actions()->debug("{$message} {$daemon}");
 
-                $this->action
-                    ->run(new DaemonService($daemon, $operation));
+                $this->run($daemon, $operation);
             }
 
             return true;
@@ -131,8 +106,27 @@ class Daemons implements ActionInterface
         }
     }
 
-    public function error(): ?string
+    /**
+     * @param string $daemon
+     * @param string $operation
+     * @throws ActionJobRunException
+     * @throws QueueJobCreateException
+     * @throws QueueJobNotTraceableException
+     * @throws QueueJobTimeoutException
+     */
+    private function run(string $daemon, string $operation): void
     {
-        return $this->action->error();
+        // WORK AROUND MYSQL
+        if ($daemon == 'mysql') {
+            $this->action
+                ->runAndExit(new DaemonService($daemon, $operation));
+
+            // sleep(5);
+
+            return;
+        }
+
+        $this->action
+            ->run(new DaemonService($daemon, $operation));
     }
 }

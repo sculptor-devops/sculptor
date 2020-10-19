@@ -3,66 +3,52 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
+use Sculptor\Agent\Actions\Domains\Parameters;
+use Sculptor\Agent\Actions\Domains\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
+use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
+use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Jobs\DomainConfigure;
 use Sculptor\Agent\Jobs\DomainCreate;
 use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Logs\Logs;
-use Sculptor\Agent\Repositories\DatabaseRepository;
-use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Domains implements ActionInterface
 {
-    /**
-     * @const array
-     */
-    public const PARAMETERS = [
-        'alias',
-        'type',
-        'certificate',
-        'home',
-        'deployer',
-        'install',
-        'vcs',
-        'database',
-        'user'
-    ];
+    use Report;
 
     /**
      * @var DomainRepository
      */
     private $domains;
     /**
-     * @var Action
+     * @var StatusMachine
      */
-    private $action;
+    private $machine;
     /**
-     * @var DatabaseRepository
+     * @var Parameters
      */
-    private $databases;
-    /**
-     * @var DatabaseUserRepository
-     */
-    private $users;
+    private $parameters;
 
     public function __construct(
         Action $action,
+        StatusMachine $machine,
         DomainRepository $domains,
-        DatabaseRepository $databases,
-        DatabaseUserRepository $users
+        Parameters $parameters
     ) {
         $this->action = $action;
 
+        $this->machine = $machine;
+
         $this->domains = $domains;
 
-        $this->databases = $databases;
-
-        $this->users = $users;
+        $this->parameters = $parameters;
     }
 
     public function create(
@@ -79,17 +65,23 @@ class Domains implements ActionInterface
                 'name' => $name,
                 'type' => $type,
                 'certificate' => $certificate,
-                'user' => $user
+                'user' => $user,
+                'status' => DomainStatusType::NEW
             ]);
 
-            $this->action->run(new DomainCreate($domain));
+            $this->action
+                ->run(new DomainCreate($domain));
 
-            return true;
+            $this->machine
+                ->change($domain, DomainStatusType::CONFIGURED);
         } catch (Exception $e) {
-            $this->action->report("Create domain: {$e->getMessage()}");
+            $this->action
+                ->report("Create domain: {$e->getMessage()}");
 
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -127,17 +119,19 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            $this->machine
+                ->change($domain, DomainStatusType::CONFIGURED);
+
             $this->action
                 ->run(new DomainConfigure($domain));
 
-            foreach (Daemons::SERVICES[Daemons::WEB] as $service) {
+            foreach (config('sculptor.services')[DaemonGroupType::WEB] as $service) {
                 $this->action
                     ->run(new DaemonService($service, DaemonOperationsType::RELOAD));
             }
-
-            $domain->delete();
         } catch (Exception $e) {
-            $this->action->report("Configure domain: {$e->getMessage()}");
+            $this->action
+                ->report("Configure domain: {$e->getMessage()}");
 
             return false;
         }
@@ -153,15 +147,19 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            $this->machine
+                ->change($domain, DomainStatusType::DEPLOYED);
+
             $this->action
                 ->runIndefinite(new DomainDeploy($domain, $command));
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report("Deploy domain: {$e->getMessage()}");
+            $this->action
+                ->report("Deploy domain: {$e->getMessage()}");
 
             return false;
         }
+
+        return true;
     }
 
     public function deployBatch(string $name, string $command = null): bool
@@ -172,15 +170,19 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            $this->machine
+                ->change($domain, DomainStatusType::DEPLOYED);
+
             $this->action
                 ->runAndExit(new DomainDeploy($domain, $command));
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report("Deploy domain: {$e->getMessage()}");
+            $this->action
+                ->report("Deploy domain: {$e->getMessage()}");
 
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -194,36 +196,17 @@ class Domains implements ActionInterface
     {
         Logs::actions()->info("Setup domain {$name}: {$parameter}={$value}");
 
-        if (!in_array($parameter, Domains::PARAMETERS)) {
-            throw new Exception("Invalid parameter {$parameter}");
-        }
-
         $domain = $this->domains
             ->byName($name);
 
-        if ($parameter == 'database') {
-            $database = $this->databases
-                ->byName($value);
+        $this->machine
+            ->change($domain, DomainStatusType::SETUP);
 
-            $domain->database()
-                ->associate($database)
-                ->save();
-
-            return true;
+        if ($this->machine
+            ->can($domain->status, DomainStatusType::SETUP)) {
+            $this->parameters
+                ->set($domain, $parameter, $value);
         }
-
-        if ($parameter == 'user') {
-            $user = $this->users
-                ->byName($domain->database, $value);
-
-            $domain->databaseUser()
-                ->associate($user)
-                ->save();
-
-            return true;
-        }
-
-        $domain->update(["{$parameter}" => "{$value}"]);
 
         return true;
     }
@@ -231,19 +214,30 @@ class Domains implements ActionInterface
     /**
      * @param string $name
      * @return bool
+     * @throws Exception
      */
     public function enable(string $name): bool
     {
+        $domain = $this->domains
+            ->byName($name);
+
+        $domain->update(['enabled' => true]);
+
         return $name != null;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     * @throws Exception
+     */
     public function disable(string $name): bool
     {
-        return $name != null;
-    }
+        $domain = $this->domains
+            ->byName($name);
 
-    public function error(): ?string
-    {
-        return $this->action->error();
+        $domain->update(['enabled' => false]);
+
+        return $name != null;
     }
 }

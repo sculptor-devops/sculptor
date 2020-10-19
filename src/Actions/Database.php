@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
+use Sculptor\Agent\Actions\Support\Report;
 use Sculptor\Agent\Exceptions\DatabaseAlreadyExistsException;
 use Sculptor\Agent\Jobs\DatabaseCreate;
 use Sculptor\Agent\Jobs\DatabaseDelete;
@@ -17,6 +18,8 @@ use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Database implements ActionInterface
 {
+    use Report;
+
     /**
      * @var DatabaseRepository
      */
@@ -25,10 +28,6 @@ class Database implements ActionInterface
      * @var DatabaseUserRepository
      */
     private $users;
-    /**
-     * @var Action
-     */
-    private $action;
 
     /**
      * Action constructor.
@@ -197,10 +196,5 @@ class Database implements ActionInterface
 
             return false;
         }
-    }
-
-    public function error(): ?string
-    {
-        return $this->action->error();
     }
 }

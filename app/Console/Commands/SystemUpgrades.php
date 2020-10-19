@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
 use Sculptor\Agent\Logs\Upgrades;
+use Sculptor\Agent\Support\CommandBase;
 
-class SystemUpgrades extends Command
+class SystemUpgrades extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -21,7 +21,6 @@ class SystemUpgrades extends Command
      * @var string
      */
     protected $description = 'Show system upgrades';
-
     /**
      * Create a new command instance.
      *

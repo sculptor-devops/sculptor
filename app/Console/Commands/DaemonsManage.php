@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Daemons;
+use Sculptor\Agent\Support\CommandBase;
 
-class DaemonsManage extends Command
+class DaemonsManage extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -20,7 +20,6 @@ class DaemonsManage extends Command
      * @var string
      */
     protected $description = 'Manage daemons';
-
     /**
      * Create a new command instance.
      *
@@ -93,7 +92,9 @@ class DaemonsManage extends Command
                 break;
 
             default:
-                $daemons = collect(Daemons::SERVICES)->keys()->join(', ');
+                $daemons = collect(config('sculptor.services'))
+                    ->keys()
+                    ->join(', ');
 
                 $this->error("Invalid operation {$operation}: use enable, disable, start, restart, reload, stop, status on {$daemons}");
 

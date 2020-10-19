@@ -74,7 +74,7 @@ class DomainCreate implements ShouldQueue, ITraceable
 
             $this->ok();
         } catch (Exception $e) {
-            $this->error($e->getMessage());
+            $this->report($e);
         }
     }
 }

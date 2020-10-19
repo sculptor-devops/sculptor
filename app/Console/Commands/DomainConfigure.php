@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
-
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Domains;
+use Sculptor\Agent\Support\CommandBase;
 
-class DomainConfigure extends Command
+class DomainConfigure extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -21,7 +20,6 @@ class DomainConfigure extends Command
      * @var string
      */
     protected $description = 'Configure a domain';
-
     /**
      * Create a new command instance.
      *

@@ -4,10 +4,10 @@
 namespace App\Console\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
+use Sculptor\Agent\Support\CommandBase;
 
-class DatabaseUserPassword extends Command
+class DatabaseUserPassword extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -22,7 +22,6 @@ class DatabaseUserPassword extends Command
      * @var string
      */
     protected $description = 'Change a database user password';
-
     /**
      * Create a new command instance.
      *

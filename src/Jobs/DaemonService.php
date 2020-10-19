@@ -50,6 +50,8 @@ class DaemonService implements ShouldQueue, ITraceable
      */
     public function handle(Daemons $daemons): void
     {
+        $this->transaction = ($this->name != 'mysql');
+
         $this->running();
 
         try {
@@ -61,7 +63,7 @@ class DaemonService implements ShouldQueue, ITraceable
 
             $this->ok();
         } catch (Exception $e) {
-            $this->error($e->getMessage());
+            $this->report($e);
         }
     }
 
@@ -72,7 +74,7 @@ class DaemonService implements ShouldQueue, ITraceable
      */
     private function run(Daemons $daemons): bool
     {
-        Logs::job()->info("Daemon domain {$this->name} {$this->operation}");
+        Logs::job()->info("Daemon {$this->name} {$this->operation}");
 
         switch ($this->operation) {
             case DaemonOperationsType::START:

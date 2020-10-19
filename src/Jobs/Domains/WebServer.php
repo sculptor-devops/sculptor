@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
@@ -138,7 +139,7 @@ class WebServer implements DomainAction
     {
         Logs::actions()->debug("Reloading services for www");
 
-        foreach (ServiceActions::SERVICES['web'] as $service) {
+        foreach (config('sculptor.services')[DaemonGroupType::WEB] as $service) {
             if (!$this->daemons->reload($service)) {
                 throw new Exception("Cannot reload service {$service}");
             }

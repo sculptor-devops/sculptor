@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Jobs\Domains\Deployer;
 use Sculptor\Agent\Jobs\Domains\Permissions;
+use Sculptor\Agent\Jobs\Domains\WebServer;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
@@ -46,11 +47,12 @@ class DomainDeploy implements ShouldQueue, ITraceable
     }
 
     /**
+     * @param WebServer $web
      * @param Deployer $deploy
      * @param Permissions $permission
      * @throws Exception
      */
-    public function handle(Deployer $deploy, Permissions $permission): void
+    public function handle(WebServer $web, Deployer $deploy, Permissions $permission): void
     {
         $this->running();
 
@@ -63,9 +65,11 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $permission->run($this->domain);
 
+            $web->enable($this->domain);
+
             $this->ok();
         } catch (Exception $e) {
-            $this->error($e->getMessage());
+            $this->report($e);
         }
     }
 }

@@ -21,6 +21,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string deployer
  * @property string home
  * @property string alias
+ * @property string install
  */
 class Domain extends Model implements Transformable, EncryptInterface
 {

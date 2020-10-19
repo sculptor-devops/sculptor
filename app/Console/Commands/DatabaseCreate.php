@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
+use Sculptor\Agent\Support\CommandBase;
 
-class DatabaseCreate extends Command
+class DatabaseCreate extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -21,7 +21,6 @@ class DatabaseCreate extends Command
      * @var string
      */
     protected $description = 'Create a database';
-
     /**
      * Create a new command instance.
      *

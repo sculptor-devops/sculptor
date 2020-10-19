@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Sculptor\Agent\Enums\CertificatesTypes;
+use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Enums\DomainType;
 use Sculptor\Agent\Enums\VersionControlType;
 
@@ -20,6 +21,8 @@ class CreateDomainsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('alias')->nullable();
+            $table->string('status')->default(DomainStatusType::NEW);
+            $table->boolean('enabled')->default(true);
             $table->string('type')->default(DomainType::LARAVEL);
             $table->string('certificate')->default(CertificatesTypes::SELF_SIGNED);
 

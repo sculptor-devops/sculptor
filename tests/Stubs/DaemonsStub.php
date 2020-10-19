@@ -14,7 +14,7 @@ class DaemonsStub
     {
         app()->bind(Daemons::class, function () {
             return Mockery::mock(Daemons::class, function ($mock) {
-                foreach (collect(Actions::SERVICES)->flatten() as $service) {
+                foreach (collect(config('sculptor.services'))->flatten() as $service) {
                     foreach (DaemonsStub::operations as $action) {
                         $mock->shouldReceive($action)
                             ->with($service)
@@ -29,7 +29,7 @@ class DaemonsStub
     {
         app()->bind(Daemons::class, function () {
             return Mockery::mock(Daemons::class, function ($mock) {
-                foreach (collect(Actions::SERVICES)->flatten() as $service) {
+                foreach (collect(config('sculptor.services'))->flatten() as $service) {
                     foreach (DaemonsStub::operations as $action) {
                         $mock->shouldReceive($action)
                             ->with($service)

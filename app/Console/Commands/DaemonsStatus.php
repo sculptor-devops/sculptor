@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-
-use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Sculptor\Agent\Actions\Daemons;
+use Sculptor\Agent\Support\CommandBase;
 
-class DaemonsStatus extends Command
+class DaemonsStatus extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -38,9 +38,18 @@ class DaemonsStatus extends Command
      * @param Daemons $actions
      * @return int
      */
-    public function handle(Daemons $actions)
+    public function handle(Daemons $actions): int
     {
-        $this->table(['group' => 'Group', 'name' => 'Service', 'active' => 'Active'], $actions->status());
+        $tabled = collect($actions->status())
+            ->map(function ($item) {
+                return [
+                    'name' => $item['name'],
+                    'group' => Str::upper($item['group']),
+                    'active' => $item['active'] ? '<info>YES</info>' : '<error>NO</error>'
+                ];
+            });
+
+        $this->table(['Service', 'Group', 'Active'], $tabled);
 
         return 0;
     }

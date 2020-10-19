@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Console\Commands;
 
-
 use Exception;
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Domains;
+use Sculptor\Agent\Support\CommandBase;
 
-class DomainSetup extends Command
+class DomainSetup extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -23,7 +21,6 @@ class DomainSetup extends Command
      * @var string
      */
     protected $description = 'Run deploy for a domain';
-
     /**
      * Create a new command instance.
      *

@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Enums\DomainType;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Logs\Logs;
@@ -76,11 +77,20 @@ class Deployer implements DomainAction
     {
         $this->deploy('deploy:unlock', $domain);
 
-        $deploy = $domain->deployer ?? SITES_DEPLOY;
+        $deploy = null;
 
-        if (!File::exists($domain->home())) {
+        if ($domain->status == DomainStatusType::CONFIGURED) {
+            $deploy = $domain->deployer ?? SITES_DEPLOY;
+        }
+
+        if ($domain->status == DomainStatusType::NEW) {
             $deploy = $domain->install ?? SITES_INSTALL;
         }
+
+        if ($deploy == null) {
+            throw new Exception("Invalid status {$domain->status} for {$domain->name}");
+        }
+
 
         if ($command != null) {
             $deploy = $command;

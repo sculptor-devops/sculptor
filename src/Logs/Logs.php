@@ -48,70 +48,77 @@ class Logs
     }
 
     /**
+     * @param array $context
      * @return array
      */
-    public function context(): array
+    public function context(array $context = []): array
     {
-        return [ 'ip' => $this->from(), 'tag' => $this->tag ];
+        return array_merge($context, ['ip' => $this->from(), 'tag' => $this->tag]);
     }
 
     /**
+     * @param array $context
      * @return LogsContext
      */
-    public static function actions(): LogsContext
+    public static function actions(array $context = []): LogsContext
     {
-        $logs =  new Logs();
+        $logs = new Logs();
 
-        return new LogsContext($logs->context());
+        return new LogsContext($logs->context($context));
     }
 
     /**
+     * @param array $context
      * @return LogsContext
      */
-    public static function security(): LogsContext
+    public static function security(array $context = []): LogsContext
     {
-        $logs =  new Logs(LogContextType::SECURITY);
+        $logs = new Logs(LogContextType::SECURITY);
 
-        return new LogsContext($logs->context());
+        return new LogsContext($logs->context($context));
     }
 
     /**
+     * @param array $context
      * @return LogsContext
      */
-    public static function backup(): LogsContext
+    public static function backup(array $context = []): LogsContext
     {
-        $logs =  new Logs(LogContextType::BACKUP);
+        $logs = new Logs(LogContextType::BACKUP);
 
-        return new LogsContext($logs->context());
+        return new LogsContext($logs->context($context));
     }
 
     /**
+     * @param array $context
      * @return LogsContext
      */
-    public static function batch(): LogsContext
+    public static function batch(array $context = []): LogsContext
     {
-        $logs =  new Logs(LogContextType::BATCH);
+        $logs = new Logs(LogContextType::BATCH);
 
-        return new LogsContext($logs->context());
+        return new LogsContext($logs->context($context));
     }
 
     /**
+     * @param array $context
      * @return LogsContext
      */
-    public static function login(): LogsContext
+    public static function login(array $context = []): LogsContext
     {
-        $logs =  new Logs(LogContextType::LOGIN);
+        $logs = new Logs(LogContextType::LOGIN);
 
-        return new LogsContext($logs->context());
+        return new LogsContext($logs->context($context));
     }
 
     /**
+     * @param array $context
      * @return LogsContext
      */
-    public static function job(): LogsContext
+    public static function job(array $context = []): LogsContext
     {
-        $logs =  new Logs(LogContextType::JOB);
+        $logs = new Logs(LogContextType::JOB);
 
-        return new LogsContext($logs->context());
+        return new LogsContext($logs->context($context));
     }
 }

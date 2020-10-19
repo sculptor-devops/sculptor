@@ -4,10 +4,10 @@
 namespace App\Console\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Database;
+use Sculptor\Agent\Support\CommandBase;
 
-class DatabaseDelete extends Command
+class DatabaseDelete extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -22,7 +22,6 @@ class DatabaseDelete extends Command
      * @var string
      */
     protected $description = 'Delete a database';
-
     /**
      * Create a new command instance.
      *
@@ -40,7 +39,7 @@ class DatabaseDelete extends Command
      * @return int
      * @throws Exception
      */
-    public function handle(Database $actions)
+    public function handle(Database $actions): int
     {
         $name = $this->argument('name');
 

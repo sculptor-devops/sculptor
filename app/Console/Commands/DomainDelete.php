@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
-
-use Illuminate\Console\Command;
 use Sculptor\Agent\Actions\Domains;
+use Sculptor\Agent\Support\CommandBase;
 
-class DomainDelete extends Command
+class DomainDelete extends CommandBase
 {
     /**
      * The name and signature of the console command.
@@ -21,7 +20,6 @@ class DomainDelete extends Command
      * @var string
      */
     protected $description = 'Delete a domain';
-
     /**
      * Create a new command instance.
      *
