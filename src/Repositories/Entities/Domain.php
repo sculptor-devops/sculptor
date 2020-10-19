@@ -22,6 +22,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string home
  * @property string alias
  * @property string install
+ * @property string status
+ * @property bool www
  */
 class Domain extends Model implements Transformable, EncryptInterface
 {
@@ -34,7 +36,7 @@ class Domain extends Model implements Transformable, EncryptInterface
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'alias', 'type', 'certificate', 'user', 'home', 'deployer', 'vcs_tye', 'vcs' ];
+    protected $fillable = [ 'name', 'alias', 'type', 'status', 'enabled', 'www', 'certificate', 'user', 'home', 'install', 'deployer', 'vcs_tye', 'vcs' ];
 
     public function root(): string
     {
@@ -79,10 +81,16 @@ class Domain extends Model implements Transformable, EncryptInterface
 
     public function serverNames(): string
     {
-        if ($this->alias == null) {
-            return $this->name;
+        $name = $this->name;
+
+        if ($this->www) {
+            $name = "{$this->name} www.{$this->name}";
         }
 
-        return "{$this->name}, {$this->alias}";
+        if ($this->alias == null) {
+            return $name;
+        }
+
+        return "{$name} {$this->alias}";
     }
 }

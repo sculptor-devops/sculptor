@@ -25,7 +25,8 @@ class Parameters
         'install',
         'vcs',
         'database',
-        'user'
+        'user',
+        'www'
     ];
     /**
      * @var DatabaseRepository

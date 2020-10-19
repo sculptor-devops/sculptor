@@ -29,7 +29,7 @@ class DomainDeploy implements ShouldQueue, ITraceable
      */
     private $domain;
     /**
-     * @var string
+     * @var string|null
      */
     private $command;
 
@@ -37,9 +37,9 @@ class DomainDeploy implements ShouldQueue, ITraceable
      * Create a new job instance.
      *
      * @param Domain $domain
-     * @param string $command
+     * @param string|null $command
      */
-    public function __construct(Domain $domain, string $command)
+    public function __construct(Domain $domain, ?string $command)
     {
         $this->domain = $domain;
 

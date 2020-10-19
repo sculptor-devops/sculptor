@@ -66,10 +66,10 @@ task('deploy:install', [
     'deploy:shared',
     'deploy:writable',
     'deploy:vendors',
-    'deploy:key',
     'deploy:clear_paths',
     'deploy:symlink',
     'deploy:unlock',
+    'deploy:key',
     'deploy:owner',
     'cleanup',
     'success'

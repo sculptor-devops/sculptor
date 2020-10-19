@@ -71,6 +71,7 @@ class DomainShow extends CommandBase
             [ 'name' => 'name', 'value' => $item->name ],
             [ 'name' => 'alias', 'value' => $item->alias ?? 'none'],
             [ 'name' => 'type', 'value' => $item->type],
+            [ 'name' => 'status', 'value' => $item->status],
             [ 'name' => 'certificate', 'value' => $item->certificate],
             [ 'name' => 'user', 'value' => $item->user ],
             [ 'name' => 'database', 'value' => $item->database ?? 'none'],
@@ -95,6 +96,7 @@ class DomainShow extends CommandBase
                 'name' => $domain->name,
                 'alias' => $domain->alias ?? 'none',
                 'type' => $domain->type,
+                'status' => $domain->status,
                 'database' => $domain->database ?? 'none',
                 'home' => $domain->home()
             ];
@@ -104,6 +106,7 @@ class DomainShow extends CommandBase
             'Name',
             'Alias',
             'Type',
+            'Status',
             'Database',
             'Home'
         ], $tabled);

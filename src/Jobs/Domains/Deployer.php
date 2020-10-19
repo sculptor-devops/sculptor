@@ -58,13 +58,19 @@ class Deployer implements DomainAction
 
     private function repo(Domain $domain): string
     {
-        switch ($domain->type) {
-            case DomainType::LARAVEL:
-                return 'https://github.com/laravel/laravel.git';
+        $vcs = $domain->vcs;
 
-            default:
-                return 'git@github.com/username/repository.git';
+        if ($domain->vcs == null && $domain->type == DomainType::LARAVEL) {
+            $vcs = 'https://github.com/laravel/laravel.git';
         }
+
+        if ($domain->vcs == null && $domain->type == DomainType::GENERIC) {
+            $vcs = 'https://github.com/laravel/laravel.git';
+        }
+
+        $domain->update(['vcs' => $vcs]);
+
+        return $domain->vcs;
     }
 
     /**
@@ -87,13 +93,12 @@ class Deployer implements DomainAction
             $deploy = $domain->install ?? SITES_INSTALL;
         }
 
-        if ($deploy == null) {
-            throw new Exception("Invalid status {$domain->status} for {$domain->name}");
-        }
-
-
         if ($command != null) {
             $deploy = $command;
+        }
+
+        if ($deploy == null) {
+            throw new Exception("Command deploy cannot be null for {$domain->name}");
         }
 
         $this->deploy($deploy, $domain);

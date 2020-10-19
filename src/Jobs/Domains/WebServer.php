@@ -122,7 +122,7 @@ class WebServer implements DomainAction
      */
     public function disable(Domain $domain): bool
     {
-        Logs::actions()->debug("Disabling www domain root {$domain->name}");
+        Logs::actions()->debug("Disabling www domain {$domain->name}");
 
         $this->remove('/etc/nginx/sites-enabled/', "/etc/nginx/sites-enabled/{$domain->name}.conf");
 
@@ -155,6 +155,8 @@ class WebServer implements DomainAction
      */
     public function delete(Domain $domain): bool
     {
+        $this->remove('/etc/nginx/sites-available/', "/etc/nginx/sites-available/{$domain->name}.conf");
+
         return $this->disable($domain);
     }
 }

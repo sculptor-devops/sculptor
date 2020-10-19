@@ -6,6 +6,7 @@ use Exception;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
+use Sculptor\Agent\Exceptions\DomainNotFound;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Agent\Contracts\DomainRepository as DomainRepositoryInterface;
 
@@ -40,7 +41,7 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
         $database = $this->findByField(['name' => $name]);
 
         if ($database->count() == 0) {
-            throw new Exception($name);
+            throw new DomainNotFound($name);
         }
 
         return $database->first();

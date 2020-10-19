@@ -54,6 +54,11 @@ class Domains implements ActionInterface
         $this->parameters = $parameters;
     }
 
+    /**
+     * @param string $name
+     * @param string $type
+     * @return bool
+     */
     public function create(
         string $name,
         string $type = 'laravel'
@@ -63,7 +68,10 @@ class Domains implements ActionInterface
 
         try {
             $domain = $this->domains->firstOrCreate([
-                'name' => $name,
+                'name' => $name
+            ]);
+
+            $domain->update([
                 'type' => $type,
                 'certificate' => CertificatesTypes::SELF_SIGNED,
                 'user' => SITES_USER,
@@ -72,9 +80,6 @@ class Domains implements ActionInterface
 
             $this->action
                 ->run(new DomainCreate($domain));
-
-            $this->machine
-                ->change($domain, DomainStatusType::CONFIGURED);
         } catch (Exception $e) {
             $this->action
                 ->report("Create domain: {$e->getMessage()}");
@@ -112,6 +117,11 @@ class Domains implements ActionInterface
         return true;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     * @throws Exception
+     */
     public function configure(string $name): bool
     {
         Logs::actions()->info("Configure domain {$name}");
@@ -119,9 +129,6 @@ class Domains implements ActionInterface
         try {
             $domain = $this->domains
                 ->byName($name);
-
-            $this->machine
-                ->change($domain, DomainStatusType::CONFIGURED);
 
             $this->action
                 ->run(new DomainConfigure($domain));
@@ -137,9 +144,18 @@ class Domains implements ActionInterface
             return false;
         }
 
+        $this->machine
+            ->change($domain, DomainStatusType::CONFIGURED);
+
         return true;
     }
 
+    /**
+     * @param string $name
+     * @param string|null $command
+     * @return bool
+     * @throws Exception
+     */
     public function deploy(string $name, string $command = null): bool
     {
         Logs::actions()->info("Deploy domain {$name}");
@@ -147,9 +163,6 @@ class Domains implements ActionInterface
         try {
             $domain = $this->domains
                 ->byName($name);
-
-            $this->machine
-                ->change($domain, DomainStatusType::DEPLOYED);
 
             $this->action
                 ->runIndefinite(new DomainDeploy($domain, $command));
@@ -160,9 +173,18 @@ class Domains implements ActionInterface
             return false;
         }
 
+        $this->machine
+            ->change($domain, DomainStatusType::DEPLOYED);
+
         return true;
     }
 
+    /**
+     * @param string $name
+     * @param string|null $command
+     * @return bool
+     * @throws Exception
+     */
     public function deployBatch(string $name, string $command = null): bool
     {
         Logs::actions()->info("Deploy domain {$name}");
@@ -170,9 +192,6 @@ class Domains implements ActionInterface
         try {
             $domain = $this->domains
                 ->byName($name);
-
-            $this->machine
-                ->change($domain, DomainStatusType::DEPLOYED);
 
             $this->action
                 ->runAndExit(new DomainDeploy($domain, $command));
@@ -182,6 +201,9 @@ class Domains implements ActionInterface
 
             return false;
         }
+
+        $this->machine
+            ->change($domain, DomainStatusType::DEPLOYED);
 
         return true;
     }
@@ -200,14 +222,14 @@ class Domains implements ActionInterface
         $domain = $this->domains
             ->byName($name);
 
-        $this->machine
-            ->change($domain, DomainStatusType::SETUP);
-
         if ($this->machine
             ->can($domain->status, DomainStatusType::SETUP)) {
             $this->parameters
                 ->set($domain, $parameter, $value);
         }
+
+        $this->machine
+            ->change($domain, DomainStatusType::SETUP);
 
         return true;
     }
@@ -227,14 +249,14 @@ class Domains implements ActionInterface
 
             $this->action
                 ->run(new DomainEnable($domain));
-
-            $domain->update(['enabled' => true]);
         } catch (Exception $e) {
             $this->action
-                ->report("Deploy domain: {$e->getMessage()}");
+                ->report("Enable domain: {$e->getMessage()}");
 
             return false;
         }
+
+        $domain->update(['enabled' => true]);
 
         return true;
     }
@@ -254,14 +276,14 @@ class Domains implements ActionInterface
 
             $this->action
                 ->run(new DomainDisable($domain));
-
-            $domain->update(['enabled' => false]);
         } catch (Exception $e) {
             $this->action
-                ->report("Deploy domain: {$e->getMessage()}");
+                ->report("Disable domain: {$e->getMessage()}");
 
             return false;
         }
+
+        $domain->update(['enabled' => false]);
 
         return true;
     }

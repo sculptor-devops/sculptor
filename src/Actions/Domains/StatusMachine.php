@@ -12,41 +12,46 @@ class StatusMachine
 {
     /**
      * @param string $from
-     * @param string $status
+     * @param string $to
      * @return bool
      * @throws Exception
      */
-    public function can(string $from, string $status): bool
+    public function can(string $from, string $to): bool
     {
-        if ($status == DomainStatusType::NEW) {
-            throw new DomainStatusException($status, $from);
+        if ($to == DomainStatusType::NEW && in_array($from,
+                [
+                    DomainStatusType::NEW,
+                    DomainStatusType::CONFIGURED
+                ])) {
+            return true;
         }
 
-        if ($status == DomainStatusType::CONFIGURED && in_array($from,
+        if ($to == DomainStatusType::CONFIGURED && in_array($from,
                 [
                     DomainStatusType::NEW,
                     DomainStatusType::DEPLOYED,
                     DomainStatusType::SETUP,
                     DomainStatusType::CONFIGURED
                 ])) {
-            throw new DomainStatusException($status, $from);
+            return true;
         }
 
-        if ($status == DomainStatusType::DEPLOYED && in_array($from, [
+        if ($to == DomainStatusType::DEPLOYED && in_array($from, [
+                DomainStatusType::NEW,
                 DomainStatusType::CONFIGURED,
                 DomainStatusType::DEPLOYED
             ])) {
-            throw new DomainStatusException($status, $from);
+            return true;
         }
 
-        if ($status == DomainStatusType::SETUP && in_array($from, [
+        if ($to == DomainStatusType::SETUP && in_array($from, [
                 DomainStatusType::CONFIGURED,
                 DomainStatusType::SETUP
             ])) {
-            throw new DomainStatusException($status, $from);
+            return true;
         }
 
-        return true;
+        throw new DomainStatusException($from, $to);
     }
 
     /**

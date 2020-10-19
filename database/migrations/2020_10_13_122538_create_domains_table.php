@@ -23,6 +23,7 @@ class CreateDomainsTable extends Migration
             $table->string('alias')->nullable();
             $table->string('status')->default(DomainStatusType::NEW);
             $table->boolean('enabled')->default(true);
+            $table->boolean('www')->default(true);
             $table->string('type')->default(DomainType::LARAVEL);
             $table->string('certificate')->default(CertificatesTypes::SELF_SIGNED);
 
