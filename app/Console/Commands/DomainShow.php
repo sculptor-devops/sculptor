@@ -64,6 +64,18 @@ class DomainShow extends CommandBase
     {
         $item = $domains->byName($domain);
 
+        $database = 'none';
+
+        $databaseUser = 'none';
+
+        if ($item->database) {
+            $database = $item->database->name;
+        }
+
+        if ($item->databaseUser) {
+            $databaseUser = $item->databaseUser->name;
+        }
+
         $this->table([
             'Name',
             'Value',
@@ -73,9 +85,10 @@ class DomainShow extends CommandBase
             [ 'name' => 'type', 'value' => $item->type],
             [ 'name' => 'status', 'value' => $item->status],
             [ 'name' => 'certificate', 'value' => $item->certificate],
+            [ 'name' => 'www', 'value' => $this->YesNo($item->www)],
             [ 'name' => 'user', 'value' => $item->user ],
-            [ 'name' => 'database', 'value' => $item->database ?? 'none'],
-            [ 'name' => 'user', 'value' => $item->user ?? 'none'],
+            [ 'name' => 'database', 'value' => $database],
+            [ 'name' => 'user', 'value' => $databaseUser],
             [ 'name' => 'deployer', 'value' => $item->deployer],
             [ 'name' => 'install', 'value' => $item->install],
             [ 'name' => 'vcs', 'value' => $item->vcs],

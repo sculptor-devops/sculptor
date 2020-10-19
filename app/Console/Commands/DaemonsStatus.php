@@ -45,11 +45,11 @@ class DaemonsStatus extends CommandBase
                 return [
                     'name' => $item['name'],
                     'group' => Str::upper($item['group']),
-                    'active' => $item['active'] ? '<info>YES</info>' : '<error>NO</error>'
+                    'running' => $this->YesNo($item['active'])
                 ];
             });
 
-        $this->table(['Service', 'Group', 'Active'], $tabled);
+        $this->table(['Service', 'Group', 'Running'], $tabled);
 
         return 0;
     }
