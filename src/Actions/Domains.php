@@ -7,6 +7,7 @@ use Sculptor\Agent\Actions\Domains\Parameters;
 use Sculptor\Agent\Actions\Domains\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Enums\DomainStatusType;
@@ -15,6 +16,8 @@ use Sculptor\Agent\Jobs\DomainConfigure;
 use Sculptor\Agent\Jobs\DomainCreate;
 use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
+use Sculptor\Agent\Jobs\DomainDisable;
+use Sculptor\Agent\Jobs\DomainEnable;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
@@ -53,9 +56,7 @@ class Domains implements ActionInterface
 
     public function create(
         string $name,
-        string $type = 'laravel',
-        string $certificate = 'self-signed',
-        string $user = 'www'
+        string $type = 'laravel'
     ): bool {
 
         Logs::actions()->info("Create domain {$name}");
@@ -64,8 +65,8 @@ class Domains implements ActionInterface
             $domain = $this->domains->firstOrCreate([
                 'name' => $name,
                 'type' => $type,
-                'certificate' => $certificate,
-                'user' => $user,
+                'certificate' => CertificatesTypes::SELF_SIGNED,
+                'user' => SITES_USER,
                 'status' => DomainStatusType::NEW
             ]);
 
@@ -218,12 +219,24 @@ class Domains implements ActionInterface
      */
     public function enable(string $name): bool
     {
-        $domain = $this->domains
-            ->byName($name);
+        Logs::actions()->info("Enable domain {$name}");
 
-        $domain->update(['enabled' => true]);
+        try {
+            $domain = $this->domains
+                ->byName($name);
 
-        return $name != null;
+            $this->action
+                ->run(new DomainEnable($domain));
+
+            $domain->update(['enabled' => true]);
+        } catch (Exception $e) {
+            $this->action
+                ->report("Deploy domain: {$e->getMessage()}");
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -233,11 +246,23 @@ class Domains implements ActionInterface
      */
     public function disable(string $name): bool
     {
-        $domain = $this->domains
-            ->byName($name);
+        Logs::actions()->info("Disable domain {$name}");
 
-        $domain->update(['enabled' => false]);
+        try {
+            $domain = $this->domains
+                ->byName($name);
 
-        return $name != null;
+            $this->action
+                ->run(new DomainDisable($domain));
+
+            $domain->update(['enabled' => false]);
+        } catch (Exception $e) {
+            $this->action
+                ->report("Deploy domain: {$e->getMessage()}");
+
+            return false;
+        }
+
+        return true;
     }
 }
