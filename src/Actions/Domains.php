@@ -67,16 +67,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Create domain {$name}");
 
         try {
-            $domain = $this->domains->firstOrCreate([
-                'name' => $name
-            ]);
-
-            $domain->update([
-                'type' => $type,
-                'certificate' => CertificatesTypes::SELF_SIGNED,
-                'user' => SITES_USER,
-                'status' => DomainStatusType::NEW
-            ]);
+            $domain = $this->domains->factory($name, $type);
 
             $this->action
                 ->run(new DomainCreate($domain));

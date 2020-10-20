@@ -42,14 +42,12 @@ class DomainEnable extends CommandBase
     {
         $name = $this->argument('name');
 
-        if ($domains->enable($name)) {
-            $this->info('Done.');
+        $this->startTask("Enable domain {$name}");
 
-            return 0;
+        if (!$domains->enable($name)) {
+            return $this->errorTask($domains->error());
         }
 
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

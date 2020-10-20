@@ -26,7 +26,8 @@ class Parameters
         'vcs',
         'database',
         'user',
-        'www'
+        'www',
+        'email'
     ];
     /**
      * @var DatabaseRepository

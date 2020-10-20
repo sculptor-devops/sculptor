@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -35,6 +36,7 @@ class DomainDeploy extends CommandBase
      *
      * @param Domains $domains
      * @return int
+     * @throws Exception
      */
     public function handle(Domains $domains): int
     {
@@ -42,14 +44,12 @@ class DomainDeploy extends CommandBase
 
         $command = $this->argument('deploy');
 
-        if ($domains->deploy($name, $command)) {
-            $this->info('Done.');
+        $this->startTask("Deploy {$command} domain {$name}");
 
-            return 0;
+        if (!$domains->deploy($name, $command)) {
+            return $this->errorTask($domains->error());;
         }
 
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

@@ -37,7 +37,13 @@ class Certificates implements DomainAction
         switch ($domain->certificate) {
             case CertificatesTypes::CUSTOM:
             case CertificatesTypes::SELF_SIGNED:
-                $this->selfSigned($domain);
+                $this->selfSigned($domain, "{$domain->root()}/certs");
+
+                break;
+
+            case CertificatesTypes::LETS_ENCRYPT:
+                // $this->selfSigned($domain, "{$domain->root()}/certs");
+                $this->letsEncrypt($domain);
 
                 break;
 
@@ -50,14 +56,15 @@ class Certificates implements DomainAction
 
     /**
      * @param Domain $domain
+     * @param string $path
      * @throws Exception
      */
-    private function selfSigned(Domain $domain): void
+    private function selfSigned(Domain $domain, string $path): void
     {
-        $root = $domain->root();
+        Logs::job()->debug("Creating self signed certificates in {$path}");
 
         $result = $this->runner
-            ->from("{$root}/certs")
+            ->from($path)
             ->run([
                 'openssl',
                 'req',
@@ -68,14 +75,48 @@ class Certificates implements DomainAction
                 '-nodes',
                 '-sha256',
                 '-out',
-                "{$root}/certs/{$domain->name}.crt",
+                "{$path}/{$domain->name}.crt",
                 '-keyout',
-                "{$root}/certs/{$domain->name}.key",
+                "{$path}{$domain->name}.key",
                 '-subj',
                 "/CN={$domain->name}"
             ]);
 
         // "/C=IT/ST=Italy/L=Italy/O=IT/CN=www.example.com"
+
+        if (!$result->success()) {
+            throw new Exception("Error creating self signed certificate: {$result->error()}");
+        }
+    }
+
+    /**
+     * @param Domain $domain
+     * @throws Exception
+     */
+    private function letsEncrypt(Domain $domain): void
+    {
+        $email = $domain->email;
+
+        if ($email == null) {
+            throw new Exception("Domain {$domain->name} has no email configured");
+        }
+
+        Logs::job()->debug("Creating let's encrypt certificates for {{$domain->serverName()}} with email {$email}");
+
+        $names = str_replace($domain->serverName(), ' ', '-d ');
+
+        $result = $this->runner
+            ->from("{$domain->root()}/certs")
+            ->run([
+                'certbot',
+                '--nginx ',
+                '--agree-tos',
+                '-n',
+                '-m',
+                $email,
+                '-d',
+                $names
+            ]);
 
         if (!$result->success()) {
             throw new Exception("Error creating self signed certificate: {$result->error()}");

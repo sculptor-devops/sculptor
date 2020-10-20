@@ -12,7 +12,7 @@ class DomainCreate extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'domain:create {name} {type=laravel} {certificate=self-signed}';
+    protected $signature = 'domain:create {name} {type=laravel}';
 
     /**
      * The console command description.
@@ -42,16 +42,10 @@ class DomainCreate extends CommandBase
 
         $type = $this->argument('type');
 
-        $certificate = $this->argument('certificate');
-
-        if ($domains->create($name, $type, $certificate)) {
-            $this->info('Done.');
-
-            return 0;
+        if (!$domains->create($name, $type)) {
+            return $this->errorTask($domains->error());
         }
 
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

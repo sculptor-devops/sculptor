@@ -80,15 +80,14 @@ class SystemUpgrades extends CommandBase
             $index++;
         }
 
-        $this->info("Active: " . ($logs->active() ? 'YES' : 'NO'));
-
-        $this->info( $recently ? 'Upgraded recently' : 'No recently upgrades');
-
-        $this->info('Last Logged Events:');
+        $this->table(['Setting', 'Status'], [
+            [ 'Active', $this->yesNo($logs->active() ) ],
+            [ 'Upgraded recently', $this->yesNo($recently) ]
+        ]);
 
         $this->table(['Index', 'Event'], $events);
 
-        $this->info('Use system:upgrades show <INDEX> to show complete event');
+        $this->info('Use system:upgrades <INDEX> to show complete event');
     }
 
     /**

@@ -15,14 +15,18 @@ class CommandBase extends Command
         $this->output->write("$name: <comment>{$loading}</comment>");
     }
 
-    public function completeTask(): void
+    public function completeTask(): int
     {
         $this->endTask( true);
+
+        return 0;
     }
 
-    public function errorTask(string $error = 'failed'): void
+    public function errorTask(string $error = 'failed'): int
     {
         $this->endTask(false, $error);
+
+        return 1;
     }
 
     public function endTask(bool $completed, string $error = 'failed'): void
@@ -45,7 +49,7 @@ class CommandBase extends Command
         $this->output->writeln($message);
     }
 
-    public function YesNo(bool $check): string
+    public function yesNo(bool $check): string
     {
         return $check ? '<info>YES</info>' : '<error>NO</error>';
     }

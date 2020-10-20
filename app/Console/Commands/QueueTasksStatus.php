@@ -37,7 +37,7 @@ class QueueTasksStatus extends CommandBase
      * @param QueueRepository $queue
      * @return int
      */
-    public function handle(QueueRepository $queue)
+    public function handle(QueueRepository $queue): int
     {
         $verbose = $this->argument('verbose');
 

@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Jobs\Domains\Support;
 
 use Exception;
 use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Support\Replacer;
 
@@ -40,5 +41,26 @@ class Compiler
         }
 
         return true;
+    }
+
+    /**
+     * @param Domain $domain
+     * @return array|string[]
+     * @throws Exception
+     */
+    public function certificates(Domain $domain): array
+    {
+        $certs = "{$domain->root()}/certs/{$domain->name}";
+
+        switch ($domain->type) {
+            case CertificatesTypes::SELF_SIGNED:
+            case CertificatesTypes::CUSTOM:
+                return [ 'crt' => "{$certs}.crt", 'key' => "{$certs}.key"];
+
+            case CertificatesTypes::LETS_ENCRYPT:
+                return [];
+        }
+
+        throw new Exception("Invalid certificate type {$domain->type}");
     }
 }

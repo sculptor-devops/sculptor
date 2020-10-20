@@ -85,7 +85,7 @@ class DomainShow extends CommandBase
             [ 'name' => 'type', 'value' => $item->type],
             [ 'name' => 'status', 'value' => $item->status],
             [ 'name' => 'certificate', 'value' => $item->certificate],
-            [ 'name' => 'www', 'value' => $this->YesNo($item->www)],
+            [ 'name' => 'www', 'value' => $this->yesNo($item->www)],
             [ 'name' => 'user', 'value' => $item->user ],
             [ 'name' => 'database', 'value' => $database],
             [ 'name' => 'user', 'value' => $databaseUser],

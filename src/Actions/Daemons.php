@@ -121,7 +121,7 @@ class Daemons implements ActionInterface
             $this->action
                 ->runAndExit(new DaemonService($daemon, $operation));
 
-            // sleep(5);
+            sleep(5);
 
             return;
         }

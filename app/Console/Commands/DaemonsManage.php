@@ -36,58 +36,48 @@ class DaemonsManage extends CommandBase
      * @param Daemons $actions
      * @return int
      */
-    public function handle(Daemons $actions)
+    public function handle(Daemons $actions): int
     {
         $name = $this->argument('name');
 
         $operation = $this->argument('operation');
 
+        $this->startTask("Running {$name} {$operation}");
+
         switch ($operation) {
             case 'enable':
                 if (!$actions->enable($name)) {
-                    $this->error("Error: {$actions->error()}");
-
-                    return 2;
+                    return $this->errorTask($actions->error());
                 }
                 break;
 
             case 'disable':
                 if (!$actions->disable($name)) {
-                    $this->error("Error: {$actions->error()}");
-
-                    return 2;
+                    return $this->errorTask($actions->error());
                 }
                 break;
 
             case 'restart':
                 if (!$actions->restart($name)) {
-                    $this->error("Error: {$actions->error()}");
-
-                    return 2;
+                    return $this->errorTask($actions->error());
                 }
                 break;
 
             case 'reload':
                 if (!$actions->reload($name)) {
-                    $this->error("Error: {$actions->error()}");
-
-                    return 2;
+                    return $this->errorTask($actions->error());
                 }
                 break;
 
             case 'start':
                 if (!$actions->start($name)) {
-                    $this->error("Error: {$actions->error()}");
-
-                    return 2;
+                    return $this->errorTask($actions->error());
                 }
                 break;
 
             case 'stop':
                 if (!$actions->stop($name)) {
-                    $this->error("Error: {$actions->error()}");
-
-                    return 2;
+                    return $this->errorTask($actions->error());
                 }
                 break;
 
@@ -96,13 +86,9 @@ class DaemonsManage extends CommandBase
                     ->keys()
                     ->join(', ');
 
-                $this->error("Invalid operation {$operation}: use enable, disable, start, restart, reload, stop, status on {$daemons}");
-
-                return 1;
+                return $this->errorTask("Invalid operation {$operation}: use enable, disable, start, restart, reload, stop, status on {$daemons}");
         }
 
-        $this->info("Done.");
-
-        return 0;
+        return $this->completeTask();
     }
 }

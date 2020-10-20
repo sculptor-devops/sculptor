@@ -20,6 +20,7 @@ class DomainConfigure extends CommandBase
      * @var string
      */
     protected $description = 'Configure a domain';
+
     /**
      * Create a new command instance.
      *
@@ -35,19 +36,18 @@ class DomainConfigure extends CommandBase
      *
      * @param Domains $domains
      * @return int
+     * @throws \Exception
      */
     public function handle(Domains $domains): int
     {
         $name = $this->argument('name');
 
-        if ($domains->configure($name)) {
-            $this->info('Done.');
+        $this->startTask("Configure domain {$name}");
 
-            return 0;
+        if (!$domains->configure($name)) {
+            return $this->errorTask($domains->error());
         }
 
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

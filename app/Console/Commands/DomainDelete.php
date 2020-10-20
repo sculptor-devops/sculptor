@@ -35,19 +35,18 @@ class DomainDelete extends CommandBase
      *
      * @param Domains $domains
      * @return int
+     * @throws \Exception
      */
     public function handle(Domains $domains): int
     {
         $name = $this->argument('name');
 
-        if ($domains->delete($name)) {
-            $this->info('Done.');
+        $this->startTask("Delete domain {$name}");
 
-            return 0;
+        if (!$domains->delete($name)) {
+            return $this->errorTask($domains->error());
         }
 
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

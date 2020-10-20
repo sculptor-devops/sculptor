@@ -38,20 +38,16 @@ class DatabaseCreate extends CommandBase
      * @return int
      * @throws Exception
      */
-    public function handle(Database $actions)
+    public function handle(Database $actions): int
     {
         $name = $this->argument('name');
 
-        $this->info("Creating {$name}...");
+        $this->startTask("Creating domain {$name}...");
 
-        if ($actions->create($name)) {
-            $this->info("Done.");
-
-            return 0;
+        if (!$actions->create($name)) {
+            return $this->errorTask("Error: {$actions->error()}");
         }
 
-        $this->error("Error: {$actions->error()}");
-
-        return 1;
+        return $this->completeTask();
     }
 }

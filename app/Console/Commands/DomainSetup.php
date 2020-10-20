@@ -46,16 +46,12 @@ class DomainSetup extends CommandBase
 
         $value = $this->argument('value');
 
-        if ($domains->setup($name, $parameter, $value)) {
-            $this->info('Done.');
+        $this->startTask("Domain setup {$name} {$parameter}={$value}");
 
-            return 0;
+        if (!$domains->setup($name, $parameter, $value)) {
+            return $this->errorTask("{$domains->error()} (Valid parameters: " . collect(Domains\Parameters::ALLOWED)->join(',') . ")");
         }
 
-        $this->error('Valid parameters: ' . collect(Domains::PARAMETERS)->join(',') );
-
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

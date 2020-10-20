@@ -38,7 +38,7 @@ class DatabaseUserDelete extends CommandBase
      * @return int
      * @throws Exception
      */
-    public function handle(Database $actions)
+    public function handle(Database $actions): int
     {
         $database = $this->argument('database');
 
@@ -46,16 +46,12 @@ class DatabaseUserDelete extends CommandBase
 
         $host = $this->argument('host');
 
-        $this->info("Creating {$name}@{$host} on {$database}...");
+        $this->startTask("Delete user {$name}@{$host} on {$database}...");
 
-        if ($actions->drop($name, $database, $host)) {
-            $this->info("Done.");
-
-            return 0;
+        if (!$actions->drop($name, $database, $host)) {
+            return $this->errorTask("Error: {$actions->error()}");
         }
 
-        $this->error("Error: {$actions->error()}");
-
-        return 1;
+        return $this->completeTask();
     }
 }

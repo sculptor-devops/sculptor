@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Logs\Logs;
@@ -50,9 +51,13 @@ class WebServer implements DomainAction
 
         $logrotate = File::get("{$domain->configs()}/logrotate.conf");
 
+        $certificates = $this->compiler->certificates($domain);
+
         $nginx = $this->compiler
             ->replace($nginx, $domain)
             ->replace('{DOMAINS}', $domain->serverNames())
+            ->replace('{CERTIFICATE}', $certificates['crt'])
+            ->replace('{CERTIFICATE_KEY}', $certificates['key'])
             ->value();
 
         $logrotate = $this->compiler

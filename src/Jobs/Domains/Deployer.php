@@ -49,28 +49,11 @@ class Deployer implements DomainAction
 
         $compiled = $this->compiler
             ->replace($template, $domain)
-            ->replace('{REPOSITORY}', $domain->vcs ?? $this->repo($domain))
+            ->replace('{REPOSITORY}', $domain->vcs ?? 'git@not_defined.com/unknown/something.git')
             ->value();
 
         return $this->compiler
             ->save("{$domain->root()}/deploy.php", $compiled);
-    }
-
-    private function repo(Domain $domain): string
-    {
-        $vcs = $domain->vcs;
-
-        if ($domain->vcs == null && $domain->type == DomainType::LARAVEL) {
-            $vcs = 'https://github.com/laravel/laravel.git';
-        }
-
-        if ($domain->vcs == null && $domain->type == DomainType::GENERIC) {
-            $vcs = 'https://github.com/laravel/laravel.git';
-        }
-
-        $domain->update(['vcs' => $vcs]);
-
-        return $domain->vcs;
     }
 
     /**

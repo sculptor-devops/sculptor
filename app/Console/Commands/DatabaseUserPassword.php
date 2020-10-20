@@ -39,7 +39,7 @@ class DatabaseUserPassword extends CommandBase
      * @return int
      * @throws Exception
      */
-    public function handle(Database $actions)
+    public function handle(Database $actions): int
     {
         $database = $this->argument('database');
 
@@ -49,16 +49,12 @@ class DatabaseUserPassword extends CommandBase
 
         $host = $this->argument('host');
 
-        $this->info("Creating {$name}@{$host} on {$database}...");
+        $this->startTask("Updating password {$name}@{$host} on {$database}...");
 
-        if ($actions->password($name, $password, $database, $host)) {
-            $this->info("Done.");
-
-            return 0;
+        if (!$actions->password($name, $password, $database, $host)) {
+            return $this->errorTask("Error: {$actions->error()}");
         }
 
-        $this->error("Error: {$actions->error()}");
-
-        return 1;
+        return $this->completeTask();
     }
 }

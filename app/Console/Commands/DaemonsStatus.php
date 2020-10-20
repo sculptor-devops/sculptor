@@ -45,7 +45,7 @@ class DaemonsStatus extends CommandBase
                 return [
                     'name' => $item['name'],
                     'group' => Str::upper($item['group']),
-                    'running' => $this->YesNo($item['active'])
+                    'running' => $this->yesNo($item['active'])
                 ];
             });
 

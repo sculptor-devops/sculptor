@@ -42,14 +42,12 @@ class DomainDisable extends CommandBase
     {
         $name = $this->argument('name');
 
-        if ($domains->disable($name)) {
-            $this->info('Done.');
+        $this->startTask("Domain disable {$name}");
 
-            return 0;
+        if (!$domains->disable($name)) {
+            return $this->errorTask($domains->error());
         }
 
-        $this->error($domains->error());
-
-        return 1;
+        return $this->completeTask();
     }
 }

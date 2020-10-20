@@ -24,6 +24,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string install
  * @property string status
  * @property bool www
+ * @property string email
  */
 class Domain extends Model implements Transformable, EncryptInterface
 {
@@ -79,13 +80,20 @@ class Domain extends Model implements Transformable, EncryptInterface
         return $this->belongsTo(DatabaseUser::class);
     }
 
-    public function serverNames(): string
+    public function serverName(): string
     {
         $name = $this->name;
 
         if ($this->www) {
             $name = "{$this->name} www.{$this->name}";
         }
+
+        return $name;
+    }
+
+    public function serverNames(): string
+    {
+        $name = $this->serverName();
 
         if ($this->alias == null) {
             return $name;

@@ -43,16 +43,12 @@ class DatabaseDelete extends CommandBase
     {
         $name = $this->argument('name');
 
-        $this->info("Deleting {$name}...");
+        $this->startTask("Deleting domain {$name}...");
 
-        if ($actions->delete($name)) {
-            $this->info("Done.");
-
-            return 0;
+        if (!$actions->delete($name)) {
+            return $this->errorTask("Error: {$actions->error()}");
         }
 
-        $this->error("Error: {$actions->error()}");
-
-        return 1;
+        return $this->completeTask();
     }
 }
