@@ -6,14 +6,14 @@ use Illuminate\Support\Str;
 use Sculptor\Agent\Actions\Daemons;
 use Sculptor\Agent\Support\CommandBase;
 
-class DaemonsStatus extends CommandBase
+class DaemonsShow extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'daemons:status';
+    protected $signature = 'daemons:show';
 
     /**
      * The console command description.

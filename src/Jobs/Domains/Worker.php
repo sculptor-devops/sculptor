@@ -65,6 +65,75 @@ class Worker implements DomainAction
     {
         Logs::actions()->debug("Deleting worker for {$domain->name}");
 
+        return $this->disable($domain);
+    }
+
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function enable(Domain $domain): bool
+    {
+        $worker = File::get("{$domain->root()}/worker.conf");
+
+        if (!File::put("/etc/supervisor/conf.d/{$domain->name}.conf", $worker)) {
+            throw new Exception("Cannot write worker configuration of {$domain->name}");
+        }
+
+        $this->reload($domain);
+
+        $this->runner
+            ->runOrFail([
+                'supervisorctl',
+                'start',
+                "{$domain->name}:*"
+            ]);
+
         return true;
+    }
+
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function disable(Domain $domain): bool
+    {
+        if (!File::exists("/etc/supervisor/conf.d/{$domain->name}.conf")) {
+            return true;
+        }
+
+        $this->runner
+            ->runOrFail([
+                'supervisorctl',
+                'stop',
+                "{$domain->name}:*"
+            ]);
+
+
+        if (!File::delete("/etc/supervisor/conf.d/{$domain->name}.conf")) {
+            throw new Exception("Cannot delete worker configuration of {$domain->name}");
+        }
+
+        $this->reload($domain);
+
+        return true;
+    }
+
+    private function reload(Domain $domain): void
+    {
+        $runner = $this->runner
+            ->from($domain->root());
+
+        $runner->runOrFail([
+            'supervisorctl',
+            'reread'
+        ]);
+
+        $runner->runOrFail([
+            'supervisorctl',
+            'update'
+        ]);
     }
 }

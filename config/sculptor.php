@@ -23,5 +23,15 @@ return [
             'ssh',
             'fail2ban'
         ]
+    ],
+
+    'monitors' => [
+        'rotate' => 60,
+        'disks' => [
+            [
+                'root' => env('MONITOR_DISK_ROOT', '/'),
+                'device' => env('MONITOR_DISK_DEVICE', 'sda')
+            ]
+        ]
     ]
 ];
