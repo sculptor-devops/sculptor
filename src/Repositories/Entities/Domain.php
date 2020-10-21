@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Sculptor\Agent\Enums\DomainStatusType;
 
 /**
  * @property string type
@@ -25,6 +26,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string status
  * @property bool www
  * @property string email
+ * @property bool enabled
  */
 class Domain extends Model implements Transformable, EncryptInterface
 {
@@ -37,7 +39,21 @@ class Domain extends Model implements Transformable, EncryptInterface
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'alias', 'type', 'status', 'enabled', 'www', 'certificate', 'user', 'home', 'install', 'deployer', 'vcs_tye', 'vcs' ];
+    protected $fillable = [
+        'name',
+        'alias',
+        'type',
+        'status',
+        'enabled',
+        'www',
+        'certificate',
+        'user',
+        'home',
+        'install',
+        'deployer',
+        'vcs_tye',
+        'vcs'
+    ];
 
     public function root(): string
     {
@@ -100,5 +116,12 @@ class Domain extends Model implements Transformable, EncryptInterface
         }
 
         return "{$name} {$this->alias}";
+    }
+
+    public function deployed(): bool
+    {
+        return $this->enabled && in_array($this->status, [
+                DomainStatusType::DEPLOYED
+            ]);
     }
 }

@@ -2,24 +2,24 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Domains;
+use Sculptor\Agent\Actions\Crontabs;
 use Sculptor\Agent\Support\CommandBase;
 
-class DomainConfigure extends CommandBase
+class DomainCrontab extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'domain:configure {name}';
+    protected $signature = 'domain:crontab';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Configure a domain, this will take configs templates and compile all placeholder fields';
+    protected $description = 'Update domains crontab';
 
     /**
      * Create a new command instance.
@@ -34,20 +34,18 @@ class DomainConfigure extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Domains $domains
+     * @param Crontabs $crontabs
      * @return int
-     * @throws \Exception
      */
-    public function handle(Domains $domains): int
+    public function handle(Crontabs $crontabs): int
     {
-        $name = $this->argument('name');
+        $this->startTask("Update domains crontab");
 
-        $this->startTask("Configure domain {$name}");
-
-        if (!$domains->configure($name)) {
-            return $this->errorTask($domains->error());
+        if (!$crontabs->update()) {
+            return $this->errorTask("{$crontabs->error()}");
         }
 
         return $this->completeTask();
     }
+
 }

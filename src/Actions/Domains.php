@@ -18,6 +18,7 @@ use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Jobs\DomainDisable;
 use Sculptor\Agent\Jobs\DomainEnable;
+use Sculptor\Agent\Jobs\DomainWorkerEnable;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
@@ -72,10 +73,8 @@ class Domains implements ActionInterface
             $this->action
                 ->run(new DomainCreate($domain));
         } catch (Exception $e) {
-            $this->action
-                ->report("Create domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Create domain {$name}: {$e->getMessage()}");
         }
 
         return true;
@@ -99,10 +98,8 @@ class Domains implements ActionInterface
 
             $domain->delete();
         } catch (Exception $e) {
-            $this->action
-                ->report("Deploy domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Deploy domain {$name}: {$e->getMessage()}");
         }
 
         return true;
@@ -129,10 +126,8 @@ class Domains implements ActionInterface
                     ->run(new DaemonService($service, DaemonOperationsType::RELOAD));
             }
         } catch (Exception $e) {
-            $this->action
-                ->report("Configure domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Configure domain {$name}: {$e->getMessage()}");
         }
 
         $this->machine
@@ -158,10 +153,8 @@ class Domains implements ActionInterface
             $this->action
                 ->runIndefinite(new DomainDeploy($domain, $command));
         } catch (Exception $e) {
-            $this->action
-                ->report("Deploy domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Deploy domain {$name}: {$e->getMessage()}");
         }
 
         $this->machine
@@ -187,10 +180,8 @@ class Domains implements ActionInterface
             $this->action
                 ->runAndExit(new DomainDeploy($domain, $command));
         } catch (Exception $e) {
-            $this->action
-                ->report("Deploy domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Deploy domain {$name}: {$e->getMessage()}");
         }
 
         $this->machine
@@ -241,10 +232,8 @@ class Domains implements ActionInterface
             $this->action
                 ->run(new DomainEnable($domain));
         } catch (Exception $e) {
-            $this->action
-                ->report("Enable domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Enable domain {$name}: {$e->getMessage()}");
         }
 
         $domain->update(['enabled' => true]);
@@ -268,10 +257,8 @@ class Domains implements ActionInterface
             $this->action
                 ->run(new DomainDisable($domain));
         } catch (Exception $e) {
-            $this->action
-                ->report("Disable domain: {$e->getMessage()}");
-
-            return false;
+            return $this->action
+                ->report("Disable domain {$name}: {$e->getMessage()}");
         }
 
         $domain->update(['enabled' => false]);

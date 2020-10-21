@@ -39,7 +39,8 @@ class Crontab implements DomainAction
 
         $template = File::get("{$domain->configs()}/cron.conf");
 
-        $compiled = $this->compiler->replace($template, $domain)
+        $compiled = $this->compiler
+            ->replace($template, $domain)
             ->value();
 
         return $this->compiler
@@ -58,14 +59,12 @@ class Crontab implements DomainAction
         return true;
     }
 
-    /* private function add(string $filename, string $destination, string $user): bool
+    public function update(string $filename, string $user): bool
     {
-        if (!$this->write($destination, $this->template($filename), "Cannot write to {$destination}")) {
-            return false;
-        }
-
-        $this->command(['crontab', '-u', $user, $destination]);
+        $this->runner
+            ->from(SCULPTOR_HOME)
+            ->runOrFail(['crontab', '-u', $user, $filename]);
 
         return true;
-    }*/
+    }
 }

@@ -93,11 +93,29 @@ class Action
 
     /**
      * @param string $message
+     * @return bool
      */
-    public function report(string $message): void
+    public function report(string $message): bool
     {
         Logs::actions()->error($message);
 
         $this->error = $message;
+
+        return false;
+    }
+
+    public function job(string $description, ITraceable $job): bool
+    {
+        Logs::actions()->info($description);
+
+        try {
+            $this->run($job);
+        } catch (Exception $e) {
+            $this->report("{$description}: {$e->getMessage()}");
+
+            return false;
+        }
+
+        return true;
     }
 }
