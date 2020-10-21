@@ -3,6 +3,14 @@
 use Sculptor\Agent\Enums\DaemonGroupType;
 
 return [
+    'database' => [
+        'driver' => 'mysql',
+        'host' => '127.0.0.1',
+        'database' => 'mysql',
+        'username' => 'root',
+        'password' => 'password'
+    ],
+
     'php' => [
         'version' => env('PHP_VERSION', '7.4')
     ],

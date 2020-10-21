@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Sculptor\Foundation\Contracts\Database;
 use Sculptor\Foundation\Contracts\Runner;
@@ -41,7 +42,7 @@ class SculptorServiceProvider extends ServiceProvider
     private function password(): ?string
     {
         try {
-            $password = file_get_contents(DB_SERVER_PASSWORD);
+            $password = File::get(DB_SERVER_PASSWORD);
 
             if (!$password) {
                 return null;
@@ -55,14 +56,10 @@ class SculptorServiceProvider extends ServiceProvider
 
     private function connection(): void
     {
-        config([
-            'database.connections.db_server' => [
-                'driver' => 'mysql',
-                'host' => '127.0.0.1',
-                'database' => 'mysql',
-                'username' => 'root',
-                'password' => $this->password()
-            ]
-        ]);
+        $database = config('sculptor.database');
+
+        $database['password'] = $this->password();
+
+        config([ 'database.connections.db_server' => $database ]);
     }
 }
