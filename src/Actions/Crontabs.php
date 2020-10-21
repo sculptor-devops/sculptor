@@ -2,7 +2,6 @@
 
 namespace Sculptor\Agent\Actions;
 
-
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Actions\Support\Action;

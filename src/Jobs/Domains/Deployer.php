@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\DomainStatusType;
-use Sculptor\Agent\Enums\DomainType;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;

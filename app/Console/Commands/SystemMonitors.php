@@ -1,11 +1,7 @@
 <?php
 
-
 namespace App\Console\Commands;
 
-
-use Exception;
-use Sculptor\Agent\Logs\Upgrades;
 use Sculptor\Agent\Monitors\Collector;
 use Sculptor\Agent\Monitors\Formatter;
 use Sculptor\Agent\Support\CommandBase;

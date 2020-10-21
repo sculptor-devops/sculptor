@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Console\Commands;
-
 
 use Exception;
 use Sculptor\Agent\Repositories\DomainRepository;

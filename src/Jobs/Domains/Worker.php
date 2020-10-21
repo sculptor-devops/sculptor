@@ -10,7 +10,6 @@ use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Services\Daemons;
-use Sculptor\Foundation\Support\Replacer;
 
 class Worker implements DomainAction
 {

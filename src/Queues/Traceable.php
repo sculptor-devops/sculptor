@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Queues;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use ReflectionClass;
 use Sculptor\Agent\Enums\QueueStatusType;
 use Sculptor\Agent\Exceptions\QueueJobRefUndefinedException;
 use Sculptor\Agent\Logs\Logs;
@@ -105,7 +106,7 @@ trait Traceable
             throw new QueueJobRefUndefinedException();
         }
 
-        $name = get_class($this);
+        $name = ((new ReflectionClass($this))->getShortName());
 
         Logs::job()->debug("Job {$name} status changed to {$status}", [ 'uuid' => $this->ref->uuid ]);
 

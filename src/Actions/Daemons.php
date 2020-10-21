@@ -5,7 +5,6 @@ namespace Sculptor\Agent\Actions;
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Report;
-use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Exceptions\ActionJobRunException;
 use Sculptor\Agent\Exceptions\DaemonInvalidException;

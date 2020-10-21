@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Sculptor\Agent\Actions;
-
 
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;

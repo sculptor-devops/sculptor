@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands;
 
-
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
-use Sculptor\Agent\Actions\Database;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Support\CommandBase;
 
