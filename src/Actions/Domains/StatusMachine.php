@@ -36,19 +36,20 @@ class StatusMachine
             return true;
         }
 
-        if ($to == DomainStatusType::DEPLOYED && in_array($from, [
-                DomainStatusType::NEW,
-                DomainStatusType::CONFIGURED,
-                DomainStatusType::DEPLOYED
-            ])) {
+        if ($to == DomainStatusType::DEPLOYED && in_array($from,
+                [
+                    DomainStatusType::CONFIGURED,
+                    DomainStatusType::DEPLOYED
+                ])) {
             return true;
         }
 
-        if ($to == DomainStatusType::SETUP && in_array($from, [
-                DomainStatusType::CONFIGURED,
-                DomainStatusType::SETUP,
-                DomainStatusType::NEW
-            ])) {
+        if ($to == DomainStatusType::SETUP && in_array($from,
+                [
+                    DomainStatusType::CONFIGURED,
+                    DomainStatusType::SETUP,
+                    DomainStatusType::NEW
+                ])) {
             return true;
         }
 
