@@ -234,6 +234,10 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            if ($domain->status != DomainStatusType::DEPLOYED) {
+                throw new Exception("Cannot enable a domain in status {$domain->status}, must be deployed");
+            }
+
             $this->action
                 ->run(new DomainEnable($domain));
         } catch (Exception $e) {

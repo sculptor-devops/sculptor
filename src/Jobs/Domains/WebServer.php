@@ -84,12 +84,18 @@ class WebServer implements DomainAction
             throw new Exception("Public directory {$domain->home()} not exists");
         }
 
+        $config = "/etc/nginx/sites-available/{$domain->name}.conf";
+
+        if (File::exists($config)) {
+            File::delete($config);
+        }
+
         $enabled = $this->runner
             ->from('/etc/nginx/sites-enabled/')
             ->run([
                 'ln',
                 "-s",
-                "/etc/nginx/sites-available/{$domain->name}.conf",
+                $config,
                 '/etc/nginx/sites-enabled/'
             ]);
 
