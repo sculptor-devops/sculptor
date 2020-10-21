@@ -3,8 +3,7 @@
 namespace Sculptor\Agent\Backup\Archives;
 
 use Aws\S3\S3Client;
-use Eppak\Configuration;
-use Eppak\Contracts\Archive;
+use Sculptor\Agent\Backup\Contracts\Archive;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
 
@@ -17,21 +16,21 @@ class S3 implements Archive
 
     /**
      * S3 constructor.
-     * @param Configuration $configuration
      */
-    public function __construct(Configuration $configuration)
+    public function __construct()
 	{
 		$client = new S3Client([
 		    'credentials' => [
-		        'key'    => $configuration->get('s3.key', 'KEY'),
-		        'secret' => $configuration->get('s3.secret', 'SECRET'),
+		        'key'    => config('sculptor.backup.drivers.s3.key'),
+		        'secret' => config('sculptor.backup.drivers.s3.secret'),
 		    ],
             'version' => 'latest',
-		    'region' => $configuration->get('s3.region', 'REGION'),
-		    'endpoint' => $configuration->get('s3.endpoint', 'https://example.com/end-point')
+		    'region' => config('sculptor.backup.drivers.s3.region'),
+		    'endpoint' => config('sculptor.backup.drivers.s3.endpoint')
 		]);
 
-		$adapter = new AwsS3Adapter($client, $configuration->get('s3.bucket'));
+		$adapter = new AwsS3Adapter($client, config('sculptor.backup.drivers.s3.bucket'));
+
 		$this->filesystem = new Filesystem($adapter);
 	}
 

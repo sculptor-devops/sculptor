@@ -31,6 +31,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
          $schedule->command('system:monitors', [ 'write' ])->everyMinute();
+
+         // $schedule->command('queue:restart', [ 'write' ])->daily();
     }
 
     /**

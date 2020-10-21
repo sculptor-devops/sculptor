@@ -2,10 +2,11 @@
 
 namespace Sculptor\Agent\Backup;
 
+use Exception;
 use Sculptor\Agent\Backup\Archives\S3;
 use Sculptor\Agent\Backup\Dumper\Factory;
-use Exception;
 use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Repositories\Entities\Backup as Item;
 
 /**
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -16,15 +17,25 @@ class Backup
 {
     public function __construct()
     {
-        
+
     }
 
-    public function create(Backup $backup): bool
+    public function create(Item $backup): bool
     {
 
     }
 
-    public function rotate(Backup $backup): bool
+    public function rotate(Item $backup): bool
+    {
+
+    }
+
+    public function archives(Item $backup): array
+    {
+
+    }
+
+    public function check(Item $backup): bool
     {
 
     }
@@ -94,7 +105,7 @@ class Backup
         }
 
         $filename = $this->db($name);
-        $zip = new PkZip($this->archive($name));
+        $zip = new Zip($this->archive($name));
         $dumper = Factory::make($config);
 
         $dumper->dump($filename);
@@ -109,7 +120,7 @@ class Backup
 		return;
 	}
 
-        $zip = new PkZip($this->archive($name));
+        $zip = new Zip($this->archive($name));
 
         foreach ($files as $file) {
             $zip->directory($file);

@@ -4,7 +4,7 @@ namespace Sculptor\Agent\Backup;
 
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Archives\S3;
-use Sculptor\Agent\Backup\Compression\PkZip;
+use Sculptor\Agent\Backup\Compression\Zip;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Dumper\Factory;
 use Sculptor\Agent\Repositories\Entities\Domain;
@@ -24,13 +24,13 @@ class Database
      */
     private $tmp;
 
-    public function __construct()
+    public function __construct(Archive $archive, string $destination)
     {
-        $this->tmp = 'sculptor tmp';
+        $this->tmp = config('sculptor.backup.temp');
 
-        $this->destination = '';
+        $this->destination = $destination;
 
-        $this->archive = null;
+        $this->archive = $archive;
     }
 
     public function create(Domain $domain): bool
@@ -72,7 +72,7 @@ class Database
 
         $dumper->dump($filename);
 
-        $zip = new PkZip($this->archive($name));
+        $zip = new Zip($this->archive($name));
 
         $zip->file($filename);
 
@@ -85,7 +85,7 @@ class Database
             return;
         }
 
-        $zip = new PkZip($this->archive($name));
+        $zip = new Zip($this->archive($name));
 
         foreach ($files as $file) {
             $zip->directory($file);

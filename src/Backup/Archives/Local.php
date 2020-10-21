@@ -2,7 +2,7 @@
 
 namespace Sculptor\Agent\Backup\Archives;
 
-use Eppak\Contracts\Archive;
+use Sculptor\Agent\Backup\Contracts\Archive;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
@@ -17,11 +17,13 @@ class Local implements Archive
 
     /**
      * Local constructor.
-     * @param $path
      */
-    public function __construct($path)
+    public function __construct()
     {
+        $path = config('sculptor.backup.drivers.local.path');
+
         $adapter = new LocalAdapter($path);
+
         $this->filesystem = new Filesystem($adapter);
     }
 
