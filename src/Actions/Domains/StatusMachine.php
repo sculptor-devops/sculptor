@@ -18,6 +18,10 @@ class StatusMachine
      */
     public function can(string $from, string $to): bool
     {
+        if (!config('sculptor.domains.state-machine')) {
+            return true;
+        }
+
         if ($to == DomainStatusType::NEW && in_array($from,
                 [
                     DomainStatusType::NEW,

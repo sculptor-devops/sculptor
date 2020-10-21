@@ -3,6 +3,10 @@
 use Sculptor\Agent\Enums\DaemonGroupType;
 
 return [
+    'domains' => [
+        'state-machine' => true
+    ],
+
     'database' => [
         'driver' => 'mysql',
         'host' => '127.0.0.1',
