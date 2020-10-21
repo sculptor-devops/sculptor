@@ -42,6 +42,8 @@ class DomainCreate extends CommandBase
 
         $type = $this->argument('type');
 
+        $this->startTask("Create domain {$name} type {$type}");
+
         if (!$domains->create($name, $type)) {
             return $this->errorTask($domains->error());
         }

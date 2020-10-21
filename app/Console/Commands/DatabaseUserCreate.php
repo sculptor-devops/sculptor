@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use Exception;
 use Sculptor\Agent\Actions\Database;
+use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Support\CommandBase;
 
 class DatabaseUserCreate extends CommandBase
@@ -14,7 +15,7 @@ class DatabaseUserCreate extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'database:user {database} {name} {password} {host=localhost}';
+    protected $signature = 'database:user {database} {name} {password?} {host=localhost}';
 
     /**
      * The console command description.
@@ -22,6 +23,7 @@ class DatabaseUserCreate extends CommandBase
      * @var string
      */
     protected $description = 'Create a database user';
+
     /**
      * Create a new command instance.
      *
@@ -36,11 +38,14 @@ class DatabaseUserCreate extends CommandBase
      * Execute the console command.
      *
      * @param Database $actions
+     * @param PasswordGenerator $passwords
      * @return int
      * @throws Exception
      */
-    public function handle(Database $actions): int
+    public function handle(Database $actions, PasswordGenerator $passwords): int
     {
+        $created = false;
+
         $database = $this->argument('database');
 
         $name = $this->argument('name');
@@ -51,10 +56,24 @@ class DatabaseUserCreate extends CommandBase
 
         $this->startTask("Creating user {$name}@{$host} on {$database}...");
 
+        if ($password == null) {
+            $created = true;
+
+            $password = $passwords->create();
+        }
+
         if (!$actions->user($name, $password, $database, $host)) {
             return $this->errorTask("Error: {$actions->error()}");
         }
 
-        return $this->completeTask();
+        $this->completeTask();
+
+        if (!$created) {
+            return 0;
+        }
+
+        $this->info("Password generated: {$password}");
+
+        return 0;
     }
 }

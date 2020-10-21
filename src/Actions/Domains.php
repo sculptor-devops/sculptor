@@ -201,13 +201,18 @@ class Domains implements ActionInterface
     {
         Logs::actions()->info("Setup domain {$name}: {$parameter}={$value}");
 
-        $domain = $this->domains
-            ->byName($name);
+        try {
+            $domain = $this->domains
+                ->byName($name);
 
-        if ($this->machine
-            ->can($domain->status, DomainStatusType::SETUP)) {
-            $this->parameters
-                ->set($domain, $parameter, $value);
+            if ($this->machine
+                ->can($domain->status, DomainStatusType::SETUP)) {
+                $this->parameters
+                    ->set($domain, $parameter, $value);
+            }
+        } catch (Exception $e) {
+            return $this->action
+                ->report("Enable domain {$name}: {$e->getMessage()}");
         }
 
         $this->machine

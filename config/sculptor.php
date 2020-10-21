@@ -15,6 +15,13 @@ return [
         'version' => env('PHP_VERSION', '7.4')
     ],
 
+    'security' => [
+        'password' => [
+            'min' => 10,
+            'max' => 20
+        ]
+    ],
+
     'services' => [
         DaemonGroupType::DATABASE => [
             'mysql'

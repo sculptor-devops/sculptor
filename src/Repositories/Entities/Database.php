@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
-use Sculptor\Agent\Actions\Domains;
 
 /**
  * Class Database.
@@ -33,8 +32,8 @@ class Database extends Model implements Transformable
         return $this->hasMany(DatabaseUser::class);
     }
 
-    public function domains(): BelongsTo
+    public function domains(): HasMany
     {
-        return $this->belongsTo(Domains::class);
+        return $this->hasMany(Domain::class);
     }
 }

@@ -78,6 +78,7 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
         switch ($type) {
             case DomainType::LARAVEL:
                 return $this->create([
+                    'name' => $name,
                     'type' => $type,
                     'certificate' => CertificatesTypes::SELF_SIGNED,
                     'user' => SITES_USER,
@@ -89,6 +90,7 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
 
             case DomainType::GENERIC:
                 return $this->create([
+                    'name' => $name,
                     'type' => $type,
                     'certificate' => CertificatesTypes::SELF_SIGNED,
                     'user' => SITES_USER,

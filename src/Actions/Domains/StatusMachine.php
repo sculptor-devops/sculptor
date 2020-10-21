@@ -46,7 +46,8 @@ class StatusMachine
 
         if ($to == DomainStatusType::SETUP && in_array($from, [
                 DomainStatusType::CONFIGURED,
-                DomainStatusType::SETUP
+                DomainStatusType::SETUP,
+                DomainStatusType::NEW
             ])) {
             return true;
         }

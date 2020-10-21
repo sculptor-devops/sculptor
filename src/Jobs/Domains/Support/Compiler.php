@@ -52,7 +52,7 @@ class Compiler
     {
         $certs = "{$domain->root()}/certs/{$domain->name}";
 
-        switch ($domain->type) {
+        switch ($domain->certificate) {
             case CertificatesTypes::SELF_SIGNED:
             case CertificatesTypes::CUSTOM:
                 return [ 'crt' => "{$certs}.crt", 'key' => "{$certs}.key"];
