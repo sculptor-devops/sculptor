@@ -15,7 +15,7 @@ class SculptorServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->connection();
 
@@ -33,7 +33,7 @@ class SculptorServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }

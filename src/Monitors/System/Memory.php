@@ -31,7 +31,7 @@ class Memory
         return [
             "{$this->name()}.total" => ceil($mem[1] * 1024),
             "{$this->name()}.used" => ceil($mem[2] * 1024),
-            "{$this->name()}.percent" => $percent
+            // "{$this->name()}.percent" => $percent
         ];
     }
 

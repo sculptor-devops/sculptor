@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use Exception;
 use Sculptor\Agent\Logs\Upgrades;
 use Sculptor\Agent\Monitors\Collector;
+use Sculptor\Agent\Monitors\Formatter;
 use Sculptor\Agent\Support\CommandBase;
 
 class SystemMonitors extends CommandBase
@@ -39,10 +40,10 @@ class SystemMonitors extends CommandBase
      * Execute the console command.
      *
      * @param Collector $monitors
+     * @param Formatter $formatter
      * @return int
-     * @throws Exception
      */
-    public function handle(Collector $monitors): int
+    public function handle(Collector $monitors, Formatter $formatter): int
     {
         $operation = $this->argument('operation');
 
@@ -62,7 +63,37 @@ class SystemMonitors extends CommandBase
             case 'show':
                 $this->completeTask();
 
-                $values = $monitors->last();
+                $values = $this->toKeyValue($monitors->last());
+
+                foreach ($values as &$value) {
+                    $value['value'] = $formatter->value($value['key'], $value['value']);
+
+                    $value['key'] = $formatter->name($value['key']);
+                }
+
+
+                $this->table(['Monitor', 'Value'], $values);
+
+                return 0;
+
+            case 'all':
+                $this->completeTask();
+
+                $values = collect($monitors->read());
+
+                $headers = [];
+
+                foreach ($this->toKeyValueHeaders($values) as $header) {
+                    $headers[] = $formatter->name($header);
+                }
+
+                $this->table($headers, $values->map(function ($items) use ($formatter) {
+                    foreach ($items as $key => $value) {
+                        $items[$key] = $formatter->value($key, $value);
+                    }
+
+                    return $items;
+                }));
 
                 return 0;
         }

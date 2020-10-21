@@ -67,8 +67,8 @@ class UnattendedUpdatesTest extends TestCase
 
         $this->assertEquals(Carbon::parse(1589871465), $parsed->start());
 
-        $this->assertEquals(Carbon::parse(1591855337), $parsed->end());
+        $this->assertEquals(Carbon::parse(1589871511), $parsed->end());
 
-        $this->assertCount(592, $parsed);
+        $this->assertCount(91, $parsed);
     }
 }

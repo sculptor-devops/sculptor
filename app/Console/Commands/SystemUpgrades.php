@@ -71,7 +71,10 @@ class SystemUpgrades extends CommandBase
         $recently = false;
 
         foreach ($logs->events() as $event) {
-            $events[] = [ 'index' => $index, 'upgrade' => $event->toString() ];
+            $packages = count($logs->parse($event)
+                ->packages());
+
+            $events[] = [ 'index' => $index, 'upgrade' => $event->toString(), 'packages' => $packages];
 
             if ($event->isYesterday() || $event->isToday()) {
                 $recently = true;
@@ -85,7 +88,7 @@ class SystemUpgrades extends CommandBase
             [ 'Upgraded recently', $this->yesNo($recently) ]
         ]);
 
-        $this->table(['Index', 'Event'], $events);
+        $this->table(['Index', 'Event', 'Packages'], $events);
 
         $this->info('Use system:upgrades <INDEX> to show complete event');
     }
@@ -97,17 +100,29 @@ class SystemUpgrades extends CommandBase
      */
     private function show(Upgrades $logs, int $index): void
     {
+        $result = [];
+
+        $upgraded = [];
+
         $events = $logs->events();
 
         $log = $logs->parse($events[$index - 1]);
 
-        $result = [];
+        $packages = $log->packages();
+
+        foreach ($packages as $package) {
+            $upgraded[] = [ $package ];
+        }
 
         foreach ($log as $row) {
             $result[] = [ $row ];
         }
 
         $this->table([], $result);
+
+        $this->info("Package upgraded");
+
+        $this->table([], $upgraded);
 
         $this->info("Between {$log->start()} and {$log->end()}");
     }

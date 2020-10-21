@@ -15,9 +15,9 @@ class Disk
         $percent = (100 - ceil(($free / $total) * 100));
 
         return [
-            "{$this->name()}.{$device}.free" => $free,
-            "{$this->name()}.{$device}.total" => $total,
-            "{$this->name()}.{$device}.percent" => $percent
+            "{$this->name()}.free.{$device}" => $free,
+            "{$this->name()}.total.{$device}" => $total,
+            // "{$this->name()}.percent.{$device}" => $percent
         ];
     }
 

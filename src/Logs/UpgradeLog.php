@@ -2,8 +2,10 @@
 
 namespace Sculptor\Agent\Logs;
 
+use Illuminate\Support\Str;
 use Iterator;
 use Carbon\Carbon;
+use Sculptor\Foundation\Support\Replacer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -14,20 +16,20 @@ use Carbon\Carbon;
 class UpgradeLog implements Iterator
 {
     /**
-    * @var Carbon
-    */
+     * @var Carbon
+     */
     private $start;
     /**
-    * @var Carbon
-    */
+     * @var Carbon
+     */
     private $end;
     /**
-    * @var array
-    */
+     * @var array
+     */
     private $lines = [];
     /**
-    * @var int
-    */
+     * @var int
+     */
     private $position = 0;
 
     public function __construct(array $lines = [], Carbon $start = null, Carbon $end = null)
@@ -90,5 +92,34 @@ class UpgradeLog implements Iterator
     public function end(): Carbon
     {
         return $this->end;
+    }
+
+    public function packages(): array
+    {
+        $packages = [];
+
+        foreach ($this->lines as $line) {
+            if (Str::startsWith($line, 'Setting up ')) {
+                $package = Replacer::make($line)
+                    ->replace('Setting up ', '')
+                    ->replace(' ...', '')
+                    ->value();
+
+                $packages[] = $package;
+            }
+        }
+
+        return $packages;
+    }
+
+    public function recent(): bool
+    {
+        $date = $this->start;
+
+        if ($date->isYesterday() || $date->isToday()) {
+            return true;
+        }
+
+        return false;
     }
 }

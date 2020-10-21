@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Support;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class CommandBase extends Command
 {
@@ -52,5 +53,21 @@ class CommandBase extends Command
     public function yesNo(bool $check): string
     {
         return $check ? '<info>YES</info>' : '<error>NO</error>';
+    }
+
+    public function toKeyValue(array $values): array
+    {
+        $result = [];
+
+        foreach ($values as $key => $value) {
+            $result[] = [ 'key' => $key, 'value' => $value];
+        }
+
+        return $result;
+    }
+
+    public function toKeyValueHeaders(Collection $values): array
+    {
+        return collect($values->first())->keys()->toArray();
     }
 }

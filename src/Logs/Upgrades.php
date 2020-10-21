@@ -131,6 +131,17 @@ class Upgrades
     }
 
     /**
+     * @return UpgradeLog
+     * @throws Exception
+     */
+    public function last(): UpgradeLog
+    {
+        $events = collect($this->events());
+
+        return $this->parse($events->last());
+    }
+
+    /**
      * @param string $line
      * @param Carbon $date
      * @return bool
@@ -139,13 +150,13 @@ class Upgrades
     private function parseStart(string $line, Carbon $date): bool
     {
         if (Str::startsWith($line, $this->startTag) && !$this->opened) {
-            $date = new Carbon(Str::after($line, ':'));
+            $now = new Carbon(Str::after($line, ':'));
 
-            $this->opened = $date->day == $date->day &&
-                $date->month == $date->month &&
-                $date->year == $date->year;
+            $this->opened = ($date->day == $now->day &&
+                $date->month == $now->month &&
+                $date->year == $now->year) || $date == null;
 
-            $this->startDate = ($this->startDate == null && $this->opened) ? $date : $this->startDate;
+            $this->startDate = ($this->startDate == null && $this->opened) ? $now : $this->startDate;
 
             return true;
         }
@@ -176,7 +187,8 @@ class Upgrades
      */
     public function enable(): bool
     {
-        return $this->daemons->enable($this->service);
+        return $this->daemons
+            ->enable($this->service);
     }
 
     /**
@@ -184,6 +196,7 @@ class Upgrades
      */
     public function active(): bool
     {
-        return $this->daemons->active($this->service);
+        return $this->daemons
+            ->active($this->service);
     }
 }

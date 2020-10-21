@@ -35,11 +35,11 @@ class Io
         foreach ($stats[0]['disk'] as $disk) {
             if ($disk['disk_device'] == $device) {
                 return [
-                    "{$this->name()}.{$device}.tps" => $disk['tps'],
-                    "{$this->name()}.{$device}.kbreads" => $disk["kB_read/s"],
-                    "{$this->name()}.{$device}.kbwrtns" => $disk["kB_wrtn/s"],
-                    "{$this->name()}.{$device}.kbread" => $disk['kB_read'],
-                    "{$this->name()}.{$device}.kbwrtn" => $disk['kB_wrtn']
+                    "{$this->name()}.tps.{$device}" => $disk['tps'],
+                    "{$this->name()}.kbreads.{$device}" => $disk["kB_read/s"],
+                    "{$this->name()}.kbwrtns.{$device}" => $disk["kB_wrtn/s"],
+                    // "{$this->name()}.kbread.{$device}" => $disk['kB_read'],
+                    // "{$this->name()}.kbwrtn.{$device}" => $disk['kB_wrtn']
                 ];
             }
         }
