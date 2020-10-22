@@ -77,7 +77,7 @@ class Certificates implements DomainAction
                 '-out',
                 "{$path}/{$domain->name}.crt",
                 '-keyout',
-                "{$path}{$domain->name}.key",
+                "{$path}/{$domain->name}.key",
                 '-subj',
                 "/CN={$domain->name}"
             ]);

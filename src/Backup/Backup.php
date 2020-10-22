@@ -3,130 +3,129 @@
 namespace Sculptor\Agent\Backup;
 
 use Exception;
-use Sculptor\Agent\Backup\Archives\S3;
-use Sculptor\Agent\Backup\Dumper\Factory;
-use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Enums\BackupStatusType;
+use Sculptor\Agent\Enums\BackupType;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
+use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 
 /**
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
  *  file that was distributed with this source code.
  */
-class Backup
+class Backup implements BackupInterface
 {
-    public function __construct()
-    {
+    /**
+     * @var Database
+     */
+    private $database;
+    /**
+     * @var Domain
+     */
+    private $domain;
 
+    public function __construct(Database $database, Domain $domain)
+    {
+        $this->database = $database;
+
+        $this->domain = $domain;
     }
 
+    /**
+     * @param Item $backup
+     * @return BackupInterface
+     * @throws Exception
+     */
+    private function resolve(Item $backup): BackupInterface
+    {
+        switch ($backup->type) {
+            case BackupType::DATABASE:
+                return $this->database;
+
+            case BackupType::DOMAIN:
+                return $this->domain;
+        }
+
+        throw new Exception("Invalid backup type {$backup->type}");
+    }
+
+    /**
+     * @param Item $backup
+     * @return bool
+     * @throws Exception
+     */
     public function create(Item $backup): bool
     {
+        try {
+            Logs::backup()->info("Backup {$backup->name()} create...");
 
+            $resolved = $this->resolve($backup);
+
+            $resolved->check($backup);
+
+            if ($resolved->create($backup)) {
+                $this->clean($backup);
+            }
+
+            Logs::backup()->info("Backup {$backup->name()} created");
+        } catch (Exception $e) {
+            Logs::backup()->error("Backup {$backup->name()} error: {$e->getMessage()}");
+
+            Logs::backup()->report($e);
+
+            $backup->change(BackupStatusType::ERROR, $e->getMessage());
+
+            return false;
+        }
+
+        $backup->change(BackupStatusType::OK);
+
+        return true;
     }
 
+    /**
+     * @param Item $backup
+     * @return bool
+     * @throws Exception
+     */
     public function rotate(Item $backup): bool
     {
-
+        throw new Exception("Not implemented");
     }
 
+    /**
+     * @param Item $backup
+     * @return array
+     * @throws Exception
+     */
     public function archives(Item $backup): array
     {
-
+        throw new Exception("Not implemented");
     }
 
+    /**
+     * @param Item $backup
+     * @return bool
+     * @throws Exception
+     */
     public function check(Item $backup): bool
     {
-
+        throw new Exception("Not implemented");
     }
 
-/*
-    private $archive;
-
-
-    public function __construct(S3 $archive)
+    public function clean(Item $backup): bool
     {
-        $this->archive = $archive;
-    }
+        try {
+            Logs::backup()->debug("Cleaning backup temp {$backup->name()}");
 
-    public function run()
-    {
-        $size = 0;
+            $resolved = $this->resolve($backup);
 
-        foreach ($this->configuration->get('sites') as $name => $value) {
-            try {
-                $destination = $this->configuration->get("sites.{$name}.destination");
-                $db = $this->configuration->get("sites.{$name}.assets.db");
-                $files = $this->configuration->get("sites.{$name}.assets.files");
+            return $resolved->clean($backup);
+        } catch (Exception $e) {
+            Logs::backup()->report($e);
 
-                $this->context->startTask("SITE {$name}", 'Creating...');
-
-                $this->files($name, $files);
-                $this->dump($name, $db);
-                $this->move($destination, $name);
-
-                $size += File::size($this->archive($name));
-                $this->context->endTask("SITE {$name}", 'Done', true);
-
-                File::delete($this->archive($name));
-            } catch (Exception $e) {
-                $this->context->endTask("SITE {$name}",false, $e->getMessage());
-            }
+            return false;
         }
-
-        $this->context->info("TOTAL " . hrSize($size));
     }
-
-    private function archive($name)
-    {
-        $temp = $this->configuration->get('tmp');
-
-        return "{$temp}/{$name}.zip";
-    }
-
-    private function db($name)
-    {
-        $temp = $this->configuration->get('tmp');
-
-        return "{$temp}/{$name}.sql";
-    }
-
-    private function move($destination, $name)
-    {
-        $to = "{$destination}/{$name}.zip";
-
-        $this->archive->put($to, File::get($this->archive($name)));
-    }
-
-    private function dump($name, $config)
-    {
-        if ($config == '') {
-            return;
-        }
-
-        $filename = $this->db($name);
-        $zip = new Zip($this->archive($name));
-        $dumper = Factory::make($config);
-
-        $dumper->dump($filename);
-
-        $zip->file($filename);
-        $zip->close();
-    }
-
-    private function files($name, $files)
-    {
-	if ($files == null) {
-		return;
-	}
-
-        $zip = new Zip($this->archive($name));
-
-        foreach ($files as $file) {
-            $zip->directory($file);
-        }
-
-        $zip->close();
-    }*/
-
 }

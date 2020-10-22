@@ -2,25 +2,25 @@
 
 namespace App\Console\Commands;
 
-use Exception;
+use Sculptor\Agent\Actions\Backups;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Support\CommandBase;
 
-class DomainSetup extends CommandBase
+class BackupSetup extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'domain:setup {name} {parameter} {value}';
+    protected $signature = 'backup:setup {id} {parameter} {value}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Setup domain parameter';
+    protected $description = 'Setup backup parameter';
     /**
      * Create a new command instance.
      *
@@ -34,24 +34,24 @@ class DomainSetup extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Domains $domains
+     * @param Backups $backups
      * @return int
-     * @throws Exception
      */
-    public function handle(Domains $domains): int
+    public function handle(Backups $backups): int
     {
-        $name = $this->argument('name');
+        $id = $this->argument('id');
 
         $parameter = $this->argument('parameter');
 
         $value = $this->argument('value');
 
-        $this->startTask("Domain setup {$name} {$parameter}={$value}");
+        $this->startTask("backup setup {$id} {$parameter}={$value}");
 
-        if (!$domains->setup($name, $parameter, $value)) {
-            return $this->errorTask("{$domains->error()} (Valid parameters: " . collect(Domains\Parameters::ALLOWED)->join(',') . ")");
+        if (!$backups->setup($id, $parameter, $value)) {
+            return $this->errorTask("{$backups->error()}");
         }
 
         return $this->completeTask();
     }
+
 }

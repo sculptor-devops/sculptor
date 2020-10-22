@@ -79,7 +79,13 @@ trait Traceable
 
         Logs::job()->report($error);
 
-        $this->changeStatus(QueueStatusType::ERROR, $error->getMessage());
+        $message = $error->getMessage();
+
+        if (app()->environment() == 'local') {
+            $message = "{$message}\n{$error->getTraceAsString()}";
+        }
+
+        $this->changeStatus(QueueStatusType::ERROR, $message);
     }
 
     /**

@@ -11,23 +11,21 @@ use Sculptor\Agent\Backup\Contracts\Compressor;
 class Zip implements Compressor
 {
     /**
-     * @var
+     * @var string|null
      */
     private $filename;
     /**
-     * @var Filesystem
+     * @var Filesystem|null
      */
     private $filesystem;
 
-    /**
-     * Zip constructor.
-     * @param string $filename
-     */
-    public function __construct(string $filename)
+    public function create(string $filename): Compressor
     {
         $this->filename = $filename;
 
         $this->open();
+
+        return $this;
     }
 
     private function open(): void
@@ -46,34 +44,55 @@ class Zip implements Compressor
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @param string|null $path
+     * @return Compressor
      * @throws FileNotFoundException
      */
-    public function directory(string $name): void
+    public function directory(string $name, string $path = null): Compressor
     {
-        $local = new Local($name);
+        $local = new Local();
+
+        $local->create($name);
+
+        if ($path == null) {
+            $path = $name;
+        }
 
         foreach ($local->list('/') as $file) {
             if ($file['type'] == 'file') {
+
                 $content = $local->get($file['path']);
 
                 $this->filesystem
-                    ->put($file['path'], $content);
+                    ->put("{$path}/{$file['path']}", $content);
             }
         }
+
+        return $this;
     }
 
     /**
      * @param $file
+     * @return Compressor
      * @throws FileNotFoundException
      */
-    public function file(string $file): void
+    public function file(string $file): Compressor
     {
-        $local = new Local(dirname($file));
+        $local = new Local();
+
+        $local->create(dirname($file));
 
         $content = $local->get(basename($file));
 
         $this->filesystem
             ->put(basename($file), $content);
+
+        return $this;
+    }
+
+    public function extension(): string
+    {
+        return 'zip';
     }
 }

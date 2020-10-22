@@ -1,5 +1,7 @@
 <?php namespace Sculptor\Agent\Backup\Contracts;
 
+use Sculptor\Agent\Backup\Archives\Local;
+
 /**
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
@@ -8,6 +10,12 @@
 
 interface Archive
 {
+    /**
+     * @param string $path
+     * @return Archive
+     */
+    public function create(string $path): Archive;
+
     /**
      * @param string $file
      * @param $content

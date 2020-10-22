@@ -21,8 +21,9 @@ class CreateBackupsTable extends Migration
             $table->string('cron')->default(BACKUP_CRON);
             $table->string('path')->nullable();
             $table->string('destination')->nullable();
-            $table->string('status')->default(BackupStatusType::NEVER);
+            $table->string('status')->default(BackupStatusType::NONE);
             $table->string('error')->nullable();
+            $table->bigInteger('size')->nullable();
             $table->dateTime('run')->nullable();
             $table->unsignedInteger('rotate')->default(BACKUP_ROTATE);
             $table->unsignedInteger('database_id')->nullable();

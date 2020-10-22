@@ -91,7 +91,7 @@ class Domain extends Model implements Transformable, EncryptInterface
         return $this->belongsTo(Database::class);
     }
 
-    public function databaseUser(): belongsTo
+    public function databaseUser(): BelongsTo
     {
         return $this->belongsTo(DatabaseUser::class);
     }

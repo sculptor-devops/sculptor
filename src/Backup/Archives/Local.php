@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Backup\Archives;
 
+use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FileNotFoundException;
@@ -11,20 +12,17 @@ use League\Flysystem\Adapter\Local as LocalAdapter;
 class Local implements Archive
 {
     /**
-     * @var Filesystem
+     * @var Filesystem|null
      */
     private $filesystem;
 
-    /**
-     * Local constructor.
-     */
-    public function __construct()
+    public function create(string $path): Archive
     {
-        $path = config('sculptor.backup.drivers.local.path');
-
         $adapter = new LocalAdapter($path);
 
         $this->filesystem = new Filesystem($adapter);
+
+        return $this;
     }
 
     /**
@@ -34,6 +32,10 @@ class Local implements Archive
      */
     public function put(string $file, $content)
     {
+        if (!File::exists(dirname($file))) {
+            File::makeDirectory(dirname($file), 0755, true);
+        }
+
         $this->filesystem->write($file, $content);
     }
 

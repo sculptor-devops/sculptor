@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Support;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class CommandBase extends Command
@@ -69,5 +70,20 @@ class CommandBase extends Command
     public function toKeyValueHeaders(Collection $values): array
     {
         return collect($values->first())->keys()->toArray();
+    }
+
+    public function toName(?Relation $collection): string
+    {
+        if ($collection == null) {
+            return 'none';
+        }
+
+        $name = $collection->get(['name'])
+            ->map(function ($user) {
+                return $user->name;
+            })
+            ->join(', ');
+
+        return $name == '' ? 'none' : $name;
     }
 }

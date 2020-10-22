@@ -8,11 +8,18 @@ return [
     ],
 
     'database' => [
-        'driver' => env('SERVER_','mysql'),
-        'host' => env('SERVER_DATABASE_HOST','127.0.0.1'),
-        'database' => env('SERVER_DATABASE_NAME','mysql'),
-        'username' => env('SERVER_DATABASE_USERNAME','root'),
-        'password' => 'password'
+        'default' => env('SERVER_DATABASE_DRIVER', 'mysql'),
+
+        'drivers' => [
+            'mysql' => [
+                'driver' => env('MYSQL_DATABASE_DRIVER', 'mysql'),
+                'host' => env('MYSQL_DATABASE_HOST', '127.0.0.1'),
+                'port' => env('MYSQL_DATABASE_PORT', '3306'),
+                'database' => env('MYSQL_DATABASE_NAME', 'mysql'),
+                'username' => env('MYSQL_DATABASE_USERNAME', 'root'),
+                'password' => 'password'
+            ]
+        ]
     ],
 
     'php' => [
@@ -45,7 +52,7 @@ return [
     ],
 
     'monitors' => [
-        'rotate' =>  env('MONITOR_ROTATE', 60),
+        'rotate' => env('MONITOR_ROTATE', 60),
         'disks' => [
             [
                 'root' => env('MONITOR_DISK_ROOT', '/'),
@@ -57,11 +64,15 @@ return [
     'backup' => [
         'archive' => env('BACKUP_ARCHIVE', 'local'),
         'temp' => env('BACKUP_TMP', '/tmp'),
+        'compression' => env('BACKUP_COMPRESSION', 'zip'),
 
         'drivers' => [
+            'default' => 'local',
+
             'local' => [
                 'path' => env('BACKUP_LOCAL_PATH', SCULPTOR_HOME . '/backups'),
             ],
+
             's3' => [
                 'key' => env('S3_KEY', 'key'),
                 'secret' => env('S3_SECRET', 'secret'),

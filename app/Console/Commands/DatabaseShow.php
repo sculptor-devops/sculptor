@@ -57,17 +57,4 @@ class DatabaseShow extends CommandBase
 
         return 0;
     }
-
-    private function toName(?Relation $collection): string
-    {
-        if ($collection == null) {
-            return 'none';
-        }
-
-        return $collection->get(['name'])
-            ->map(function ($user) {
-                return $user->name;
-            })
-            ->join(', ');
-    }
 }

@@ -3,6 +3,9 @@
 namespace Sculptor\Agent\Backup\Archives;
 
 use Aws\S3\S3Client;
+use League\Flysystem\Directory;
+use League\Flysystem\File;
+use League\Flysystem\Handler;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
@@ -10,29 +13,35 @@ use League\Flysystem\Filesystem;
 class S3 implements Archive
 {
     /**
-     * @var Filesystem
+     * @var Filesystem|null
      */
     private $filesystem;
 
-    /**
-     * S3 constructor.
-     */
+    private $path;
+
     public function __construct()
-	{
-		$client = new S3Client([
-		    'credentials' => [
-		        'key'    => config('sculptor.backup.drivers.s3.key'),
-		        'secret' => config('sculptor.backup.drivers.s3.secret'),
-		    ],
+    {
+        $client = new S3Client([
+            'credentials' => [
+                'key'    => config('sculptor.backup.drivers.s3.key'),
+                'secret' => config('sculptor.backup.drivers.s3.secret'),
+            ],
             'version' => 'latest',
-		    'region' => config('sculptor.backup.drivers.s3.region'),
-		    'endpoint' => config('sculptor.backup.drivers.s3.endpoint')
-		]);
+            'region' => config('sculptor.backup.drivers.s3.region'),
+            'endpoint' => config('sculptor.backup.drivers.s3.endpoint')
+        ]);
 
-		$adapter = new AwsS3Adapter($client, config('sculptor.backup.drivers.s3.bucket'));
+        $adapter = new AwsS3Adapter($client, config('sculptor.backup.drivers.s3.bucket'));
 
-		$this->filesystem = new Filesystem($adapter);
-	}
+        $this->filesystem = new Filesystem($adapter);
+    }
+
+    public function create(string $path): Archive
+    {
+        $this->path = $path;
+
+        return $this;
+    }
 
     /**
      * @param string $file
@@ -40,7 +49,11 @@ class S3 implements Archive
      */
     public function put(string $file, $content)
     {
-        $this->filesystem->put($file, $content);
+        if (!$this->filesystem->has($this->path)) {
+            $this->filesystem->createDir($this->path);
+        }
+
+        $this->filesystem->put("{$this->path}/{$file}", $content);
     }
 
     /**
@@ -48,22 +61,24 @@ class S3 implements Archive
      */
     public function delete(string $file)
     {
-        // TODO: Implement delete() method.
+        return $this->filesystem->delete($file);
     }
 
     /**
      * @param string $file
+     * @return array
      */
     public function list(string $file)
     {
-        // TODO: Implement list() method.
+        return $this->filesystem->listContents($file, true);
     }
 
     /**
      * @param string $file
+     * @return Directory|File|Handler|null
      */
     public function get(string $file)
     {
-        // TODO: Implement get() method.
+        return $this->filesystem->get($file);
     }
 }

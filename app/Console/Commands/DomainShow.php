@@ -108,7 +108,8 @@ class DomainShow extends CommandBase
                 'alias' => $domain->alias ?? 'none',
                 'type' => $domain->type,
                 'status' => $domain->status,
-                'database' => $domain->database ?? 'none',
+                'database' => $this->toName($domain->database()),
+                'user' =>  $this->toName($domain->databaseUser()),
                 'home' => $domain->home()
             ];
         });
@@ -119,6 +120,7 @@ class DomainShow extends CommandBase
             'Type',
             'Status',
             'Database',
+            'User',
             'Home'
         ], $tabled);
     }

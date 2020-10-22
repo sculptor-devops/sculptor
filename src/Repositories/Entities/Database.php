@@ -14,6 +14,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property int id
  * @property DatabaseUser users
  * @property string name
+ * @property string driver
  * @package namespace Sculptor\Agent\Entities;
  */
 class Database extends Model implements Transformable

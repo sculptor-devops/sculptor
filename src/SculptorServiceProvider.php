@@ -2,8 +2,15 @@
 
 namespace Sculptor\Agent;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Sculptor\Agent\Backup\Archives\Local;
+use Sculptor\Agent\Backup\Archives\S3;
+use Sculptor\Agent\Backup\Compression\Zip;
+use Sculptor\Agent\Backup\Contracts\Archive;
+use Sculptor\Agent\Backup\Contracts\Compressor;
+use Sculptor\Agent\Enums\BackupArchiveType;
 use Sculptor\Foundation\Contracts\Database;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Database\MySql;
@@ -20,12 +27,25 @@ class SculptorServiceProvider extends ServiceProvider
     {
         $this->connection();
 
-        app()->bind(Runner::class, function () {
-            return new RunnerImplementation();
-        });
+        app()->bind(Runner::class, RunnerImplementation::class);
 
-        app()->bind(Database::class, function () {
-            return new MySql();
+        app()->bind(Database::class, MySql::class);
+
+        app()->bind(Compressor::class, Zip::class);
+
+        app()->bind(Archive::class, function () {
+            $driver = config('sculptor.backup.drivers.default');
+
+            switch ($driver) {
+                case BackupArchiveType::LOCAL:
+                    return new Local();
+
+                case BackupArchiveType::S3:
+                    return new S3();
+
+                default:
+                    throw new Exception("Invalid {$driver} archive driver");
+            }
         });
     }
 
@@ -49,17 +69,19 @@ class SculptorServiceProvider extends ServiceProvider
             }
 
             return $password;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
 
     private function connection(): void
     {
-        $database = config('sculptor.database');
+        $driver = config('sculptor.database.default');
+
+        $database = config("sculptor.database.drivers.{$driver}");
 
         $database['password'] = $this->password();
 
-        config([ 'database.connections.db_server' => $database ]);
+        config(['database.connections.db_server' => $database]);
     }
 }
