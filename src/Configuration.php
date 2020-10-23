@@ -21,6 +21,24 @@ class Configuration
         'sculptor.monitors.disks'
     ];
 
+    private $valid = [
+        'sculptor.domains.state-machine',
+        'sculptor.security.password.min',
+        'sculptor.security.password.max',
+        'sculptor.monitors.rotate',
+        'sculptor.backup.archive',
+        'sculptor.backup.temp',
+        'sculptor.backup.compression',
+        'sculptor.backup.drivers.default',
+        'sculptor.backup.drivers.local.path',
+        'sculptor.backup.drivers.s3.path',
+        'sculptor.backup.drivers.s3.key',
+        'sculptor.backup.drivers.s3.secret',
+        'sculptor.backup.drivers.s3.region',
+        'sculptor.backup.drivers.s3.endpoint',
+        'sculptor.backup.drivers.s3.bucket'
+    ];
+
     /**
      * Configuration constructor.
      * @param ConfigurationRepository $configurations
@@ -81,9 +99,14 @@ class Configuration
      * @param string $name
      * @param string $value
      * @return $this
+     * @throws Exception
      */
     public function set(string $name, string $value): Configuration
     {
+        if (!in_array($name, $this->valid)) {
+            throw new Exception("Configuration name {$name} is not valid or supported");
+        }
+        
         $configuration = $this->configurations->firstOrNew(['name' => $name]);
 
         $configuration->update(['value' => $value]);
