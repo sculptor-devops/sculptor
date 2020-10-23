@@ -4,6 +4,7 @@ namespace Sculptor\Agent;
 
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Sculptor\Agent\Repositories\ConfigurationRepository;
 
 class Configuration
@@ -12,6 +13,13 @@ class Configuration
      * @var ConfigurationRepository
      */
     private $configurations;
+
+    private $filter = [
+        'sculptor.services',
+        'sculptor.database',
+        'sculptor.php.version',
+        'sculptor.monitors.disks'
+    ];
 
     /**
      * Configuration constructor.
@@ -33,24 +41,40 @@ class Configuration
 
     /**
      * @param string $name
-     * @return mixed
+     * @return string
      */
-    public function get(string $name)
+    public function get(string $name): ?string
     {
         $value = Cache::get($this->key($name), null);
 
         if ($value != null) {
-            return json_decode($value);
+            return $value;
         }
+
+        $standard = config($name);
 
         $configuration = $this->configurations
             ->byName($name);
 
-        if ($configuration == null) {
-            return config($name);
+        if ($configuration != null) {
+            return $configuration->value;
         }
 
-        return json_decode($configuration->value, true);
+        if (!is_array($standard)) {
+            return $standard;
+        }
+
+        return null;
+    }
+
+    public function getInt(string $name): int
+    {
+        return intval($this->get($name));
+    }
+
+    public function getBool(string $name): int
+    {
+        return $this->get($name) == '1' || $this->get($name) == 'true';
     }
 
     /**
@@ -60,13 +84,11 @@ class Configuration
      */
     public function set(string $name, string $value): Configuration
     {
-        $encoded = json_encode($value);
-
         $configuration = $this->configurations->firstOrNew(['name' => $name]);
 
-        $configuration->update(['value' => $encoded]);
+        $configuration->update(['value' => $value]);
 
-        Cache::add($this->key($name), $encoded);
+        Cache::add($this->key($name), $value);
 
         return $this;
     }
@@ -86,7 +108,6 @@ class Configuration
         if ($configuration != null) {
             $configuration->delete();
         }
-
 
         return $this;
     }
@@ -110,5 +131,60 @@ class Configuration
     public function database(array $connection): void
     {
         config(['database.connections.db_server' => $connection]);
+    }
+
+    public function toArray(): array
+    {
+        $values = [];
+
+        $configuration = $this->recourseConfig(config('sculptor'), 'sculptor');
+
+        foreach ($configuration as $name) {
+            $values[$name] = $this->get($name);
+        }
+
+        return $filtered = collect($values)->reject(function ($value, $key) {
+            return Str::startsWith($key, $this->filter);
+        })->toArray();
+    }
+
+    private function recourseConfig(array $all, string $root): array
+    {
+        $values = [];
+
+        foreach ($all as $key => $value) {
+            if (is_array($value)) {
+                $values = array_merge($values,
+                    $this->recourseConfig($value, "{$root}.{$key}"));
+
+                continue;
+            }
+
+            $values[] = "{$root}.{$key}";
+        }
+
+        return $values;
+    }
+
+    public function services(string $key = null): array
+    {
+        $values = config('sculptor.services');
+
+        if ($key == null) {
+            return $values;
+        }
+
+        return $values[$key];
+    }
+
+    public function monitors(string $key = null): array
+    {
+        $values = config('sculptor.monitors');
+
+        if ($key == null) {
+            return $values;
+        }
+
+        return $values[$key];
     }
 }

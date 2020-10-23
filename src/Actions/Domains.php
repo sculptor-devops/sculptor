@@ -127,7 +127,7 @@ class Domains implements ActionInterface
             $this->action
                 ->run(new DomainConfigure($domain));
 
-            foreach ($this->configuration->get('sculptor.services')[DaemonGroupType::WEB] as $service) {
+            foreach ($this->configuration->services(DaemonGroupType::WEB) as $service) {
                 $this->action
                     ->run(new DaemonService($service, DaemonOperationsType::RELOAD));
             }

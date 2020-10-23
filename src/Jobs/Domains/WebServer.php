@@ -155,9 +155,9 @@ class WebServer implements DomainAction
     {
         Logs::actions()->debug("Reloading services for www");
 
-        $services = $this->configuration->get('sculptor.services');
+        $services = $this->configuration->services(DaemonGroupType::WEB);
 
-        foreach ($services[DaemonGroupType::WEB] as $service) {
+        foreach ($services as $service) {
             if (!$this->daemons->reload($service)) {
                 throw new Exception("Cannot reload service {$service}");
             }

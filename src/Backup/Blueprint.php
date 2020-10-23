@@ -58,20 +58,22 @@ class Blueprint implements BackupInterface
 
     public function create(Item $backup): bool
     {
-        $this->blueprint->create($this->tag->temp('blueprint'));
+        $this->blueprint->create($this->tag->temp('system'));
 
-        $compressed = $this->tag->compressed('blueprint');
+        $compressed = $this->tag->compressed('system');
 
         $compressor = $this->compressor
             ->create($compressed);
 
-        $compressor->file($this->tag->temp('blueprint'));
+        $compressor->file($this->tag->temp('system'));
 
         $compressor->close();
 
-        $to = $this->tag->destination('blueprint', $backup->destination);
+        $to = $this->tag
+            ->destination('system', $backup->destination);
 
-        $compressed = $this->tag->compressed('blueprint');
+        $compressed = $this->tag
+            ->compressed('system');
 
         $this->size = File::size($compressed);
 
@@ -91,7 +93,6 @@ class Blueprint implements BackupInterface
             if (File::exists($file)) {
                 File::delete($file);
             }
-
         }
 
         return true;

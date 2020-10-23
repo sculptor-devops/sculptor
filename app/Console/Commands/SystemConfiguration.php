@@ -38,6 +38,7 @@ class SystemConfiguration extends CommandBase
      *
      * @param Configuration $configurations
      * @return int
+     * @throws \Exception
      */
     public function handle(Configuration $configurations): int
     {
@@ -48,6 +49,11 @@ class SystemConfiguration extends CommandBase
         $value = (string)$this->argument('value');
 
         switch ($operation) {
+            case 'show':
+                $this->show($configurations);
+
+                return 1;
+
             case 'get':
                 if ($name == null) {
                     $this->error("Name cannot be null");
@@ -121,5 +127,10 @@ class SystemConfiguration extends CommandBase
         }
 
         return "Cannot be represented";
+    }
+
+    private function show(Configuration $configurations): void
+    {
+        $this->table(['Name', 'Value'], $this->toKeyValue($configurations->toArray()));
     }
 }

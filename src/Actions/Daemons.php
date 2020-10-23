@@ -39,14 +39,9 @@ class Daemons implements ActionInterface
         $this->configuration = $configuration;
     }
 
-    private function services(): array
-    {
-        return $this->configuration->get('sculptor.services');
-    }
-
     private function valid(string $name): bool
     {
-        return array_key_exists($name, $this->services());
+        return array_key_exists($name, $this->configuration->services());
     }
 
     public function disable(string $name): bool
@@ -83,7 +78,7 @@ class Daemons implements ActionInterface
     {
         $result = [];
 
-        foreach ($this->services() as $key => $group) {
+        foreach ($this->configuration->services() as $key => $group) {
             foreach ($group as $daemon) {
                 $active = $this->daemons->active($daemon);
 
@@ -103,7 +98,7 @@ class Daemons implements ActionInterface
                 throw new DaemonInvalidException($name);
             }
 
-            foreach ($this->services()[$name] as $daemon) {
+            foreach ($this->configuration->services()[$name] as $daemon) {
                 Logs::actions()->debug("{$message} {$daemon}");
 
                 $this->run($daemon, $operation);

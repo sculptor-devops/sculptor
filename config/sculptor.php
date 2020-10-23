@@ -54,9 +54,8 @@ return [
     'monitors' => [
         'rotate' => env('MONITOR_ROTATE', 60),
         'disks' => [
-            [
-                'root' => env('MONITOR_DISK_ROOT', '/'),
-                'device' => env('MONITOR_DISK_DEVICE', 'sda')
+            env('MONITOR_DISK_DEVICE', 'sda') => [
+                'root' => env('MONITOR_DISK_ROOT', '/')
             ]
         ]
     ],

@@ -17,11 +17,6 @@ use Sculptor\Agent\Monitors\System\Uptime;
 class Collector
 {
     /**
-     * @var Repository|Application|mixed
-     */
-    private $configuration;
-
-    /**
      * @var string[]
      */
     private $system = [
@@ -31,10 +26,14 @@ class Collector
         Memory::class,
         Uptime::class,
     ];
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
     public function __construct(Configuration $configuration)
     {
-        $this->configuration = $configuration->get('sculptor.monitors');
+        $this->configuration = $configuration;
     }
 
     /**
@@ -54,7 +53,7 @@ class Collector
 
         $values = collect($stored ?? []);
 
-        return $values->take(-1 * $this->configuration['rotate']);
+        return $values->take(-1 * $this->configuration->getInt('sculptor.monitors.rotate'));
     }
 
     /**
@@ -80,13 +79,16 @@ class Collector
     {
         $sampled = collect([]);
 
-        $disks = $this->configuration['disks'];
+        $disks = $this->configuration->monitors('disks');
 
         foreach ($this->system as $reader) {
             $monitor = resolve($reader);
 
-            foreach ($disks as $disk) {
-                $values = $monitor->values($disk);
+            foreach ($disks as $device => $root) {
+                $values = $monitor->values([
+                    'device' => $device,
+                    'root' => $root['root']
+                ]);
 
                 $sampled = $sampled->merge($values);
             }
