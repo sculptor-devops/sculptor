@@ -9,6 +9,7 @@ use League\Flysystem\Handler;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
+use Sculptor\Agent\Configuration;
 
 class S3 implements Archive
 {
@@ -19,19 +20,19 @@ class S3 implements Archive
 
     private $path;
 
-    public function __construct()
+    public function __construct(Configuration $configuration)
     {
         $client = new S3Client([
             'credentials' => [
-                'key'    => config('sculptor.backup.drivers.s3.key'),
-                'secret' => config('sculptor.backup.drivers.s3.secret'),
+                'key'    => $configuration->get('sculptor.backup.drivers.s3.key'),
+                'secret' => $configuration->get('sculptor.backup.drivers.s3.secret'),
             ],
             'version' => 'latest',
-            'region' => config('sculptor.backup.drivers.s3.region'),
-            'endpoint' => config('sculptor.backup.drivers.s3.endpoint')
+            'region' => $configuration->get('sculptor.backup.drivers.s3.region'),
+            'endpoint' => $configuration->get('sculptor.backup.drivers.s3.endpoint')
         ]);
 
-        $adapter = new AwsS3Adapter($client, config('sculptor.backup.drivers.s3.bucket'));
+        $adapter = new AwsS3Adapter($client, $configuration->get('sculptor.backup.drivers.s3.bucket'));
 
         $this->filesystem = new Filesystem($adapter);
     }

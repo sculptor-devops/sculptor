@@ -57,7 +57,8 @@ class Database implements ActionInterface
                 throw new DatabaseAlreadyExistsException($name);
             }
 
-            $this->action->run(new DatabaseCreate($name));
+            $this->action
+                ->run(new DatabaseCreate($name));
 
             $this->database
                 ->create(['name' => $name]);
@@ -79,7 +80,8 @@ class Database implements ActionInterface
         Logs::actions()->info("Delete database {$name}");
 
         try {
-            $database = $this->database->byName($name);
+            $database = $this->database
+                ->byName($name);
 
             $this->action
                 ->run(new DatabaseDelete($name));
@@ -112,7 +114,8 @@ class Database implements ActionInterface
         Logs::actions()->info("Create user {$name}@{$host} on {$name}");
 
         try {
-            $database = $this->database->byName($db);
+            $database = $this->database
+                ->byName($db);
 
             $this->action
                 ->run(new DatabaseUserCreate($name, $password, $db, $host));

@@ -45,7 +45,7 @@ class BackupRun extends CommandBase
         $this->startTask("Appending backup batch {$id}");
 
         if(!$actions->run($id)) {
-            $this->errorTask($actions->error());
+            return $this->errorTask($actions->error());
         }
 
         return $this->completeTask();

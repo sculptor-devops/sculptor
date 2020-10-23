@@ -7,4 +7,6 @@ class BackupType
     public const DATABASE = 'database';
 
     public const DOMAIN = 'domain';
+
+    public const BLUEPRINT = 'blueprint';
 }

@@ -10,18 +10,24 @@ class PasswordGenerator
      * @var Runner
      */
     private $runner;
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
-    public function __construct(Runner $runner)
+    public function __construct(Runner $runner, Configuration $configuration)
     {
         $this->runner = $runner;
+
+        $this->configuration = $configuration;
     }
 
     public function create(int $length = null): string
     {
         if ($length == null) {
-            $min = config('sculptor.security.password.min');
+            $min = $this->configuration->get('sculptor.security.password.min');
 
-            $max = config('sculptor.security.password.max');
+            $max = $this->configuration->get('sculptor.security.password.max');
 
             $length = rand($min, $max);
         }

@@ -3,9 +3,11 @@
 namespace Sculptor\Agent\Actions;
 
 use Exception;
+use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Report;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
+use Sculptor\Agent\Enums\BackupStatusType;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Jobs\BackupRun;
@@ -81,17 +83,20 @@ class Backups implements ActionInterface
 
     /**
      * @param string $type
-     * @param string $name
+     * @param string|null $name
      * @return bool
+     * @throws ValidatorException
      */
-    public function create(string $type, string $name): bool
+    public function create(string $type, ?string $name = null): bool
     {
-        try {
-            $backup = $this->backups->create(['type' => $type]);
+        $backup = $this->backups->create(['type' => $type]);
 
+        try {
             Logs::backup()->info("Create backup {$type} database {$name}");
 
-            $this->associate($backup, $name);
+            if ($name != null) {
+                $this->associate($backup, $name);
+            }
 
         } catch (Exception $e) {
             $backup->delete();

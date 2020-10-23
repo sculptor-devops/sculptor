@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Backups;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -12,7 +13,7 @@ class BackupCreate extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'backup:create {type} {name}';
+    protected $signature = 'backup:create {type} {name?}';
 
     /**
      * The console command description.
@@ -36,6 +37,7 @@ class BackupCreate extends CommandBase
      *
      * @param Backups $actions
      * @return int
+     * @throws ValidatorException
      */
     public function handle(Backups $actions): int
     {
@@ -43,7 +45,7 @@ class BackupCreate extends CommandBase
 
         $name = $this->argument('name');
 
-        $this->startTask("Creating backup batch {$type} for {$name}");
+        $this->startTask("Creating backup batch {$type} for " . ($name ?? 'none') );
 
         if (!$actions->create($type, $name)) {
             return $this->errorTask($actions->error());

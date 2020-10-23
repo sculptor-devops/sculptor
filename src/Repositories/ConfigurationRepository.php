@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Repositories;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
+use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Repositories\Entities\Configuration;
 use Sculptor\Agent\Contracts\ConfigurationRepository as ConfigurationRepositoryInterface;
 
@@ -27,5 +28,15 @@ class ConfigurationRepository extends BaseRepository implements ConfigurationRep
     public function boot(): void
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function byName(string $name): ?Configuration
+    {
+        $configuration = $this->findByField('name', $name);
+
+        if ($configuration->count() == 0) {
+            return null;
+        }
+        return $configuration;
     }
 }

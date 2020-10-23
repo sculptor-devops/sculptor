@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Crypt;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Sculptor\Agent\Contracts\BlueprintRecord;
 use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
+use Sculptor\Agent\Support\BlueprintSerializer;
 
 /**
  * @property string name
@@ -15,18 +17,20 @@ use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
  * @property string password
  * @property Database database
  */
-class DatabaseUser extends Model implements Transformable, EncryptInterface
+class DatabaseUser extends Model implements Transformable, EncryptInterface, BlueprintRecord
 {
     use TransformableTrait;
 
     use Encrypt;
+
+    use BlueprintSerializer;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'database_id', 'host', 'password' ];
+    protected $fillable = ['name', 'database_id', 'host', 'password'];
 
     public function database(): BelongsTo
     {
@@ -47,5 +51,14 @@ class DatabaseUser extends Model implements Transformable, EncryptInterface
     public function getPasswordAttribute(): ?string
     {
         return $this->decrypt('password');
+    }
+
+    public function serialize(): array
+    {
+        $values = $this->serializeFiler( [ 'database_id' ]);
+
+        $values['database'] = $this->toName($this->database);
+
+        return $values;
     }
 }

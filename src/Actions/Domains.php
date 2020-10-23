@@ -7,6 +7,7 @@ use Sculptor\Agent\Actions\Domains\Parameters;
 use Sculptor\Agent\Actions\Domains\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Enums\DomainStatusType;
@@ -37,13 +38,20 @@ class Domains implements ActionInterface
      * @var Parameters
      */
     private $parameters;
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
     public function __construct(
+        Configuration $configuration,
         Action $action,
         StatusMachine $machine,
         DomainRepository $domains,
         Parameters $parameters
     ) {
+        $this->configuration = $configuration;
+
         $this->action = $action;
 
         $this->machine = $machine;
@@ -119,7 +127,7 @@ class Domains implements ActionInterface
             $this->action
                 ->run(new DomainConfigure($domain));
 
-            foreach (config('sculptor.services')[DaemonGroupType::WEB] as $service) {
+            foreach ($this->configuration->get('sculptor.services')[DaemonGroupType::WEB] as $service) {
                 $this->action
                     ->run(new DaemonService($service, DaemonOperationsType::RELOAD));
             }

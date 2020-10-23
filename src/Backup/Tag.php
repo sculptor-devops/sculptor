@@ -8,6 +8,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
+use Sculptor\Agent\Configuration;
 
 class Tag
 {
@@ -32,9 +33,9 @@ class Tag
      */
     private $type;
 
-    public function __construct()
+    public function __construct(Configuration $configuration)
     {
-        $this->tmp = config('sculptor.backup.temp');
+        $this->tmp = $configuration->get('sculptor.backup.temp');
 
         $this->tag = Carbon::now()->format("Ymd-His");
     }

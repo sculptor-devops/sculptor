@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Actions\Domains;
 
 use Exception;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Exceptions\DomainStatusException;
 use Sculptor\Agent\Logs\Logs;
@@ -11,6 +12,16 @@ use Sculptor\Agent\Repositories\Entities\Domain;
 class StatusMachine
 {
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    public function __construct(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * @param string $from
      * @param string $to
      * @return bool
@@ -18,7 +29,9 @@ class StatusMachine
      */
     public function can(string $from, string $to): bool
     {
-        if (!config('sculptor.domains.state-machine')) {
+
+        if (!$this->configuration
+            ->get('sculptor.domains.state-machine')) {
             return true;
         }
 

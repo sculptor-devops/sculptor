@@ -74,6 +74,7 @@ return [
             ],
 
             's3' => [
+                'path' => env('S3_KEY_PATH', 'backups'),
                 'key' => env('S3_KEY', 'key'),
                 'secret' => env('S3_SECRET', 'secret'),
                 'region' => env('S3_REGION', 'region'),

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 
 class Domain implements BackupInterface
@@ -32,15 +33,15 @@ class Domain implements BackupInterface
      */
     private $size;
 
-    public function __construct(Archive $archive, Compressor $compressor, Tag $tag)
+    public function __construct(Configuration $configuration, Archive $archive, Compressor $compressor, Tag $tag)
     {
-        $this->tmp = config('sculptor.backup.temp');
+        $this->tmp = $configuration->get('sculptor.backup.temp');
 
         $this->archive = $archive;
 
         $this->compressor = $compressor;
 
-        $this->tag = $tag->extensions('domain', 'zip', $this->compressor->extension());
+        $this->tag = $tag->extensions('domain', $this->compressor->extension(), $this->compressor->extension());
     }
 
     private function move(string $name, string $destination): void

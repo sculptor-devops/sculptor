@@ -10,7 +10,10 @@ use App\Console\Commands\DatabaseDelete;
 use App\Console\Commands\DatabaseUserDelete;
 use App\Console\Commands\QueueTasksStatus;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Sculptor\Agent\Repositories\BackupRepository;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,9 +33,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('system:monitors', [ 'write' ])->everyMinute();
+        $schedule->command('system:monitors', [ 'write' ])->everyMinute();
 
-         // $schedule->command('queue:restart', [ 'write' ])->daily();
+        $backups = resolve(BackupRepository::class);
+
+        foreach ($backups->all() as $backup) {
+            $schedule->command('backup:run', [ $backup->id ])->cron($backup->cron);
+        }
+
+        // $schedule->command('queue:restart', [ 'write' ])->daily();
     }
 
     /**
@@ -42,7 +51,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

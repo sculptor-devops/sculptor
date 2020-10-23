@@ -15,6 +15,7 @@ use Sculptor\Foundation\Contracts\Database;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Database\MySql;
 use Sculptor\Foundation\Runner\Runner as RunnerImplementation;
+use Sculptor\Agent\Facades\Configuration as ConfigurationFacade;
 
 class SculptorServiceProvider extends ServiceProvider
 {
@@ -25,7 +26,7 @@ class SculptorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->connection();
+        app()->bind(ConfigurationFacade::class, Configuration::class);
 
         app()->bind(Runner::class, RunnerImplementation::class);
 
@@ -34,7 +35,7 @@ class SculptorServiceProvider extends ServiceProvider
         app()->bind(Compressor::class, Zip::class);
 
         app()->bind(Archive::class, function () {
-            $driver = config('sculptor.backup.drivers.default');
+            $driver = ConfigurationFacade::get('sculptor.backup.drivers.default');
 
             switch ($driver) {
                 case BackupArchiveType::LOCAL:
@@ -56,7 +57,7 @@ class SculptorServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->connection();
     }
 
     private function password(): ?string
@@ -76,12 +77,12 @@ class SculptorServiceProvider extends ServiceProvider
 
     private function connection(): void
     {
-        $driver = config('sculptor.database.default');
+        $driver = ConfigurationFacade::get('sculptor.database.default');
 
-        $database = config("sculptor.database.drivers.{$driver}");
+        $database = ConfigurationFacade::get("sculptor.database.drivers.{$driver}");
 
         $database['password'] = $this->password();
 
-        config(['database.connections.db_server' => $database]);
+        ConfigurationFacade::database(['database.connections.db_server' => $database]);
     }
 }

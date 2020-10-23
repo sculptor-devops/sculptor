@@ -8,6 +8,7 @@ use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 use Sculptor\Agent\Backup\Dumper\MySql;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\BackupDatabaseType;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 use Sculptor\Agent\Repositories\Entities\Database as DatabaseItem;
@@ -36,10 +37,16 @@ class Database implements BackupInterface
      * @var int
      */
     private $size;
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
-    public function __construct(Archive $archive, Compressor $compressor, Tag $tag)
+    public function __construct(Configuration $configuration, Archive $archive, Compressor $compressor, Tag $tag)
     {
-        $this->tmp = config('sculptor.backup.temp');
+        $this->configuration = $configuration;
+
+        $this->tmp = $configuration->get('sculptor.backup.temp');
 
         $this->archive = $archive;
 
@@ -63,8 +70,8 @@ class Database implements BackupInterface
         }
 
         return [
-            'DB_HOST' => config("sculptor.database.drivers.{$database->driver}.host"),
-            'DB_PORT' => config("sculptor.database.drivers.{$database->driver}.port"),
+            'DB_HOST' => $this->configuration->get("sculptor.database.drivers.{$database->driver}.host"),
+            'DB_PORT' => $this->configuration->get("sculptor.database.drivers.{$database->driver}.port"),
             'DB_DATABASE' => $database->name,
             'DB_USERNAME' => $user->name,
             'DB_PASSWORD' => $user->password

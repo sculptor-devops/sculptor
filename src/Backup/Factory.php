@@ -22,12 +22,18 @@ class Factory
      * @var Domain
      */
     private $domain;
+    /**
+     * @var Blueprint
+     */
+    private $blueprint;
 
-    public function __construct(Database $database, Domain $domain)
+    public function __construct(Database $database, Domain $domain, Blueprint $blueprint)
     {
         $this->database = $database;
 
         $this->domain = $domain;
+
+        $this->blueprint = $blueprint;
     }
 
     /**
@@ -43,6 +49,9 @@ class Factory
 
             case BackupType::DOMAIN:
                 return $this->domain;
+
+            case BackupType::BLUEPRINT:
+                return $this->blueprint;
         }
 
         throw new Exception("Invalid backup type {$backup->type}");

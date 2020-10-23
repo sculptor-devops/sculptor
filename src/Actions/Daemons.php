@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Actions;
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Exceptions\ActionJobRunException;
 use Sculptor\Agent\Exceptions\DaemonInvalidException;
@@ -24,17 +25,28 @@ class Daemons implements ActionInterface
      * @var Services
      */
     private $daemons;
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
-    public function __construct(Action $action, Services $daemons)
+    public function __construct(Action $action, Services $daemons, Configuration $configuration)
     {
         $this->action = $action;
 
         $this->daemons = $daemons;
+
+        $this->configuration = $configuration;
+    }
+
+    private function services(): array
+    {
+        return $this->configuration->get('sculptor.services');
     }
 
     private function valid(string $name): bool
     {
-        return array_key_exists($name, config('sculptor.services'));
+        return array_key_exists($name, $this->services());
     }
 
     public function disable(string $name): bool
@@ -71,7 +83,7 @@ class Daemons implements ActionInterface
     {
         $result = [];
 
-        foreach (config('sculptor.services') as $key => $group) {
+        foreach ($this->services() as $key => $group) {
             foreach ($group as $daemon) {
                 $active = $this->daemons->active($daemon);
 
@@ -91,7 +103,7 @@ class Daemons implements ActionInterface
                 throw new DaemonInvalidException($name);
             }
 
-            foreach (config('sculptor.services')[$name] as $daemon) {
+            foreach ($this->services()[$name] as $daemon) {
                 Logs::actions()->debug("{$message} {$daemon}");
 
                 $this->run($daemon, $operation);

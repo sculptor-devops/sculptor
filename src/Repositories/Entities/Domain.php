@@ -4,10 +4,12 @@ namespace Sculptor\Agent\Repositories\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sculptor\Agent\Contracts\BlueprintRecord;
 use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Sculptor\Agent\Enums\DomainStatusType;
+use Sculptor\Agent\Support\BlueprintSerializer;
 
 /**
  * @property string type
@@ -28,11 +30,13 @@ use Sculptor\Agent\Enums\DomainStatusType;
  * @property string email
  * @property bool enabled
  */
-class Domain extends Model implements Transformable, EncryptInterface
+class Domain extends Model implements Transformable, EncryptInterface, BlueprintRecord
 {
     use TransformableTrait;
 
     use Encrypt;
+
+    use BlueprintSerializer;
 
     /**
      * The attributes that are mass assignable.
@@ -123,5 +127,16 @@ class Domain extends Model implements Transformable, EncryptInterface
         return $this->enabled && in_array($this->status, [
                 DomainStatusType::DEPLOYED
             ]);
+    }
+
+    public function serialize(): array
+    {
+        $values = $this->serializeFiler(['database_id', 'database_user_id', 'vcs_tye']);
+
+        $values['database'] = $this->toName($this->database);
+
+        $values['database_user'] = $this->toName($this->databaseUser);
+
+        return $values;
     }
 }

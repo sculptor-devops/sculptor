@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Sculptor\Agent\Contracts\BlueprintRecord;
+use Sculptor\Agent\Support\BlueprintSerializer;
 
 /**
  * Class Database.
@@ -17,16 +19,18 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string driver
  * @package namespace Sculptor\Agent\Entities;
  */
-class Database extends Model implements Transformable
+class Database extends Model implements Transformable, BlueprintRecord
 {
     use TransformableTrait;
+
+    use BlueprintSerializer;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'driver' ];
+    protected $fillable = ['name', 'driver'];
 
     public function users(): HasMany
     {
@@ -36,5 +40,10 @@ class Database extends Model implements Transformable
     public function domains(): HasMany
     {
         return $this->hasMany(Domain::class);
+    }
+
+    public function serialize(): array
+    {
+        return $this->serializeFiler();
     }
 }
