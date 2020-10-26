@@ -35,6 +35,7 @@ class CreateDomainsTable extends Migration
             $table->string('install')->default(SITES_INSTALL);
             $table->string('provider')->default(VersionControlType::GITHUB);
             $table->string('vcs')->nullable();
+            $table->string('branch')->default('master');
             $table->string('token')->nullable();
 
             $table->unsignedInteger('database_id')->nullable();

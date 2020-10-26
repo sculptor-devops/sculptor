@@ -34,6 +34,7 @@ use Sculptor\Agent\Support\BlueprintSerializer;
  * @property string token
  * @property int id
  * @property string provider
+ * @property string branch
  */
 class Domain extends Model implements Transformable, EncryptInterface, BlueprintRecord
 {

@@ -117,7 +117,8 @@ class Blueprint
                              'deployer',
                              'install',
                              'vcs',
-                             'provider'
+                             'provider',
+                             'branch'
                          ] as $parameter) {
                     if (array_key_exists($parameter, $domain)) {
                         $this->artisan('domain:setup', [$item->name, $parameter, $domain[$parameter]]);
@@ -178,7 +179,7 @@ class Blueprint
                 $this->artisan('system:configuration', [$name, $value]);
             }
 
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             report($e);
 
             return false;
@@ -228,7 +229,7 @@ class Blueprint
             $result = $e->getMessage();
         }
 
-        $this->pushCommand( $name, $parameters, $result );
+        $this->pushCommand($name, $parameters, $result);
     }
 
     public function commands(): ?array

@@ -30,7 +30,8 @@ class Parameters
         'www',
         'email',
         'token',
-        'provider'
+        'provider',
+        'branch'
     ];
     /**
      * @var DatabaseRepository
