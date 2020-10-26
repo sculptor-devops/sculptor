@@ -87,16 +87,17 @@ class DomainShow extends CommandBase
             ['name' => 'type', 'value' => $item->type],
             ['name' => 'status', 'value' => $item->status],
             ['name' => 'certificate type', 'value' => $item->certificate],
-            ['name' => 'use www', 'value' => $this->yesNo($item->www)],
+            ['name' => 'www', 'value' => $this->yesNo($item->www)],
             ['name' => 'user', 'value' => $item->user],
-            ['name' => 'database', 'value' => $database],
+            ['name' => 'root', 'value' => $item->root()],
             ['name' => 'http user', 'value' => $databaseUser],
+            ['name' => 'home', 'value' => $item->home()],
+            ['name' => 'database', 'value' => $database],
             ['name' => 'deploy command', 'value' => $item->deployer],
             ['name' => 'install command', 'value' => $item->install],
             ['name' => 'git uri', 'value' => $item->vcs],
-            ['name' => 'root', 'value' => $item->root()],
-            ['name' => 'home', 'value' => $item->home()],
             ['name' => 'deploy url', 'value' => $item->deployUrl() ?? 'No token configured' ],
+            ['name' => 'deploy branch', 'value' => $item->branch ?? 'None' ],
         ]);
     }
 
