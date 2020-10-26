@@ -33,6 +33,7 @@ use Sculptor\Agent\Support\BlueprintSerializer;
  * @property bool enabled
  * @property string token
  * @property int id
+ * @property string provider
  */
 class Domain extends Model implements Transformable, EncryptInterface, BlueprintRecord
 {
@@ -59,7 +60,7 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
         'home',
         'install',
         'deployer',
-        'vcs_tye',
+        'provider',
         'vcs'
     ];
 

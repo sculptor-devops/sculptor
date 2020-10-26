@@ -104,7 +104,7 @@ class Blueprint
 
             $item = $this->domains->byName($domain['name']);
 
-            foreach (['alias', 'status', 'certificate', 'home', 'deployer', 'install', 'vcs'] as $parameter) {
+            foreach (['alias', 'status', 'certificate', 'home', 'deployer', 'install', 'vcs', 'provider'] as $parameter) {
                 $this->artisan('domain:setup', [  $item->name, $parameter, $domain[$parameter] ]);
             }
 

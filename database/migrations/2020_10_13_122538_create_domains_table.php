@@ -33,7 +33,7 @@ class CreateDomainsTable extends Migration
 
             $table->string('deployer')->default(SITES_DEPLOY);
             $table->string('install')->default(SITES_INSTALL);
-            $table->string('vcs_tye')->default(VersionControlType::GIT);
+            $table->string('provider')->default(VersionControlType::GIT);
             $table->string('vcs')->nullable();
             $table->string('token')->nullable();
 

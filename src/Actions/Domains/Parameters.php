@@ -29,7 +29,8 @@ class Parameters
         'user',
         'www',
         'email',
-        'token'
+        'token',
+        'provider'
     ];
     /**
      * @var DatabaseRepository

@@ -2,17 +2,27 @@
 
 namespace Sculptor\Agent\Webhooks\Providers;
 
-use Illuminate\Http\Request;
+use Exception;
 use Sculptor\Agent\Contracts\DeployProvider;
+use Sculptor\Agent\Enums\VersionControlType;
 
 class Factory
 {
-    public static function deploy(Request $request): DeployProvider
+    /**
+     * @param string $type
+     * @return DeployProvider
+     * @throws Exception
+     */
+    public static function deploy(string $type): DeployProvider
     {
-        // if (false) {
-            // return new Github();
-        // }
+        switch ($type) {
+            case VersionControlType::GITHUB:
+                return new Github();
 
-        return new Custom();
+            case VersionControlType::CUSTOM:
+                return new Custom();
+        }
+
+        throw new Exception("Invalid vcs provider {$type}");
     }
 }

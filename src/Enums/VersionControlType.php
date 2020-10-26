@@ -4,7 +4,7 @@ namespace Sculptor\Agent\Enums;
 
 class VersionControlType
 {
-    public const GIT = 'git';
+    public const GITHUB = 'github';
 
-    public const NONE = 'none';
+    public const CUSTOM = 'custom';
 }

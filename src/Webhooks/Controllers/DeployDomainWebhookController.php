@@ -39,17 +39,17 @@ class DeployDomainWebhookController extends Controller
      */
     public function deploy(Request $request, string $hash, string $token)
     {
-        $provider = Factory::deploy($request);
-
         $domain = $this->domains->byHash($hash);
 
         if ($domain->token != $token) {
             abort(400, 'Invalid token');
         }
 
+        $provider = Factory::deploy($domain->provider);
+
         Logs::job()->info("Webhook deploy {$domain->name} from {$provider->name()} received");
 
-        if ($provider->valid()) {
+        if ($provider->valid($request)) {
             abort(400, $provider->error());
         }
 

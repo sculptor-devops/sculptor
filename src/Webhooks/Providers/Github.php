@@ -2,17 +2,19 @@
 
 namespace Sculptor\Agent\Webhooks\Providers;
 
+
+use Illuminate\Http\Request;
 use Sculptor\Agent\Contracts\DeployProvider;
-use Sculptor\Agent\Enums\DeployProviderType;
+use Sculptor\Agent\Enums\VersionControlType;
 
 class Github implements DeployProvider
 {
     public function name(): string
     {
-        return DeployProviderType::GITHUB;
+        return VersionControlType::GITHUB;
     }
 
-    public function valid(): bool
+    public function valid(Request $request): bool
     {
         return true;
     }
