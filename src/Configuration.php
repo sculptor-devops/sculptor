@@ -4,15 +4,13 @@ namespace Sculptor\Agent;
 
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Sculptor\Agent\Repositories\ConfigurationRepository;
+use Symfony\Component\Yaml\Yaml;
 
 class Configuration
 {
-    /**
-     * @var ConfigurationRepository
-     */
-    private $configurations;
+    private $configurations = [];
 
     private $filter = [
         'sculptor.services',
@@ -21,7 +19,7 @@ class Configuration
         'sculptor.monitors.disks'
     ];
 
-    private $valid = [
+    private $keys = [
         'sculptor.domains.state-machine',
         'sculptor.security.password.min',
         'sculptor.security.password.max',
@@ -39,13 +37,18 @@ class Configuration
         'sculptor.backup.drivers.s3.bucket'
     ];
 
-    /**
-     * Configuration constructor.
-     * @param ConfigurationRepository $configurations
-     */
-    public function __construct(ConfigurationRepository $configurations)
+    public function __construct()
     {
-        $this->configurations = $configurations;
+        $filename = $this->fileName();
+
+        if (File::exists($filename)) {
+            $this->configurations = Yaml::parseFile($filename);
+        }
+    }
+
+    private function fileName(): string
+    {
+        return SCULPTOR_HOME . '/.configuration.yml';
     }
 
     /**
@@ -55,6 +58,17 @@ class Configuration
     private function key(string $name): string
     {
         return "config.cache.{$name}";
+    }
+
+    public function all(): array
+    {
+        $all = [];
+
+        foreach ($this->keys as $key) {
+            $all[$key] = $this->get($key);
+        }
+
+        return $all;
     }
 
     /**
@@ -71,11 +85,10 @@ class Configuration
 
         $standard = config($name);
 
-        $configuration = $this->configurations
-            ->byName($name);
+        $configuration = $this->findPointedKey($name);
 
         if ($configuration != null) {
-            return $configuration->value;
+            return $configuration;
         }
 
         if (!is_array($standard)) {
@@ -83,6 +96,32 @@ class Configuration
         }
 
         return null;
+    }
+
+    /**
+     * @param string $key
+     * @return string|null
+     */
+    private function findPointedKey(string $key): ?string
+    {
+        $result = $this->configurations;
+
+        $keys = explode('.', $key);
+
+        foreach ($keys as $key) {
+
+            if (!is_array($result)) {
+                return null;
+            }
+
+            if (!array_key_exists($key, $result)) {
+                return null;
+            }
+
+            $result = $result[$key];
+        }
+
+        return $result;
     }
 
     public function getInt(string $name): int
@@ -97,23 +136,36 @@ class Configuration
 
     /**
      * @param string $name
-     * @param string $value
+     * @param string|null $value
      * @return $this
      * @throws Exception
      */
-    public function set(string $name, string $value): Configuration
+    public function set(string $name, ?string $value): Configuration
     {
-        if (!in_array($name, $this->valid)) {
+        if (!in_array($name, $this->keys)) {
             throw new Exception("Configuration name {$name} is not valid or supported");
         }
-        
-        $configuration = $this->configurations->firstOrNew(['name' => $name]);
 
-        $configuration->update(['value' => $value]);
+        $this->assignArrayByPath($this->configurations, $name, $value);
 
         Cache::add($this->key($name), $value);
 
+        File::put($this->fileName(), Yaml::dump($this->configurations, 10));
+
         return $this;
+    }
+
+    function assignArrayByPath(array &$arr, string $path, ?string $value): void
+    {
+        $path = Str::replaceFirst('sculptor.', '', $path);
+
+        $keys = explode('.', $path);
+
+        foreach ($keys as $key) {
+            $arr = &$arr[$key];
+        }
+
+        $arr = $value;
     }
 
     /**
@@ -125,12 +177,7 @@ class Configuration
     {
         Cache::forget($this->key($name));
 
-        $configuration = $this->configurations
-            ->byName($name);
-
-        if ($configuration != null) {
-            $configuration->delete();
-        }
+        $this->set($name, null);
 
         return $this;
     }
@@ -141,8 +188,8 @@ class Configuration
      */
     public function clear(): Configuration
     {
-        foreach ($this->configurations->all() as $configuration) {
-            $this->reset($configuration->name);
+        foreach ($this->keys as $name) {
+            $this->reset($name);
         }
 
         return $this;

@@ -84,7 +84,7 @@ class Backup extends Model implements Transformable, BlueprintRecord
 
     public function serialize(): array
     {
-        $values = $this->serializeFiler(['database_id', 'domain_id']);
+        $values = $this->serializeFiler(['database_id', 'domain_id', 'status', 'error', 'run']);
 
         $values['database'] = $this->toName($this->database);
 

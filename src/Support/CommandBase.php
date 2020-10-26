@@ -51,7 +51,7 @@ class CommandBase extends Command
         $this->output->writeln($message);
     }
 
-    public function yesNo(bool $check): string
+    public function yesNo(?bool $check): string
     {
         return $check ? '<info>YES</info>' : '<error>NO</error>';
     }

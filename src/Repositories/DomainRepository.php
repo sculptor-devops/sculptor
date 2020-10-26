@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Repositories;
 
 use Exception;
+use Illuminate\Container\Container as Application;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
@@ -10,11 +11,24 @@ use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Enums\DomainType;
 use Sculptor\Agent\Exceptions\DomainNotFound;
+use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Agent\Contracts\DomainRepository as DomainRepositoryInterface;
 
 class DomainRepository extends BaseRepository implements DomainRepositoryInterface
 {
+    /**
+     * @var PasswordGenerator
+     */
+    private $password;
+
+    public function __construct(Application $app, PasswordGenerator $password)
+    {
+        parent::__construct($app);
+
+        $this->password = $password;
+    }
+
     /**
      * Specify Model class name
      *
@@ -48,6 +62,22 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
         }
 
         return $domains->first();
+    }
+
+    /**
+     * @param string $hash
+     * @return Domain
+     * @throws DomainNotFound
+     */
+    public function byHash(string $hash): Domain
+    {
+        foreach ($this->all() as $domain) {
+            if ($domain->externalId() == $hash) {
+                return $domain;
+            }
+        }
+
+        throw new DomainNotFound($hash);
     }
 
     /**
@@ -85,7 +115,8 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
                     'status' => DomainStatusType::NEW,
                     'vcs' => 'https://github.com/laravel/laravel.git',
                     'deployer' => SITES_DEPLOY,
-                    'install' => SITES_INSTALL
+                    'install' => SITES_INSTALL,
+                    'token' => $this->password->token()
                 ]);
 
             case DomainType::GENERIC:
@@ -97,7 +128,8 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
                     'status' => DomainStatusType::NEW,
                     'vcs' => 'https://github.com/username/respository.git',
                     'deployer' => 'deploy',
-                    'install' => 'deploy:install'
+                    'install' => 'deploy:install',
+                    'token' => $this->password->token()
                 ]);
         }
 

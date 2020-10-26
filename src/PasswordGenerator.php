@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent;
 
+use Illuminate\Support\Str;
 use Sculptor\Foundation\Contracts\Runner;
 
 class PasswordGenerator
@@ -43,5 +44,14 @@ class PasswordGenerator
         $password = trim(preg_replace('/\s+/', ' ', $password));
 
         return $password;
+    }
+
+    public function token(int $length = 32): string
+    {
+        $token = $this->create($length * 2);
+
+        $token = preg_replace('/[^A-Za-z0-9 ]/', '', $token);
+
+        return Str::limit($token, $length, '');
     }
 }

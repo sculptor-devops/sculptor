@@ -7,6 +7,7 @@ use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Exceptions\DatabaseUserNotFoundException;
 use Sculptor\Agent\Exceptions\ParameterInvalidException;
+use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\Entities\Domain;
@@ -27,7 +28,8 @@ class Parameters
         'database',
         'user',
         'www',
-        'email'
+        'email',
+        'token'
     ];
     /**
      * @var DatabaseRepository
@@ -37,12 +39,21 @@ class Parameters
      * @var DatabaseUserRepository
      */
     private $users;
+    /**
+     * @var PasswordGenerator
+     */
+    private $password;
 
-    public function __construct(DatabaseRepository $databases, DatabaseUserRepository $users)
-    {
+    public function __construct(
+        DatabaseRepository $databases,
+        DatabaseUserRepository $users,
+        PasswordGenerator $password
+    ) {
         $this->databases = $databases;
 
         $this->users = $users;
+
+        $this->password = $password;
     }
 
     /**
@@ -66,6 +77,12 @@ class Parameters
 
         if ($name == 'user') {
             $this->user($domain, $value);
+
+            return true;
+        }
+
+        if ($name == 'token') {
+            $domain->update(['token', $this->password->token()]);
 
             return true;
         }

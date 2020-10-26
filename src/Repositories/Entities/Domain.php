@@ -4,6 +4,8 @@ namespace Sculptor\Agent\Repositories\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Sculptor\Agent\Contracts\BlueprintRecord;
 use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 use Prettus\Repository\Contracts\Transformable;
@@ -29,6 +31,8 @@ use Sculptor\Agent\Support\BlueprintSerializer;
  * @property bool www
  * @property string email
  * @property bool enabled
+ * @property string token
+ * @property int id
  */
 class Domain extends Model implements Transformable, EncryptInterface, BlueprintRecord
 {
@@ -72,6 +76,19 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
     public function configs(): string
     {
         return "{$this->root()}/configs";
+    }
+
+    public function externalId(): string
+    {
+        return hash('sha256', $this->name);
+    }
+
+    public function deployUrl(): string
+    {
+        return route('v1.api.webhook.deploy', [
+            'hash' => $this->externalId(),
+            'token' => $this->token ?? '!invalid'
+        ]);
     }
 
     /**
@@ -136,6 +153,18 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
         $values['database'] = $this->toName($this->database);
 
         $values['database_user'] = $this->toName($this->databaseUser);
+
+        $files = [];
+
+        foreach ([ "certs", "configs" ] as $path) {
+            foreach (File::files("{$this->root()}/{$path}") as $file) {
+                    $name = $file->getRelativePathname();
+
+                $files ["{$path}/$name"] = base64_encode($file->getContents());
+            }
+        }
+
+        $values['files'] = $files;
 
         return $values;
     }

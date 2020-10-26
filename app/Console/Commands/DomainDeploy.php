@@ -47,7 +47,7 @@ class DomainDeploy extends CommandBase
         $this->startTask("Deploy {$command} domain {$name}");
 
         if (!$domains->deploy($name, $command)) {
-            return $this->errorTask($domains->error());;
+            return $this->errorTask($domains->error());
         }
 
         return $this->completeTask();

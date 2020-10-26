@@ -50,6 +50,11 @@ class SystemBlueprint extends CommandBase
                 $blueprint->create($file);
 
                 return $this->completeTask();
+
+            case 'load':
+                $blueprint->load($file);
+
+                return $this->completeTask();
         }
 
         $this->errorTask("Unknown operation {$operation}");

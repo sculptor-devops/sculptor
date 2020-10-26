@@ -147,7 +147,7 @@ class Backups implements ActionInterface
 
             Logs::backup()->info("Setup backup {$backup->name()} {$parameter}={$value}");
 
-            if (!in_array($parameter, ['cron', 'destination'])) {
+            if (!in_array($parameter, ['cron', 'destination', 'rotate'])) {
                 throw new Exception("Invalid backup parameter {$parameter}");
             }
 

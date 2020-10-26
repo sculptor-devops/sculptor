@@ -14,7 +14,7 @@ class DatabaseUserCreate extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'database:user {database} {name} {password?} {host=localhost}';
+    protected $signature = 'database:user {database} {name} {host=localhost} {password?}';
 
     /**
      * The console command description.

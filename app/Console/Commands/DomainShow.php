@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Exception;
+use Sculptor\Agent\Ip;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -21,6 +22,7 @@ class DomainShow extends CommandBase
      * @var string
      */
     protected $description = 'List all available domains';
+
     /**
      * Create a new command instance.
      *
@@ -35,15 +37,16 @@ class DomainShow extends CommandBase
      * Execute the console command.
      *
      * @param DomainRepository $domains
+     * @param Ip $ip
      * @return int
      * @throws Exception
      */
-    public function handle(DomainRepository $domains): int
+    public function handle(DomainRepository $domains, Ip $ip): int
     {
         $domain = $this->argument('domain');
 
         if ($domain) {
-            $this->show($domain, $domains);
+            $this->show($domain, $domains, $ip);
 
             return 0;
         }
@@ -56,9 +59,10 @@ class DomainShow extends CommandBase
     /**
      * @param string $domain
      * @param DomainRepository $domains
+     * @param Ip $ip
      * @throws Exception
      */
-    private function show(string $domain, DomainRepository $domains): void
+    private function show(string $domain, DomainRepository $domains, Ip $ip): void
     {
         $item = $domains->byName($domain);
 
@@ -78,22 +82,24 @@ class DomainShow extends CommandBase
             'Name',
             'Value',
         ], [
-            [ 'name' => 'name', 'value' => $item->name ],
-            [ 'name' => 'alias', 'value' => $item->alias ?? 'none'],
-            [ 'name' => 'type', 'value' => $item->type],
-            [ 'name' => 'status', 'value' => $item->status],
-            [ 'name' => 'certificate', 'value' => $item->certificate],
-            [ 'name' => 'www', 'value' => $this->yesNo($item->www)],
-            [ 'name' => 'user', 'value' => $item->user ],
-            [ 'name' => 'database', 'value' => $database],
-            [ 'name' => 'user', 'value' => $databaseUser],
-            [ 'name' => 'deployer', 'value' => $item->deployer],
-            [ 'name' => 'install', 'value' => $item->install],
-            [ 'name' => 'vcs', 'value' => $item->vcs],
-            [ 'name' => 'root', 'value' => $item->root()],
-            [ 'name' => 'home', 'value' => $item->home()],
+            ['name' => 'name', 'value' => $item->name],
+            ['name' => 'alias', 'value' => $item->alias ?? 'none'],
+            ['name' => 'type', 'value' => $item->type],
+            ['name' => 'status', 'value' => $item->status],
+            ['name' => 'certificate type', 'value' => $item->certificate],
+            ['name' => 'use www', 'value' => $this->yesNo($item->www)],
+            ['name' => 'user', 'value' => $item->user],
+            ['name' => 'database', 'value' => $database],
+            ['name' => 'http user', 'value' => $databaseUser],
+            ['name' => 'deploy command', 'value' => $item->deployer],
+            ['name' => 'install command', 'value' => $item->install],
+            ['name' => 'git uri', 'value' => $item->vcs],
+            ['name' => 'root', 'value' => $item->root()],
+            ['name' => 'home', 'value' => $item->home()],
+            ['name' => 'deploy url', 'value' => $item->deployUrl() ?? 'No token configured' ],
         ]);
     }
+
 
     /**
      * @param DomainRepository $domains
@@ -109,7 +115,7 @@ class DomainShow extends CommandBase
                 'type' => $domain->type,
                 'status' => $domain->status,
                 'database' => $this->toName($domain->database()),
-                'user' =>  $this->toName($domain->databaseUser()),
+                'user' => $this->toName($domain->databaseUser()),
                 'home' => $domain->home()
             ];
         });

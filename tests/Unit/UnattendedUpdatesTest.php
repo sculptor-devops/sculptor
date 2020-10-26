@@ -5,11 +5,14 @@ namespace Tests\Unit;
 // use PHPUnit\Framework\TestCase;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Sculptor\Agent\Logs\Upgrades;
 
 class UnattendedUpdatesTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /**
      * A basic unit test example.
      *
