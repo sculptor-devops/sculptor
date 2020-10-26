@@ -3,6 +3,7 @@
 namespace Sculptor\Agent;
 
 use Exception;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Repositories\BackupRepository;
@@ -13,6 +14,11 @@ use Symfony\Component\Yaml\Yaml;
 
 class Blueprint
 {
+    /**
+     * @var ?array
+     */
+    private $commands;
+
     /**
      * @var Configuration
      */
@@ -58,9 +64,7 @@ class Blueprint
         }
 
         $blueprint = array_merge($blueprint, [
-            'configurations' => [
-                $this->configuration->all()
-            ]
+            'Configurations' => $this->configuration->all()
         ]);
 
         File::put($filename, Yaml::dump($blueprint, 999));
@@ -79,88 +83,156 @@ class Blueprint
         return $values;
     }
 
-    public function load(string $filename): void
+    public function load(string $filename): bool
     {
-        $content = Yaml::parseFile($filename);
+        try {
+            $this->commands = [];
 
-        $version = $content['header']['version'];
+            $content = Yaml::parseFile($filename);
 
-        if ($version != 1) {
-            throw new Exception("Blueprint version must be 1, {$version} received");
+            $version = $content['header']['version'];
+
+            if ($version != 1) {
+                throw new Exception("Blueprint version must be 1, {$version} received");
+            }
+
+            foreach ($content['Databases'] as $database) {
+                $this->artisan('database:create', ['name' => $database['name']]);
+            }
+
+            foreach ($content['DatabaseUsers'] as $user) {
+                $this->artisan('database:user', [$user['database'], $user['name'], $user['host']]);
+            }
+
+            foreach ($content['Domains'] as $domain) {
+                $this->artisan('domain:create', [$domain['name'], $domain['type']]);
+
+                $item = $this->domains->byName($domain['name']);
+
+                foreach ([
+                             'alias',
+                             'status',
+                             'certificate',
+                             'home',
+                             'deployer',
+                             'install',
+                             'vcs',
+                             'provider'
+                         ] as $parameter) {
+                    if (array_key_exists($parameter, $domain)) {
+                        $this->artisan('domain:setup', [$item->name, $parameter, $domain[$parameter]]);
+                    }
+                }
+
+                if ($domain['database']) {
+                    $this->artisan('domain:setup', [$item->name, 'database', $domain['database']]);
+                }
+
+                if ($domain['database_user']) {
+                    $this->artisan('domain:setup', [$item->name, 'user', $domain['database_user']]);
+                }
+
+                foreach ($domain['files'] as $name => $payload) {
+                    $filename = "{$item->root()}/{$name}";
+
+                    if (!$this->put($filename, $payload)) {
+                        throw new Exception("Unable to write file {$filename}");
+                    }
+                }
+
+                $this->artisan('domain:configure', [$item->name]);
+
+                if (!$domain['enabled']) {
+                    $this->artisan('domain:disable', [$item->name]);
+                }
+            }
+
+            foreach ($content['Backups'] as $backup) {
+                switch ($backup['type']) {
+                    case BackupType::BLUEPRINT:
+                        $this->artisan('backup:create', [$backup['type']]);
+                        break;
+
+                    case BackupType::DOMAIN:
+                        $this->artisan('backup:create', [$backup['type'], $backup['domain']]);
+                        break;
+
+                    case BackupType::DATABASE:
+                        $this->artisan('backup:create', [$backup['type'], $backup['database']]);
+                        break;
+
+                    default:
+                        throw new Exception("Invalid backup type {$backup['type']}");
+                }
+
+                $item = $this->backups
+                    ->all()
+                    ->last();
+
+                foreach (['cron', 'destination', 'rotate'] as $parameter) {
+                    $this->artisan('backup:setup', [$item->id, $parameter, '"' . $backup[$parameter] . '"']);
+                }
+            }
+
+            foreach ($content['Configurations'] as $name => $value) {
+                $this->artisan('system:configuration', [$name, $value]);
+            }
+
+        } catch(Exception $e) {
+            report($e);
+
+            return false;
         }
 
-        foreach ($content['Databases'] as $database) {
-            $this->artisan('database:create', [ $database['name'] ]);
-        }
+        return true;
+    }
 
-        foreach ($content['DatabaseUsers'] as $user) {
-            $this->artisan('database:user', [  $user['database'], $user['name'], $user['host'] ]);
-        }
+    private function put(string $file, string $payload): bool
+    {
+        $result = true;
+        // $result = File::put( $file, $payload);
 
-        foreach ($content['Domains'] as $domain) {
-            $this->artisan('domain:create', [  $domain['name'], $domain['type'] ]);
+        $this->pushCommand(
+            'File',
+            [$file],
+            $result ? 'Ok' : 'Error'
+        );
 
-            $item = $this->domains->byName($domain['name']);
+        return true;
+    }
 
-            foreach (['alias', 'status', 'certificate', 'home', 'deployer', 'install', 'vcs', 'provider'] as $parameter) {
-                $this->artisan('domain:setup', [  $item->name, $parameter, $domain[$parameter] ]);
-            }
-
-            if ($domain['database']) {
-                $this->artisan('domain:setup', [  $item->name, 'database', $domain['database'] ]);
-            }
-
-            if ($domain['database_user']) {
-                $this->artisan('domain:setup', [  $item->name, 'user', $domain['database_user'] ]);
-            }
-
-            foreach ($domain['files'] as $name => $payload) {
-                $filename = "{$item->root()}/{$name}";
-
-                /*if (!File::put( $filename, $payload)) {
-                    throw new Exception("Unable to write file {$filename}");
-                }*/
-            }
-
-            $this->artisan('domain:configure', [  $item->name ]);
-
-            if (!$domain['enabled']) {
-                $this->artisan('domain:disable', [  $item->name ]);
-            }
-        }
-
-        foreach ($content['Backups'] as $backup) {
-            switch ($backup['type']) {
-                case BackupType::BLUEPRINT:
-                    $this->artisan('backup:create', [  $backup['type'] ]);
-                    break;
-
-                case BackupType::DOMAIN:
-                    $this->artisan('backup:create', [  $backup['type'], $backup['domain'] ]);
-                    break;
-
-                case BackupType::DATABASE:
-                    $this->artisan('backup:create', [  $backup['type'], $backup['database'] ]);
-                    break;
-
-                default:
-                    throw new Exception("Invalid backup type {$backup['type']}");
-            }
-
-            $item = $this->backups
-                ->all()
-                ->last();
-
-            foreach (['cron', 'destination', 'rotate'] as $parameter) {
-                $this->artisan('backup:setup', [ $item->id, $parameter, '"' . $backup[$parameter] . '"' ]);
-            }
-        }
+    private function pushCommand(string $name, array $parameters, string $result): void
+    {
+        $this->commands[] = [
+            'id' => count($this->commands) + 1,
+            'name' => $name,
+            'parameters' => implode(' ', $parameters),
+            'result' => $result ?? 'Ok'
+        ];
     }
 
     private function artisan(string $name, array $parameters): void
     {
-        // Artisan::call($name, $parameters);
+        $result = 'Ok';
 
-        echo "$name " . implode(' ', $parameters) . "\n";
+        try {
+            // $code = Artisan::call($name, $parameters);
+
+            // if ($code > 0) {
+            // throw new Exception("Error code {$code}");
+            //}
+
+        } catch (Exception $e) {
+            report($e);
+
+            $result = $e->getMessage();
+        }
+
+        $this->pushCommand( $name, $parameters, $result );
+    }
+
+    public function commands(): ?array
+    {
+        return $this->commands;
     }
 }

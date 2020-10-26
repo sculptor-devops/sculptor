@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use Sculptor\Agent\Blueprint;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -36,6 +37,7 @@ class SystemBlueprint extends CommandBase
      *
      * @param Blueprint $blueprint
      * @return int
+     * @throws Exception
      */
     public function handle(Blueprint $blueprint): int
     {
@@ -52,9 +54,24 @@ class SystemBlueprint extends CommandBase
                 return $this->completeTask();
 
             case 'load':
-                $blueprint->load($file);
+                if (!$blueprint->load($file)) {
+                    $this->errorTask('Error executing blueprint, see logs for details');
+                }
 
-                return $this->completeTask();
+                $this->completeTask();
+
+                $commands = $blueprint->commands();
+
+                $this->table([
+                    'Id',
+                    'Name',
+                    'Parameters',
+                    'Result'
+                ], $commands);
+
+                $this->info(count($commands) . ' commands');
+
+                return 0;
         }
 
         $this->errorTask("Unknown operation {$operation}");

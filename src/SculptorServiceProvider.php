@@ -4,6 +4,7 @@ namespace Sculptor\Agent;
 
 use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Sculptor\Agent\Backup\Archives\Local;
 use Sculptor\Agent\Backup\Archives\S3;
@@ -39,10 +40,10 @@ class SculptorServiceProvider extends ServiceProvider
 
             switch ($driver) {
                 case BackupArchiveType::LOCAL:
-                    return new Local();
+                    return  resolve(Local::class);
 
                 case BackupArchiveType::S3:
-                    return new S3();
+                    return resolve(S3::class);
 
                 default:
                     throw new Exception("Invalid {$driver} archive driver");
