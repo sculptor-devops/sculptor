@@ -12,6 +12,7 @@ use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Support\BlueprintSerializer;
+use Sculptor\Agent\Facades\Configuration;
 
 /**
  * @property string type
@@ -82,7 +83,11 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
 
     public function externalId(): string
     {
-        return hash('sha256', $this->name);
+        $hash = Configuration::get('sculptor.security.hash');
+
+        $key = Configuration::get('sculptor.security.key');
+
+        return hash_hmac($hash, $this->name, $key);
     }
 
     public function deployUrl(): string

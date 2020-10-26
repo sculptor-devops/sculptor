@@ -21,6 +21,8 @@ class Configuration
 
     private $keys = [
         'sculptor.domains.state-machine',
+        'sculptor.security.hash',
+        'sculptor.security.key',
         'sculptor.security.password.min',
         'sculptor.security.password.max',
         'sculptor.monitors.rotate',
@@ -35,6 +37,12 @@ class Configuration
         'sculptor.backup.drivers.s3.region',
         'sculptor.backup.drivers.s3.endpoint',
         'sculptor.backup.drivers.s3.bucket'
+    ];
+
+    private $sensible = [
+        'sculptor.security.key',
+        'sculptor.backup.drivers.s3.key',
+        'sculptor.backup.drivers.s3.secret'
     ];
 
     public function __construct()

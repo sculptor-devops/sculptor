@@ -27,6 +27,8 @@ return [
     ],
 
     'security' => [
+        'key' => env('SECURITY_KEY', env('APP_KEY')),
+        'hash' => env('SECURITY_HASH', 'sha1'),
         'password' => [
             'min' => env('SECURITY_PASSWORD_MIN', 10),
             'max' => env('SECURITY_PASSWORD_MAX', 20)
