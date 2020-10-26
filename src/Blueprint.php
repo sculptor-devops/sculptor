@@ -3,11 +3,9 @@
 namespace Sculptor\Agent;
 
 use Exception;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Repositories\BackupRepository;
-use Sculptor\Agent\Repositories\ConfigurationRepository;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\DomainRepository;

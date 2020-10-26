@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\Console\Commands;
 
-
+use Exception;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -38,7 +37,7 @@ class SystemConfiguration extends CommandBase
      *
      * @param Configuration $configurations
      * @return int
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(Configuration $configurations): int
     {
