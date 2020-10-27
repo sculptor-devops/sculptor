@@ -99,6 +99,7 @@ class Deployer implements DomainAction
         Logs::actions()->debug("Deploy run {$command} on {$domain->name}");
 
         $deploy = $this->runner
+            ->timeout(null)
             ->from($domain->root())
             ->run([
                 'sudo',

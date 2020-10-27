@@ -63,9 +63,9 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $deploy->run($this->domain, $this->command);
 
-            $permission->run($this->domain);
-
             $web->enable($this->domain);
+
+            $permission->run($this->domain);
 
             $this->ok();
         } catch (Exception $e) {

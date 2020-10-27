@@ -84,7 +84,7 @@ task('deploy:migrate', function () {
 });
 
 task('deploy:owner', function () {
-    run("chown -R {USER}:{USER} /var/www/html");
+    run("chown -R {USER}:{USER} {PATH}/shared");
 });
 
 after('deploy:failed', 'deploy:unlock');

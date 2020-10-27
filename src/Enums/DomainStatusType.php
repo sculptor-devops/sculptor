@@ -10,5 +10,9 @@ class DomainStatusType
 
     public const SETUP = 'setup';
 
+    public const DEPLOYING = 'deploying';
+
+    public const ERROR = 'error';
+
     public const DEPLOYED = 'deployed';
 }

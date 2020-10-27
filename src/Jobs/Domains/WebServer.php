@@ -89,24 +89,26 @@ class WebServer implements DomainAction
             throw new Exception("Public directory {$domain->home()} not exists");
         }
 
-        $config = "/etc/nginx/sites-available/{$domain->name}.conf";
+        $origin = "/etc/nginx/sites-available/{$domain->name}.conf";
 
-        if (File::exists($config)) {
-            File::delete($config);
+        $destination = "/etc/nginx/sites-enabled/{$domain->name}.conf";
+
+        if (!File::exists($origin)) {
+            throw new Exception("Unable to find web server configuration file");
         }
 
-        $enabled = $this->runner
+        if (File::exists($destination)) {
+            File::delete($destination);
+        }
+
+        $this->runner
             ->from('/etc/nginx/sites-enabled/')
-            ->run([
+            ->runOrFail([
                 'ln',
                 "-s",
-                $config,
-                '/etc/nginx/sites-enabled/'
+                $origin,
+                $destination
             ]);
-
-        if (!$enabled->success()) {
-            throw new Exception("Error enabling {$domain->name}: {$enabled->error()}");
-        }
 
         return $this->reload();
     }
@@ -124,7 +126,7 @@ class WebServer implements DomainAction
 
         $deleted = $this->runner
             ->from($from)
-            ->run([ 'rm', $filename ]);
+            ->run(['rm', $filename]);
 
         if (!$deleted->success()) {
             throw new Exception("Error deleting configuration {$filename}: {$deleted->error()}");
@@ -153,12 +155,15 @@ class WebServer implements DomainAction
      */
     private function reload(): bool
     {
-        Logs::actions()->debug("Reloading services for www");
+        Logs::actions()
+            ->debug("Reloading services for www");
 
-        $services = $this->configuration->services(DaemonGroupType::WEB);
+        $services = $this->configuration
+            ->services(DaemonGroupType::WEB);
 
         foreach ($services as $service) {
-            if (!$this->daemons->reload($service)) {
+            if (!$this->daemons
+                ->reload($service)) {
                 throw new Exception("Cannot reload service {$service}");
             }
         }
@@ -173,8 +178,14 @@ class WebServer implements DomainAction
      */
     public function delete(Domain $domain): bool
     {
+        Logs::actions()->debug("Deleting www domain {$domain->name}");
+
         $this->remove('/etc/nginx/sites-available/', "/etc/nginx/sites-available/{$domain->name}.conf");
 
-        return $this->disable($domain);
+        $this->remove('/etc/nginx/sites-enabled/', "/etc/nginx/sites-enabled/{$domain->name}.conf");
+
+        $this->remove('/etc/logrotate.d/', "/etc/logrotate.d/{$domain->name}.conf");
+
+        return $this->reload();
     }
 }
