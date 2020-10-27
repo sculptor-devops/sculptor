@@ -49,13 +49,15 @@ class SystemBlueprint extends CommandBase
 
         switch ($operation) {
             case 'create':
-                $blueprint->create($file);
+                if (!$blueprint->create($file)) {
+                    $this->errorTask($blueprint->error());
+                }
 
                 return $this->completeTask();
 
             case 'load':
                 if (!$blueprint->load($file)) {
-                    $this->errorTask('Error executing blueprint, see logs for details');
+                    $this->errorTask($blueprint->error());
                 }
 
                 $this->completeTask();

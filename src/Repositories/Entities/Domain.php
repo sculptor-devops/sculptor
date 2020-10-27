@@ -5,7 +5,6 @@ namespace Sculptor\Agent\Repositories\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Hash;
 use Sculptor\Agent\Contracts\BlueprintRecord;
 use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 use Prettus\Repository\Contracts\Transformable;
@@ -85,7 +84,7 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
     {
         $hash = Configuration::get('sculptor.security.hash');
 
-        $key = Configuration::get('sculptor.security.key');
+        $key = config('app.key');
 
         return hash_hmac($hash, $this->name, $key);
     }

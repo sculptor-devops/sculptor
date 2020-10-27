@@ -22,7 +22,6 @@ class Configuration
     private $keys = [
         'sculptor.domains.state-machine',
         'sculptor.security.hash',
-        'sculptor.security.key',
         'sculptor.security.password.min',
         'sculptor.security.password.max',
         'sculptor.monitors.rotate',
@@ -56,7 +55,7 @@ class Configuration
 
     private function fileName(): string
     {
-        return SCULPTOR_HOME . '/.configuration.yml';
+        return storage_path('app/.configuration.yml');
     }
 
     /**
