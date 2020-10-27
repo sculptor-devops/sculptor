@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Contracts\ITraceable;
+use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\Domains\Deployer;
 use Sculptor\Agent\Jobs\Domains\Permissions;
 use Sculptor\Agent\Jobs\Domains\WebServer;
@@ -59,6 +60,8 @@ class DomainDeploy implements ShouldQueue, ITraceable
         Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command}");
 
         try {
+            $this->domain->update([ 'status' => DomainStatusType::DEPLOYING ]);
+
             $deploy->compile($this->domain);
 
             $deploy->run($this->domain, $this->command);
@@ -67,8 +70,12 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $permission->run($this->domain);
 
+            $this->domain->update([ 'status' => DomainStatusType::DEPLOYED ]);
+
             $this->ok();
         } catch (Exception $e) {
+            $this->domain->update([ 'status' => DomainStatusType::ERROR ]);
+
             $this->report($e);
         }
     }

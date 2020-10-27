@@ -29,6 +29,14 @@ class StatusMachine
      */
     public function can(string $from, string $to): bool
     {
+        if ($to == DomainStatusType::ERROR || $from == DomainStatusType::ERROR) {
+            return true;
+        }
+
+        if ($from == DomainStatusType::DEPLOYING) {
+            return true;
+        }
+
         if ($to == DomainStatusType::NEW && in_array($from,
                 [
                     DomainStatusType::NEW,

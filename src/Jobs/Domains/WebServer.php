@@ -72,12 +72,17 @@ class WebServer implements DomainAction
      */
     public function enable(Domain $domain): bool
     {
-        Logs::actions()
-            ->debug("Enabling www domain root {$domain->name}");
-
         $origin = "/etc/nginx/sites-available/{$domain->name}.conf";
 
         $destination = "/etc/nginx/sites-enabled/{$domain->name}.conf";
+
+        if (File::exists($destination) &&
+            File::exists($origin)) {
+            return true;
+        }
+
+        Logs::actions()
+            ->debug("Enabling www domain root {$domain->name}");
 
         $this->system
             ->deleteIfExists($destination);
