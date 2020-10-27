@@ -25,6 +25,7 @@
     "require": {
         "php": "^7.3",
         "ext-json": "*",
+        "ext-posix": "*",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -68,7 +69,8 @@
             "database/factories"
         ],
         "files": [
-            "src/Constants.php"
+            "src/Constants.php",
+            "src/Helpers.php"
         ]
     },
     "autoload-dev": {

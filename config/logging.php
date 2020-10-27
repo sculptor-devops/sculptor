@@ -43,7 +43,7 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/laravel.' . get_current_user() . '.log'),
+            'path' => storage_path('logs/laravel.' . whoami() . '.log'),
             'level' => 'debug',
         ],
 
