@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 
 use Exception;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
@@ -11,17 +12,17 @@ use Sculptor\Foundation\Contracts\Runner;
 class Permissions implements DomainAction
 {
     /**
-     * @var Runner
+     * @var System
      */
-    private $runner;
+    private $system;
 
     /**
      * Certificates constructor.
-     * @param Runner $runner
+     * @param System $system
      */
-    public function __construct(Runner $runner)
+    public function __construct(System $system)
     {
-        $this->runner = $runner;
+        $this->system = $system;
     }
 
     /**
@@ -37,24 +38,11 @@ class Permissions implements DomainAction
 
         Logs::actions()->debug("Permissions setup for {$root} user {$user}");
 
-        $permissions = $this->runner
-            ->from($root)
-            ->run(['chmod', '-R', '755', "{$root}"]);
+        $this->system
+            ->run($root, ['chmod', '-R', '755', "{$root}"]);
 
-        $ownership = $this->runner
-            ->from($root)
-            ->run(['chown', '-R', "{$user}:{$user}", "{$root}"]);
-
-        if (
-            !$permissions
-            ->success()
-        ) {
-            throw new Exception("Cannot change {$root} permissions to {$user}: {$permissions->error()}");
-        }
-
-        if (!$ownership->success()) {
-            throw new Exception("Cannot change {$root} ownership to {$user}: {$ownership->error()}");
-        }
+        $this->system
+            ->run($root, ['chown', '-R', "{$user}:{$user}", "{$root}"]);
 
         return true;
     }

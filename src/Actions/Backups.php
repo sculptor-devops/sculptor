@@ -102,7 +102,7 @@ class Backups implements ActionInterface
             $backup->delete();
 
             return $this->action
-                ->report("Run backup: {$e->getMessage()}");
+                ->report("System backup: {$e->getMessage()}");
         }
 
         return true;
@@ -134,7 +134,7 @@ class Backups implements ActionInterface
             $this->action->runAndExit(new BackupRun($backup));
         } catch (Exception $e) {
             return $this->action
-                ->report("Run backup: {$e->getMessage()}");
+                ->report("System backup: {$e->getMessage()}");
         }
 
         return true;

@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Sculptor\Agent\Configuration;
+use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Queues\Traceable;
@@ -25,7 +27,7 @@ class DaemonService implements ShouldQueue, ITraceable
     /**
      * @var string
      */
-    private $name;
+    private $group;
     /**
      * @var string
      */
@@ -34,29 +36,30 @@ class DaemonService implements ShouldQueue, ITraceable
     /**
      * Create a new job instance.
      *
-     * @param string $name
+     * @param string $group
      * @param string $operation
      */
-    public function __construct(string $name, string $operation)
+    public function __construct(string $group, string $operation)
     {
-        $this->name = $name;
+        $this->group = $group;
 
         $this->operation = $operation;
     }
 
     /**
      * @param Daemons $daemons
+     * @param Configuration $configuration
      * @throws Exception
      */
-    public function handle(Daemons $daemons): void
+    public function handle(Daemons $daemons, Configuration $configuration): void
     {
-        $this->transaction = ($this->name != 'mysql');
+        $this->transaction = ($this->group != DaemonGroupType::DATABASE);
 
         $this->running();
 
         try {
-            if (!$this->run($daemons)) {
-                $this->error("Unable to start {$this->name}: {$daemons->error()}");
+            if (!$this->run($daemons, $configuration)) {
+                $this->error("Unable to start {$this->group}: {$daemons->error()}");
 
                 return;
             }
@@ -69,31 +72,46 @@ class DaemonService implements ShouldQueue, ITraceable
 
     /**
      * @param Daemons $daemons
+     * @param Configuration $configuration
      * @return bool
      * @throws Exception
      */
-    private function run(Daemons $daemons): bool
+    private function run(Daemons $daemons, Configuration $configuration): bool
     {
-        Logs::job()->info("Daemon {$this->name} {$this->operation}");
+        Logs::job()->info("Daemon {$this->group} {$this->operation}");
+
+        foreach ($configuration->services($this->group) as $service) {
+
+            if (!$this->apply($daemons, $service)) {
+                throw new Exception("Unable to {$this->operation} service $service: {$daemons->error()}");
+            }
+        }
+
+        return true;
+    }
+
+    private function apply(Daemons $daemons, string $service): bool
+    {
+        Logs::job()->debug("Daemon {$this->operation} {$service}");
 
         switch ($this->operation) {
             case DaemonOperationsType::START:
-                return $daemons->start($this->name);
+                return $daemons->start($service);
 
             case DaemonOperationsType::STOP:
-                return $daemons->stop($this->name);
+                return $daemons->stop($service);
 
             case DaemonOperationsType::RELOAD:
-                return $daemons->reload($this->name);
+                return $daemons->reload($service);
 
             case DaemonOperationsType::RESTART:
-                return $daemons->restart($this->name);
+                return $daemons->restart($service);
 
             case DaemonOperationsType::ENABLE:
-                return $daemons->enable($this->name);
+                return $daemons->enable($service);
 
             case DaemonOperationsType::DISABLE:
-                return $daemons->disable($this->name);
+                return $daemons->disable($service);
         }
 
         throw new Exception("Unknown daemon operation {$this->operation}");

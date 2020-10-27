@@ -20,7 +20,7 @@ class DomainDeploy extends CommandBase
      *
      * @var string
      */
-    protected $description = 'Run deploy for a domain';
+    protected $description = 'System deploy for a domain';
     /**
      * Create a new command instance.
      *

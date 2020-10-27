@@ -98,11 +98,7 @@ class Daemons implements ActionInterface
                 throw new DaemonInvalidException($name);
             }
 
-            foreach ($this->configuration->services()[$name] as $daemon) {
-                Logs::actions()->debug("{$message} {$daemon}");
-
-                $this->run($daemon, $operation);
-            }
+            $this->run($name, $operation);
 
             return true;
         } catch (Exception $e) {

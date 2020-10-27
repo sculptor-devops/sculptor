@@ -9,7 +9,7 @@ use Sculptor\Agent\Enums\BackupType;
 class CreateBackupsTable extends Migration
 {
     /**
-     * Run the migrations.
+     * System the migrations.
      *
      * @return void
      */

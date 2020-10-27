@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
@@ -14,17 +15,17 @@ use Sculptor\Foundation\Contracts\Runner;
 class Deployer implements DomainAction
 {
     /**
-     * @var Runner
+     * @var System
      */
-    private $runner;
+    private $system;
     /**
      * @var Compiler
      */
     private $compiler;
 
-    public function __construct(Runner $runner, Compiler $compiler)
+    public function __construct(System $system, Compiler $compiler)
     {
-        $this->runner = $runner;
+        $this->system = $system;
 
         $this->compiler = $compiler;
     }
@@ -98,20 +99,16 @@ class Deployer implements DomainAction
     {
         Logs::actions()->debug("Deploy run {$command} on {$domain->name}");
 
-        $deploy = $this->runner
-            ->timeout(null)
-            ->from($domain->root())
-            ->run([
-                'sudo',
-                '-u',
-                "{$domain->user}",
-                'dep',
-                $command
-            ]);
-
-        if (!$deploy->success()) {
-            throw new Exception("Error deploy: {$deploy->error()}");
-        }
+        $this->system
+            ->runAs(
+                $domain->root(),
+                $domain->user,
+                [
+                    'dep',
+                    $command
+                ],
+                null
+            );
 
         return true;
     }

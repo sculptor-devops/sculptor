@@ -5,20 +5,20 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
-use Sculptor\Foundation\Contracts\Runner;
 
 class Structure implements DomainAction
 {
     /**
-     * @var Runner
+     * @var System
      */
-    private $runner;
+    private $system;
 
-    public function __construct(Runner $runner)
+    public function __construct(System $system)
     {
-        $this->runner = $runner;
+        $this->system = $system;
     }
 
     /**
@@ -36,13 +36,13 @@ class Structure implements DomainAction
 
         foreach (
             [
-                     $root,
-                     // "{$domain->home()}",
-                     "{$root}/certs",
-                     "{$root}/configs",
-                     "{$root}/logs",
-                     "{$root}/shared"
-                 ] as $folder
+                $root,
+                // "{$domain->home()}",
+                "{$root}/certs",
+                "{$root}/configs",
+                "{$root}/logs",
+                "{$root}/shared"
+            ] as $folder
         ) {
             if (File::exists($folder)) {
                 continue;
@@ -55,13 +55,13 @@ class Structure implements DomainAction
 
         foreach (
             [
-            "{$domain->type}.deployer.php" => 'deployer.php',
-            "{$domain->type}.cron" => 'cron.conf',
-            "{$domain->type}.worker" => 'worker.conf',
-            "{$domain->type}.env" => 'env',
-            "{$domain->type}.nginx.conf" => 'nginx.conf',
-            "{$domain->type}.logrotate.conf" => 'logrotate.conf',
-                 ] as $filename => $destination
+                "{$domain->type}.deployer.php" => 'deployer.php',
+                "{$domain->type}.cron" => 'cron.conf',
+                "{$domain->type}.worker" => 'worker.conf',
+                "{$domain->type}.env" => 'env',
+                "{$domain->type}.nginx.conf" => 'nginx.conf',
+                "{$domain->type}.logrotate.conf" => 'logrotate.conf',
+            ] as $filename => $destination
         ) {
             $source = "{$templates}/{$filename}";
 
@@ -86,18 +86,13 @@ class Structure implements DomainAction
     {
         Logs::actions()->debug("Deleting domain root {$domain->root()}");
 
-        $deleted = $this->runner
-            ->from(SITES_HOME . "/{$domain->user}")
-            ->run([
-                'rm',
-                '-rf',
-                $domain->root()
-            ]);
-
-
-        if (!$deleted->success()) {
-            throw new Exception("Error deleting domain root {$domain->root()}: {$deleted->error()}");
-        }
+        $this->system
+            ->run(SITES_HOME . "/{$domain->user}",
+                [
+                    'rm',
+                    '-rf',
+                    $domain->root()
+                ]);
 
         return true;
     }

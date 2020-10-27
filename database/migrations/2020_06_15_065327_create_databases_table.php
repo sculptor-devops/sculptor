@@ -9,7 +9,7 @@ use Illuminate\Database\Migrations\Migration;
 class CreateDatabasesTable extends Migration
 {
 	/**
-	 * Run the migrations.
+	 * System the migrations.
 	 *
 	 * @return void
 	 */

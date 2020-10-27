@@ -7,40 +7,29 @@ use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\DaemonGroupType;
+use Sculptor\Agent\Enums\DaemonOperationsType;
+use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
-use Sculptor\Foundation\Contracts\Runner;
-use Sculptor\Foundation\Services\Daemons;
 
 class WebServer implements DomainAction
 {
     /**
-     * @var Daemons
+     * @var System
      */
-    private $daemons;
-    /**
-     * @var Runner
-     */
-    private $runner;
+    private $system;
     /**
      * @var Compiler
      */
     private $compiler;
-    /**
-     * @var Configuration
-     */
-    private $configuration;
 
-    public function __construct(Daemons $daemons, Runner $runner, Compiler $compiler, Configuration $configuration)
+    public function __construct(System $system, Compiler $compiler)
     {
-        $this->daemons = $daemons;
-
-        $this->runner = $runner;
+        $this->system = $system;
 
         $this->compiler = $compiler;
-
-        $this->configuration = $configuration;
     }
 
     /**
@@ -83,54 +72,34 @@ class WebServer implements DomainAction
      */
     public function enable(Domain $domain): bool
     {
-        Logs::actions()->debug("Enabling www domain root {$domain->name}");
-
-        if (!File::exists($domain->home())) {
-            throw new Exception("Public directory {$domain->home()} not exists");
-        }
+        Logs::actions()
+            ->debug("Enabling www domain root {$domain->name}");
 
         $origin = "/etc/nginx/sites-available/{$domain->name}.conf";
 
         $destination = "/etc/nginx/sites-enabled/{$domain->name}.conf";
 
-        if (!File::exists($origin)) {
-            throw new Exception("Unable to find web server configuration file");
-        }
+        $this->system
+            ->deleteIfExists($destination);
 
-        if (File::exists($destination)) {
-            File::delete($destination);
-        }
+        $this->system
+            ->errorIfNotExists($origin);
 
-        $this->runner
-            ->from('/etc/nginx/sites-enabled/')
-            ->runOrFail([
-                'ln',
-                "-s",
-                $origin,
-                $destination
-            ]);
+        $this->system
+            ->errorIfNotExists($domain->home());
+
+        $this->system
+            ->run(
+                '/etc/nginx/sites-enabled/',
+                [
+                    'ln',
+                    "-s",
+                    $origin,
+                    $destination
+                ]
+            );
 
         return $this->reload();
-    }
-
-    /**
-     * @param string $from
-     * @param string $filename
-     * @throws Exception
-     */
-    private function remove(string $from, string $filename): void
-    {
-        if (!File::exists($filename)) {
-            return;
-        }
-
-        $deleted = $this->runner
-            ->from($from)
-            ->run(['rm', $filename]);
-
-        if (!$deleted->success()) {
-            throw new Exception("Error deleting configuration {$filename}: {$deleted->error()}");
-        }
     }
 
     /**
@@ -140,11 +109,14 @@ class WebServer implements DomainAction
      */
     public function disable(Domain $domain): bool
     {
-        Logs::actions()->debug("Disabling www domain {$domain->name}");
+        Logs::actions()
+            ->debug("Disabling www domain {$domain->name}");
 
-        $this->remove('/etc/nginx/sites-enabled/', "/etc/nginx/sites-enabled/{$domain->name}.conf");
+        $this->system
+            ->deleteIfExists("/etc/nginx/sites-enabled/{$domain->name}.conf");
 
-        $this->remove('/etc/logrotate.d/', "/etc/logrotate.d/{$domain->name}.conf");
+        $this->system
+            ->deleteIfExists("/etc/logrotate.d/{$domain->name}.conf");
 
         return $this->reload();
     }
@@ -158,15 +130,7 @@ class WebServer implements DomainAction
         Logs::actions()
             ->debug("Reloading services for www");
 
-        $services = $this->configuration
-            ->services(DaemonGroupType::WEB);
-
-        foreach ($services as $service) {
-            if (!$this->daemons
-                ->reload($service)) {
-                throw new Exception("Cannot reload service {$service}");
-            }
-        }
+        dispatch(new DaemonService(DaemonGroupType::WEB, DaemonOperationsType::RELOAD));
 
         return true;
     }
@@ -178,13 +142,17 @@ class WebServer implements DomainAction
      */
     public function delete(Domain $domain): bool
     {
-        Logs::actions()->debug("Deleting www domain {$domain->name}");
+        Logs::actions()
+            ->debug("Deleting www domain {$domain->name}");
 
-        $this->remove('/etc/nginx/sites-available/', "/etc/nginx/sites-available/{$domain->name}.conf");
+        $this->system
+            ->deleteIfExists("/etc/nginx/sites-available/{$domain->name}.conf");
 
-        $this->remove('/etc/nginx/sites-enabled/', "/etc/nginx/sites-enabled/{$domain->name}.conf");
+        $this->system
+            ->deleteIfExists("/etc/nginx/sites-enabled/{$domain->name}.conf");
 
-        $this->remove('/etc/logrotate.d/', "/etc/logrotate.d/{$domain->name}.conf");
+        $this->system
+            ->deleteIfExists("/etc/logrotate.d/{$domain->name}.conf");
 
         return $this->reload();
     }

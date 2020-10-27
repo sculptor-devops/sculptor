@@ -14,18 +14,12 @@ use Sculptor\Foundation\Support\Replacer;
 class Env implements DomainAction
 {
     /**
-     * @var Runner
-     */
-    private $runner;
-    /**
      * @var Compiler
      */
     private $compiler;
 
-    public function __construct(Runner $runner, Compiler $compiler)
+    public function __construct(Compiler $compiler)
     {
-        $this->runner = $runner;
-
         $this->compiler = $compiler;
     }
 

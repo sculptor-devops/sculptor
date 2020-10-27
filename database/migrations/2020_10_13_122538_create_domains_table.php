@@ -11,7 +11,7 @@ use Sculptor\Agent\Enums\VersionControlType;
 class CreateDomainsTable extends Migration
 {
     /**
-     * Run the migrations.
+     * System the migrations.
      *
      * @return void
      */

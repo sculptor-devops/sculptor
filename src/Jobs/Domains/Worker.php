@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
@@ -14,23 +15,17 @@ use Sculptor\Foundation\Services\Daemons;
 class Worker implements DomainAction
 {
     /**
-     * @var Daemons
+     * @var System
      */
-    private $daemons;
-    /**
-     * @var Runner
-     */
-    private $runner;
+    private $system;
     /**
      * @var Compiler
      */
     private $compiler;
 
-    public function __construct(Daemons $daemons, Runner $runner, Compiler $compiler)
+    public function __construct(System $system, Compiler $compiler)
     {
-        $this->daemons = $daemons;
-
-        $this->runner = $runner;
+        $this->system = $system;
 
         $this->compiler = $compiler;
     }
@@ -82,12 +77,13 @@ class Worker implements DomainAction
 
         $this->reload($domain);
 
-        $this->runner
-            ->runOrFail([
-                'supervisorctl',
-                'start',
-                "{$domain->name}:*"
-            ]);
+        $this->system
+            ->run("{$domain->root()}",
+                [
+                    'supervisorctl',
+                    'start',
+                    "{$domain->name}:*"
+                ]);
 
         return true;
     }
@@ -103,17 +99,16 @@ class Worker implements DomainAction
             return true;
         }
 
-        $this->runner
-            ->runOrFail([
-                'supervisorctl',
-                'stop',
-                "{$domain->name}:*"
-            ]);
+        $this->system
+            ->run($domain->root(),
+                [
+                    'supervisorctl',
+                    'stop',
+                    "{$domain->name}:*"
+                ]);
 
-
-        if (!File::delete("/etc/supervisor/conf.d/{$domain->name}.conf")) {
-            throw new Exception("Cannot delete worker configuration of {$domain->name}");
-        }
+        $this->system
+            ->deleteIfExists("/etc/supervisor/conf.d/{$domain->name}.conf");
 
         $this->reload($domain);
 
@@ -122,17 +117,18 @@ class Worker implements DomainAction
 
     private function reload(Domain $domain): void
     {
-        $runner = $this->runner
-            ->from($domain->root());
+        $this->system
+            ->run($domain->root(),
+                [
+                    'supervisorctl',
+                    'reread'
+                ]);
 
-        $runner->runOrFail([
-            'supervisorctl',
-            'reread'
-        ]);
-
-        $runner->runOrFail([
-            'supervisorctl',
-            'update'
-        ]);
+        $this->system
+            ->run($domain->root(),
+                [
+                    'supervisorctl',
+                    'update'
+                ]);
     }
 }

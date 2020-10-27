@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
@@ -13,17 +14,17 @@ use Sculptor\Foundation\Contracts\Runner;
 class Crontab implements DomainAction
 {
     /**
-     * @var Runner
+     * @var System
      */
-    private $runner;
+    private $system;
     /**
      * @var Compiler
      */
     private $compiler;
 
-    public function __construct(Runner $runner, Compiler $compiler)
+    public function __construct(System $system, Compiler $compiler)
     {
-        $this->runner = $runner;
+        $this->system = $system;
 
         $this->compiler = $compiler;
     }
@@ -61,9 +62,8 @@ class Crontab implements DomainAction
 
     public function update(string $filename, string $user): bool
     {
-        $this->runner
-            ->from(SCULPTOR_HOME)
-            ->runOrFail(['crontab', '-u', $user, $filename]);
+        $this->system
+            ->run(SCULPTOR_HOME, ['crontab', '-u', $user, $filename]);
 
         return true;
     }

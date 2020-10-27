@@ -10,7 +10,7 @@ use Sculptor\Agent\Enums\QueueStatusType;
 class CreateQueuesTable extends Migration
 {
 	/**
-	 * Run the migrations.
+	 * System the migrations.
 	 *
 	 * @return void
 	 */

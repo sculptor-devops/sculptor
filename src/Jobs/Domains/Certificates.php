@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 use Exception;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\CertificatesTypes;
+use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Contracts\Runner;
@@ -12,17 +13,17 @@ use Sculptor\Foundation\Contracts\Runner;
 class Certificates implements DomainAction
 {
     /**
-     * @var Runner
+     * @var System
      */
-    private $runner;
+    private $system;
 
     /**
      * Certificates constructor.
-     * @param Runner $runner
+     * @param System $system
      */
-    public function __construct(Runner $runner)
+    public function __construct(System $system)
     {
-        $this->runner = $runner;
+        $this->system = $system;
     }
 
     /**
@@ -63,30 +64,27 @@ class Certificates implements DomainAction
     {
         Logs::job()->debug("Creating self signed certificates in {$path}");
 
-        $result = $this->runner
-            ->from($path)
-            ->run([
-                'openssl',
-                'req',
-                '-new',
-                '-x509',
-                '-days',
-                '3650',
-                '-nodes',
-                '-sha256',
-                '-out',
-                "{$path}/{$domain->name}.crt",
-                '-keyout',
-                "{$path}/{$domain->name}.key",
-                '-subj',
-                "/CN={$domain->name}"
-            ]);
+        $this->system
+            ->run(
+                $path,
+                [
+                    'openssl',
+                    'req',
+                    '-new',
+                    '-x509',
+                    '-days',
+                    '3650',
+                    '-nodes',
+                    '-sha256',
+                    '-out',
+                    "{$path}/{$domain->name}.crt",
+                    '-keyout',
+                    "{$path}/{$domain->name}.key",
+                    '-subj',
+                    "/CN={$domain->name}"
+                ]);
 
         // "/C=IT/ST=Italy/L=Italy/O=IT/CN=www.example.com"
-
-        if (!$result->success()) {
-            throw new Exception("Error creating self signed certificate: {$result->error()}");
-        }
     }
 
     /**
@@ -95,32 +93,27 @@ class Certificates implements DomainAction
      */
     private function letsEncrypt(Domain $domain): void
     {
-        $email = $domain->email;
-
-        if ($email == null) {
+        if ($domain->email == null) {
             throw new Exception("Domain {$domain->name} has no email configured");
         }
 
-        Logs::job()->debug("Creating let's encrypt certificates for {{$domain->serverName()}} with email {$email}");
+        Logs::job()->debug("Creating let's encrypt certificates for {{$domain->serverName()}} with email {$domain->email}");
 
         $names = str_replace($domain->serverName(), ' ', '-d ');
 
-        $result = $this->runner
-            ->from("{$domain->root()}/certs")
-            ->run([
-                'certbot',
-                '--nginx ',
-                '--agree-tos',
-                '-n',
-                '-m',
-                $email,
-                '-d',
-                $names
-            ]);
-
-        if (!$result->success()) {
-            throw new Exception("Error creating self signed certificate: {$result->error()}");
-        }
+        $this->system
+            ->run(
+                "{$domain->root()}/certs",
+                [
+                    'certbot',
+                    '--nginx ',
+                    '--agree-tos',
+                    '-n',
+                    '-m',
+                    $domain->email,
+                    '-d',
+                    $names
+                ]);
     }
 
     /**
