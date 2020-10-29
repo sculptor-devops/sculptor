@@ -50,15 +50,14 @@ backup:run {id}
 
 backup:delete {id}
 
+backup:blueprint {operation} {file}
+create/load
+
 System
 
 system:daemons {operation=show} {name?}
 show
 use enable, disable, start, restart, reload, stop, status on database, web, queue, remote
-
-
-system:blueprint {operation} {file}
-create/load
 
 system:configuration {operation} {name?} {value?}
 show/get/set/reset/clear

@@ -6,14 +6,14 @@ use Exception;
 use Sculptor\Agent\Blueprint;
 use Sculptor\Agent\Support\CommandBase;
 
-class SystemBlueprint extends CommandBase
+class BackupBlueprint extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'system:blueprint {operation} {file}';
+    protected $signature = 'backup:blueprint {operation} {file}';
 
     /**
      * The console command description.
