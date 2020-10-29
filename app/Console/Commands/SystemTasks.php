@@ -6,14 +6,14 @@ use Illuminate\Support\Str;
 use Sculptor\Agent\Repositories\QueueRepository;
 use Sculptor\Agent\Support\CommandBase;
 
-class QueueTasksStatus extends CommandBase
+class SystemTasks extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tasks:show {verbose=false}';
+    protected $signature = 'system:tasks {limit=25} {page=1}';
 
     /**
      * The console command description.
@@ -39,19 +39,25 @@ class QueueTasksStatus extends CommandBase
      */
     public function handle(QueueRepository $queue): int
     {
-        $verbose = $this->argument('verbose');
+        $limit = (int)$this->argument('limit');
 
-        $tasks = $queue->all();
+        $page = (int)$this->argument('page');
 
-        $map = $tasks->map(function ($item) use ($verbose) {
-            return [
-                'created_at' => $item->created_at,
-                'uuid' => $verbose ? $item->uuid : Str::limit($item->uuid, 25),
-                'status' => $item->status,
-                'type' => Str::afterLast($item->type, '\\'),
-                'error' => $item->error ?? 'None'
-            ];
-        });
+        $tasks = $queue
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->skip(($page  - 1) * $limit)
+            ->get(['created_at', 'uuid', 'status', 'type', 'error'])
+            ->map(function ($item) {
+                return [
+                    'created_at' => $item->created_at,
+                    'uuid' => Str::limit($item->uuid, 25),
+                    'status' => $item->status,
+                    'type' => Str::afterLast($item->type, '\\'),
+                    'error' => $item->error ?? 'None'
+                ];
+            })
+            ->toArray();
 
         $this->table([
             'created_at' => 'Start',
@@ -59,7 +65,9 @@ class QueueTasksStatus extends CommandBase
             'type' => 'Type',
             'status' => 'Status',
             'error' => 'Error'
-        ], $map);
+        ], $tasks);
+
+        $this->info("Limited to {$limit} page {$page}");
 
         return 0;
     }

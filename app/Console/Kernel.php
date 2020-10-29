@@ -8,7 +8,7 @@ use App\Console\Commands\DatabaseCreate;
 use App\Console\Commands\DatabaseUserCreate;
 use App\Console\Commands\DatabaseDelete;
 use App\Console\Commands\DatabaseUserDelete;
-use App\Console\Commands\QueueTasksStatus;
+use App\Console\Commands\SystemTasks;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;

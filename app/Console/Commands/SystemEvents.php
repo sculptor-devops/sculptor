@@ -47,9 +47,9 @@ class SystemEvents extends CommandBase
     {
         $limit = (int)$this->argument('limit');
 
-        $page = (int)$this->argument('page') - 1;
+        $page = (int)$this->argument('page');
 
-        $items = $this->limit($limit, $page);
+        $items = $this->limit($limit, $page - 1);
 
         $this->table([
             'Date/Time',
@@ -58,7 +58,7 @@ class SystemEvents extends CommandBase
             'Message'
         ], $items);
 
-        $this->info("Limited to {$limit} records");
+        $this->info("Limited to {$limit} page {$page}");
 
         return 0;
     }

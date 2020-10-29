@@ -13,7 +13,7 @@ class DatabaseCreate extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'database:create {name}';
+    protected $signature = 'database:create {name} {driver=mysql}';
 
     /**
      * The console command description.

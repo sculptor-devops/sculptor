@@ -70,6 +70,4 @@ reset/write/show/all
 system:upgrades {operation=list}
 list/check .. index
 
-Tasks
-
-tasks:show
+system:tasks {limit=25} {page=1}
