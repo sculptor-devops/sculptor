@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Support\Str;
+use Sculptor\Agent\Enums\QueueStatusType;
 use Sculptor\Agent\Repositories\QueueRepository;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -21,6 +22,7 @@ class SystemTasks extends CommandBase
      * @var string
      */
     protected $description = 'Show queue';
+
     /**
      * Create a new command instance.
      *
@@ -46,15 +48,15 @@ class SystemTasks extends CommandBase
         $tasks = $queue
             ->orderBy('created_at', 'desc')
             ->limit($limit)
-            ->skip(($page  - 1) * $limit)
+            ->skip(($page - 1) * $limit)
             ->get(['created_at', 'uuid', 'status', 'type', 'error'])
             ->map(function ($item) {
                 return [
                     'created_at' => $item->created_at,
-                    'uuid' => Str::limit($item->uuid, 25),
-                    'status' => $item->status,
+                    'uuid' => Str::limit($item->uuid, 15),
+                    'status' => $this->status($item->status),
                     'type' => Str::afterLast($item->type, '\\'),
-                    'error' => $item->error ?? 'None'
+                    'error' => '<error>' . Str::limit($item->error, 60) . '</error>' ?? '-'
                 ];
             })
             ->toArray();
@@ -62,13 +64,27 @@ class SystemTasks extends CommandBase
         $this->table([
             'created_at' => 'Start',
             'uuid' => 'ID',
-            'type' => 'Type',
             'status' => 'Status',
+            'type' => 'Type',
             'error' => 'Error'
         ], $tasks);
 
         $this->info("Limited to {$limit} page {$page}");
 
         return 0;
+    }
+
+    private function status(string $status): string
+    {
+        switch ($status) {
+            case QueueStatusType::ERROR:
+                return '<error>' . QueueStatusType::ERROR . '</error>';
+
+            case QueueStatusType::OK:
+                return '<info>' . QueueStatusType::OK . '</info>';
+
+            default:
+                return "<fg=yellow>{$status}</>";
+        }
     }
 }
