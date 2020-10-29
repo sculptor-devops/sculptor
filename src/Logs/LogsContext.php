@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Logs;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
 use Sculptor\Agent\Enums\LogContextLevel;
 use Sculptor\Agent\Repositories\EventRepository;
@@ -27,7 +28,7 @@ class LogsContext implements LoggerInterface
     private function event(string $message, string $level, array $context, string $payload = null): void
     {
         $this->repository->create([
-            'message' => $message,
+            'message' => Str::limit($message, 250),
             'tag' => $context['tag'],
             'level' => $level,
             'context' => $context,

@@ -1,0 +1,76 @@
+
+Domains
+
+domain:create {name} {type=laravel}
+
+domain:configure {name}
+
+domain:setup {name} {parameter} {value}
+
+domain:deploy {name} {deploy?}
+
+domain:crontab
+
+domain:worker {domain} {status=enable}
+
+domain:disable {name}
+
+domain:enable {name}
+
+domain:show {domain?}
+
+domain:delete {name}
+
+Databases
+
+database:create {name}
+
+database:show
+
+database:delete {name}
+
+Database Users
+
+database:user {database} {name} {host=localhost} {password?}
+
+database:password {database} {name} {password} {host=localhost}
+
+database:delete_user {database} {name} {host=localhost}
+
+Backups
+
+backup:create {type} {name?}
+database/domain/blueprint
+
+backup:show
+
+backup:setup {id} {parameter} {value}
+
+backup:run {id}
+
+backup:delete {id}
+
+System
+
+system:daemons {operation=show} {name?}
+show
+use enable, disable, start, restart, reload, stop, status on database, web, queue, remote
+
+
+system:blueprint {operation} {file}
+create/load
+
+system:configuration {operation} {name?} {value?}
+show/get/set/reset/clear
+
+system:events {limit=25} {page=1}
+
+system:monitors {operation=show}
+reset/write/show/all
+
+system:upgrades {operation=list}
+list/check .. index
+
+Tasks
+
+tasks:show
