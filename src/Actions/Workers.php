@@ -8,7 +8,7 @@ use Sculptor\Agent\Actions\Support\Report;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Jobs\DomainWorkerDisable;
 use Sculptor\Agent\Jobs\DomainWorkerEnable;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\DomainRepository;
 
 class Workers implements ActionInterface

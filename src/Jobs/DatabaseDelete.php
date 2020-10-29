@@ -10,7 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Exceptions\DatabaseDriverException;
 use Sculptor\Agent\Contracts\ITraceable;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Foundation\Contracts\Database as Driver;
 

@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Foundation\Services\Daemons;

@@ -33,14 +33,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $backups = resolve(BackupRepository::class);
+
         $schedule->command('system:monitors', [ 'write' ])->everyMinute();
 
-        $backups = resolve(BackupRepository::class);
+        $schedule->command('system:upgrades', [ 'check' ])->cron('59 23 * * *');
 
         foreach ($backups->all() as $backup) {
             $schedule->command('backup:run', [ $backup->id ])->cron($backup->cron);
         }
-
         // $schedule->command('queue:restart', [ 'write' ])->daily();
     }
 

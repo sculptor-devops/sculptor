@@ -4,14 +4,13 @@ namespace Sculptor\Agent\Jobs\Domains;
 
 use Exception;
 use Illuminate\Support\Facades\File;
-use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Jobs\Domains\Support\System;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 
 class WebServer implements DomainAction

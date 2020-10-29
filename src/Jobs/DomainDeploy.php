@@ -13,7 +13,7 @@ use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\Domains\Deployer;
 use Sculptor\Agent\Jobs\Domains\Permissions;
 use Sculptor\Agent\Jobs\Domains\WebServer;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
 

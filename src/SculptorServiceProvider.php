@@ -12,11 +12,13 @@ use Sculptor\Agent\Backup\Compression\Zip;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Enums\BackupArchiveType;
+use Sculptor\Agent\Logs\Logs;
 use Sculptor\Foundation\Contracts\Database;
 use Sculptor\Foundation\Contracts\Runner;
 use Sculptor\Foundation\Database\MySql;
 use Sculptor\Foundation\Runner\Runner as RunnerImplementation;
 use Sculptor\Agent\Facades\Configuration as ConfigurationFacade;
+use Sculptor\Agent\Facades\Logs as LogsFacade;
 
 class SculptorServiceProvider extends ServiceProvider
 {
@@ -28,6 +30,8 @@ class SculptorServiceProvider extends ServiceProvider
     public function register(): void
     {
         app()->bind(ConfigurationFacade::class, Configuration::class);
+
+        app()->bind(LogsFacade::class, Logs::class);
 
         app()->bind(Runner::class, RunnerImplementation::class);
 

@@ -2,12 +2,10 @@
 
 namespace Sculptor\Agent\Monitors;
 
-use Illuminate\Config\Repository;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
 use Sculptor\Agent\Configuration;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\System\Cpu;
 use Sculptor\Agent\Monitors\System\Disk;
 use Sculptor\Agent\Monitors\System\Io;

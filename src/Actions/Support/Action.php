@@ -8,7 +8,7 @@ use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Exceptions\QueueJobCreateException;
 use Sculptor\Agent\Exceptions\QueueJobNotTraceableException;
 use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Queues;
 
 class Action

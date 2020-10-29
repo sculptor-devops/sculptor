@@ -6,7 +6,7 @@ use Exception;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Exceptions\DomainStatusException;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 
 class StatusMachine

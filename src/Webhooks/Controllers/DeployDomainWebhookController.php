@@ -8,7 +8,7 @@ use Exception;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Exceptions\DomainNotFound;
 use Sculptor\Agent\Repositories\DomainRepository;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Webhooks\Providers\Factory;
 
 class DeployDomainWebhookController extends Controller
@@ -47,7 +47,7 @@ class DeployDomainWebhookController extends Controller
 
         $provider = Factory::deploy($domain->provider);
 
-        Logs::job()->info("Webhook deploy {$domain->name} from {$provider->name()} received");
+        Logs::job()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} received");
 
         if ($provider->valid($request)) {
             abort(400, $provider->error());

@@ -11,7 +11,7 @@ use Sculptor\Agent\Jobs\DatabaseDelete;
 use Sculptor\Agent\Jobs\DatabaseUserCreate;
 use Sculptor\Agent\Jobs\DatabaseUserDelete;
 use Sculptor\Agent\Jobs\DatabaseUserPassword;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;

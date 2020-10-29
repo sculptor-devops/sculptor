@@ -116,7 +116,7 @@ class UpgradeLog implements Iterator
     {
         $date = $this->start;
 
-        if ($date->isYesterday() || $date->isToday()) {
+        if (/*$date->isYesterday() ||*/ $date->isToday()) {
             return true;
         }
 

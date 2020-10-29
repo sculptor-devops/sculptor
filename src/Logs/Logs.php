@@ -2,12 +2,13 @@
 
 namespace Sculptor\Agent\Logs;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Psr\Log\LoggerInterface;
 use Sculptor\Agent\Enums\LogContextType;
+use Sculptor\Agent\Repositories\EventRepository;
+use Sculptor\Agent\Contracts\Logs as LogsInterface;
 
-class Logs
+class Logs implements LogsInterface
 {
     /*
      * @var string
@@ -15,11 +16,15 @@ class Logs
     /**
      * @var string
      */
-    private $tag;
+    private $tag = LogContextType::ACTIONS;
+    /**
+     * @var EventRepository
+     */
+    private $repository;
 
-    public function __construct(string $tag = LogContextType::ACTIONS)
+    public function __construct(EventRepository $repository)
     {
-        $this->tag = $tag;
+        $this->repository = $repository;
     }
 
     /**
@@ -37,17 +42,6 @@ class Logs
     }
 
     /**
-     * @param string $tag
-     * @return LogsContext
-     */
-    public function tag(string $tag): LogsContext
-    {
-        $this->tag = $tag;
-
-        return new LogsContext($this->context());
-    }
-
-    /**
      * @param array $context
      * @return array
      */
@@ -57,68 +51,67 @@ class Logs
     }
 
     /**
-     * @param array $context
-     * @return LogsContext
+     * @param string $tag
+     * @return LogsInterface
      */
-    public static function actions(array $context = []): LogsContext
+    public function tag(string $tag): LogsInterface
     {
-        $logs = new Logs();
+        $this->tag = $tag;
 
-        return new LogsContext($logs->context($context));
+        return $this;
     }
 
     /**
      * @param array $context
-     * @return LogsContext
+     * @return LoggerInterface
      */
-    public static function security(array $context = []): LogsContext
+    public function actions(array $context = []): LoggerInterface
     {
-        $logs = new Logs(LogContextType::SECURITY);
-
-        return new LogsContext($logs->context($context));
+        return new LogsContext($this->context($context), $this->repository);
     }
 
     /**
      * @param array $context
-     * @return LogsContext
+     * @return LoggerInterface
      */
-    public static function backup(array $context = []): LogsContext
+    public function security(array $context = []): LoggerInterface
     {
-        $logs = new Logs(LogContextType::BACKUP);
-
-        return new LogsContext($logs->context($context));
+        return new LogsContext($this->tag(LogContextType::SECURITY)->context($context), $this->repository);
     }
 
     /**
      * @param array $context
-     * @return LogsContext
+     * @return LoggerInterface
      */
-    public static function batch(array $context = []): LogsContext
+    public function backup(array $context = []): LoggerInterface
     {
-        $logs = new Logs(LogContextType::BATCH);
-
-        return new LogsContext($logs->context($context));
+        return new LogsContext($this->tag(LogContextType::BACKUP)->context($context), $this->repository);
     }
 
     /**
      * @param array $context
-     * @return LogsContext
+     * @return LoggerInterface
      */
-    public static function login(array $context = []): LogsContext
+    public function batch(array $context = []): LoggerInterface
     {
-        $logs = new Logs(LogContextType::LOGIN);
-
-        return new LogsContext($logs->context($context));
+        return new LogsContext($this->tag(LogContextType::BATCH)->context($context), $this->repository);
     }
 
     /**
      * @param array $context
-     * @return LogsContext
+     * @return LoggerInterface
      */
-    public static function job(array $context = []): LogsContext
+    public function login(array $context = []): LoggerInterface
     {
-        $logs = new Logs(LogContextType::JOB);
+        return new LogsContext($this->tag(LogContextType::LOGIN)->context($context), $this->repository);
+    }
 
-        return new LogsContext($logs->context($context));
+    /**
+     * @param array $context
+     * @return LoggerInterface
+     */
+    public function job(array $context = []): LoggerInterface
+    {
+        return new LogsContext($this->tag(LogContextType::LOGIN)->context($context), $this->repository);
     }
 }

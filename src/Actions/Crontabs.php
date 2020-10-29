@@ -8,7 +8,7 @@ use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Report;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Jobs\DomainCrontab;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\DomainRepository;
 
 class Crontabs implements ActionInterface

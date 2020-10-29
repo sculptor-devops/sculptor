@@ -13,7 +13,7 @@ use Sculptor\Agent\Exceptions\QueueJobCreateException;
 use Sculptor\Agent\Exceptions\QueueJobNotTraceableException;
 use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
 use Sculptor\Agent\Jobs\DaemonService;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Foundation\Services\Daemons as Services;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 

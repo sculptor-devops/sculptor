@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Exception;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Logs\Upgrades;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -13,7 +14,7 @@ class SystemUpgrades extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'system:upgrades {show=list}';
+    protected $signature = 'system:upgrades {operation=list}';
 
     /**
      * The console command description.
@@ -21,6 +22,7 @@ class SystemUpgrades extends CommandBase
      * @var string
      */
     protected $description = 'Show system upgrades';
+
     /**
      * Create a new command instance.
      *
@@ -40,20 +42,37 @@ class SystemUpgrades extends CommandBase
      */
     public function handle(Upgrades $logs): int
     {
-        $show = $this->argument('show');
+        $operation = $this->argument('operation');
 
-        if ($show == 'list') {
-            $this->list($logs);
+        switch ($operation) {
+            case 'list':
+                $this->list($logs);
+
+                return 0;
+
+            case 'check':
+                $event = $logs->last();
+
+                if ($event == null) {
+                    return 0;
+                }
+
+                if ($event->recent()) {
+                    $this->info('System upgraded recently');
+
+                    Logs::security()->alert("System unattended upgrades " . implode(', ', $event->packages()));
+                }
+
+                return 0;
+        }
+
+        $index = intval($operation);
+
+        if ($index > 0) {
+            $this->show($logs, $index);
 
             return 0;
         }
-
-        if (intval($show) > 0) {
-            $this->show($logs, intval($show));
-
-            return 0;
-        }
-
 
         return 1;
     }
@@ -74,7 +93,7 @@ class SystemUpgrades extends CommandBase
             $packages = count($logs->parse($event)
                 ->packages());
 
-            $events[] = [ 'index' => $index, 'upgrade' => $event->toString(), 'packages' => $packages];
+            $events[] = ['index' => $index, 'upgrade' => $event->toString(), 'packages' => $packages];
 
             if ($event->isYesterday() || $event->isToday()) {
                 $recently = true;
@@ -84,8 +103,8 @@ class SystemUpgrades extends CommandBase
         }
 
         $this->table(['Setting', 'Status'], [
-            [ 'Active', $this->yesNo($logs->active() ) ],
-            [ 'Upgraded recently', $this->yesNo($recently) ]
+            ['Active', $this->yesNo($logs->active())],
+            ['Upgraded recently', $this->yesNo($recently)]
         ]);
 
         $this->table(['Index', 'Event', 'Packages'], $events);
@@ -111,11 +130,11 @@ class SystemUpgrades extends CommandBase
         $packages = $log->packages();
 
         foreach ($packages as $package) {
-            $upgraded[] = [ $package ];
+            $upgraded[] = [$package];
         }
 
         foreach ($log as $row) {
-            $result[] = [ $row ];
+            $result[] = [$row];
         }
 
         $this->table([], $result);

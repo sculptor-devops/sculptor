@@ -9,15 +9,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Contracts\ITraceable;
-use Sculptor\Agent\Jobs\Domains\Certificates;
 use Sculptor\Agent\Jobs\Domains\Crontab;
-use Sculptor\Agent\Jobs\Domains\Deployer;
-use Sculptor\Agent\Jobs\Domains\Env;
-use Sculptor\Agent\Jobs\Domains\Permissions;
 use Sculptor\Agent\Jobs\Domains\Structure;
 use Sculptor\Agent\Jobs\Domains\WebServer;
 use Sculptor\Agent\Jobs\Domains\Worker;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
 

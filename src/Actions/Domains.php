@@ -18,7 +18,7 @@ use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Jobs\DomainDisable;
 use Sculptor\Agent\Jobs\DomainEnable;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 

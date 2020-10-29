@@ -3,8 +3,9 @@
 namespace Sculptor\Agent\Logs;
 
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request;
 use Psr\Log\LoggerInterface;
+use Sculptor\Agent\Enums\LogContextLevel;
+use Sculptor\Agent\Repositories\EventRepository;
 use Throwable;
 
 class LogsContext implements LoggerInterface
@@ -13,15 +14,33 @@ class LogsContext implements LoggerInterface
      * @var array
      */
     private $context;
+    /**
+     * @var EventRepository
+     */
+    private $repository;
 
     private function merge(array $context = []): array
     {
         return array_merge($context, $this->context);
     }
 
-    public function __construct(array $context)
+    private function event(string $message, string $level, array $context, string $payload = null): void
+    {
+        $this->repository->create([
+            'message' => $message,
+            'tag' => $context['tag'],
+            'level' => $level,
+            'context' => $context,
+            'payload' => $payload,
+        ]);
+    }
+
+
+    public function __construct(array $context, EventRepository $repository)
     {
         $this->context = $context;
+
+        $this->repository = $repository;
     }
 
     /**
@@ -30,7 +49,11 @@ class LogsContext implements LoggerInterface
      */
     public function emergency($message, array $context = array())
     {
-        Log::emergency($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::emergency($message, $context);
+
+        $this->event($message, LogContextLevel::EMERGENCY, $context);
     }
 
     /**
@@ -39,7 +62,11 @@ class LogsContext implements LoggerInterface
      */
     public function alert($message, array $context = array())
     {
-        Log::alert($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::alert($message, $context);
+
+        $this->event($message, $context);
     }
 
     /**
@@ -48,7 +75,11 @@ class LogsContext implements LoggerInterface
      */
     public function critical($message, array $context = array())
     {
-        Log::critical($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::critical($message, $context);
+
+        $this->event($message, LogContextLevel::CRITICAL, $context);
     }
 
     /**
@@ -57,7 +88,11 @@ class LogsContext implements LoggerInterface
      */
     public function error($message, array $context = array())
     {
-        Log::error($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::error($message, $context);
+
+        $this->event($message, LogContextLevel::DEBUG, $context);
     }
 
     /**
@@ -66,7 +101,11 @@ class LogsContext implements LoggerInterface
      */
     public function warning($message, array $context = array())
     {
-        Log::warning($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::warning($message, $context);
+
+        $this->event($message, LogContextLevel::WARNING, $context);
     }
 
     /**
@@ -75,7 +114,11 @@ class LogsContext implements LoggerInterface
      */
     public function notice($message, array $context = array())
     {
-        Log::notice($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::notice($message, $context);
+
+        $this->event($message, LogContextLevel::NOTICE, $context);
     }
 
     /**
@@ -84,7 +127,11 @@ class LogsContext implements LoggerInterface
      */
     public function info($message, array $context = array())
     {
-        Log::info($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::info($message, $context);
+
+        $this->event($message, LogContextLevel::INFO, $context);
     }
 
     /**
@@ -93,7 +140,13 @@ class LogsContext implements LoggerInterface
      */
     public function debug($message, array $context = array())
     {
-        Log::debug($message, $this->merge($context));
+        $context = $this->merge($context);
+
+        if (config('app.debug')) {
+            Log::debug($message, $context);
+
+            $this->event($message, LogContextLevel::DEBUG, $context);
+        }
     }
 
     /**
@@ -103,7 +156,11 @@ class LogsContext implements LoggerInterface
      */
     public function log($level, $message, array $context = array())
     {
-        Log::log($level, $message, $this->merge($context));
+        $context = $this->merge($context);
+
+        Log::log($level, $message, $context);
+
+        $this->event($message, LogContextLevel::LOG, $context);
     }
 
     /**
@@ -112,5 +169,7 @@ class LogsContext implements LoggerInterface
     public function report(Throwable $e): void
     {
         report($e);
+
+        $this->event($e->getMessage(), LogContextLevel::ERROR, $this->context, $e->getTraceAsString());
     }
 }

@@ -6,9 +6,8 @@ use Exception;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Jobs\Domains\Support\System;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
-use Sculptor\Foundation\Contracts\Runner;
 
 class Certificates implements DomainAction
 {

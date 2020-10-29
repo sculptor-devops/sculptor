@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Jobs\Domains\Crontab;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 
 class DomainCrontab implements ShouldQueue, ITraceable

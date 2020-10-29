@@ -12,10 +12,9 @@ use Illuminate\Queue\SerializesModels;
 use Sculptor\Agent\Backup\Factory;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Enums\BackupStatusType;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Backup;
-use Sculptor\Foundation\Services\Daemons;
 
 class BackupRun implements ShouldQueue, ITraceable
 {

@@ -17,7 +17,7 @@ use Sculptor\Agent\Jobs\Domains\Structure;
 use Sculptor\Agent\Jobs\Domains\WebServer;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Jobs\Domains\Worker;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
 
