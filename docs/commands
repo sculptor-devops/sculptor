@@ -71,3 +71,5 @@ system:upgrades {operation=list}
 list/check .. index
 
 system:tasks {limit=25} {page=1}
+
+system:info

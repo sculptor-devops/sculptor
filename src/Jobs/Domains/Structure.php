@@ -55,12 +55,12 @@ class Structure implements DomainAction
 
         foreach (
             [
-                "{$domain->type}.deployer.php" => 'deployer.php',
-                "{$domain->type}.cron" => 'cron.conf',
-                "{$domain->type}.worker" => 'worker.conf',
-                "{$domain->type}.env" => 'env',
-                "{$domain->type}.nginx.conf" => 'nginx.conf',
-                "{$domain->type}.logrotate.conf" => 'logrotate.conf',
+                "{$domain->type}/deployer.php" => 'deployer.php',
+                "{$domain->type}/cron" => 'cron.conf',
+                "{$domain->type}/worker" => 'worker.conf',
+                "{$domain->type}/env" => 'env',
+                "{$domain->type}/nginx.conf" => 'nginx.conf',
+                "{$domain->type}/logrotate.conf" => 'logrotate.conf',
             ] as $filename => $destination
         ) {
             $source = "{$templates}/{$filename}";
