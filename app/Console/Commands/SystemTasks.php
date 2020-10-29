@@ -41,14 +41,14 @@ class SystemTasks extends CommandBase
      */
     public function handle(QueueRepository $queue): int
     {
-        $limit = (int)$this->argument('limit');
+        $limit = $this->argument('limit');
 
-        $page = (int)$this->argument('page');
+        $page = $this->argument('page');
 
         $tasks = $queue
             ->orderBy('created_at', 'desc')
-            ->limit($limit)
-            ->skip(($page - 1) * $limit)
+            ->limit((int)$limit)
+            ->skip(((int)$page - 1) * $limit)
             ->get(['created_at', 'uuid', 'status', 'type', 'error'])
             ->map(function ($item) {
                 return [

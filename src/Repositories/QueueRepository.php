@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -47,5 +48,12 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
     public function insert(string $type = 'unknown'): Queue
     {
         return $this->create([ 'uuid' => Str::uuid(), 'type' => $type, 'status' => QueueStatusType::WAITING ]);
+    }
+
+    public function clean(): int
+    {
+        $older = Carbon::now()->subDays( 30 );
+
+        return Queue::where( 'created_at', '<=', $older )->delete();
     }
 }
