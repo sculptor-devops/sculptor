@@ -49,6 +49,7 @@ class Deployer implements DomainAction
         $compiled = $this->compiler
             ->replace($template, $domain)
             ->replace('{REPOSITORY}', $domain->vcs ?? 'git@not_defined.com/unknown/something.git')
+            ->replace('{BRANCH}', $domain->branch)
             ->value();
 
         return $this->compiler

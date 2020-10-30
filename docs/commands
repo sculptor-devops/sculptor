@@ -1,7 +1,34 @@
-
 Domains
 
 domain:create {name} {type=laravel}
+generic
+
+directory structure
+
+/home/www/sites/example.com
+certs
+        example.com.crt
+        example.com.key
+configs
+        env
+        deployer.php
+        logrotate.conf
+        nginx.conf
+        cron.conf
+        worker.conf
+logs
+        access_log
+        error_log
+shared
+        .env
+        storage/
+
+cron.conf
+worker.conf
+deploy.php
+
+releases/
+current/
 
 domain:configure {name}
 

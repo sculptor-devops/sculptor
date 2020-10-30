@@ -11,7 +11,7 @@ set('git_tty', false);
 set('http_user', '{USER}');
 set('http_group', '{USER}');
 set('writable_mode', 'chown');
-set('branch', 'master');
+set('branch', '{BRANCH}');
 set('writable_recursive', true);
 set('writable_chmod_mode', '0755');
 set('writable_chmod_recursive', true);
