@@ -57,7 +57,7 @@ class Database implements ActionInterface
                 throw new DatabaseAlreadyExistsException($name);
             }
 
-            $this->action
+             $this->action
                 ->run(new DatabaseCreate($name));
 
             $this->database

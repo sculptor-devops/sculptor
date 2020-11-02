@@ -20,7 +20,6 @@ class Compiler
         return Replacer::make($template)
             ->replace('{DOMAINS}', $domain->serverNames())
             ->replace('{URL}', "https://{$domain->name}")
-            ->replace('{USER}', $domain->user)
             ->replace('{NAME}', $domain->name)
             ->replace('{PATH}', $domain->root())
             ->replace('{HOME}', $domain->home)

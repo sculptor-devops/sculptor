@@ -20,6 +20,7 @@ class Configuration
     ];
 
     private $keys = [
+        'sculptor.database.default',
         'sculptor.domains.state-machine',
         'sculptor.security.hash',
         'sculptor.security.password.min',

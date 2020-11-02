@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use Exception;
 use Sculptor\Agent\Actions\Database;
+use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Support\CommandBase;
 
 class DatabaseUserPassword extends CommandBase
@@ -14,7 +15,7 @@ class DatabaseUserPassword extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'database:password {database} {name} {password} {host=localhost}';
+    protected $signature = 'database:password {database} {name} {host=localhost} {password?}';
 
     /**
      * The console command description.
@@ -22,6 +23,7 @@ class DatabaseUserPassword extends CommandBase
      * @var string
      */
     protected $description = 'Change a database user password';
+
     /**
      * Create a new command instance.
      *
@@ -36,10 +38,11 @@ class DatabaseUserPassword extends CommandBase
      * Execute the console command.
      *
      * @param Database $actions
+     * @param PasswordGenerator $passwords
      * @return int
      * @throws Exception
      */
-    public function handle(Database $actions): int
+    public function handle(Database $actions, PasswordGenerator $passwords): int
     {
         $database = $this->argument('database');
 
@@ -50,6 +53,10 @@ class DatabaseUserPassword extends CommandBase
         $host = $this->argument('host');
 
         $this->startTask("Updating password {$name}@{$host} on {$database}...");
+
+        if ($password == null) {
+            $password = $passwords->create();
+        }
 
         if (!$actions->password($name, $password, $database, $host)) {
             return $this->errorTask("Error: {$actions->error()}");

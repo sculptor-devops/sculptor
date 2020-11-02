@@ -43,7 +43,8 @@ class Action
      */
     public function run(ITraceable $job, int $timeout = QUEUE_TASK_TIMEOUT): bool
     {
-        $result = $this->queues->await($job, 'system', $timeout);
+        $result = $this->queues
+            ->await($job, 'system', $timeout);
 
         if ($result->ok()) {
             return true;

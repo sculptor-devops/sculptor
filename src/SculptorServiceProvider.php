@@ -4,7 +4,6 @@ namespace Sculptor\Agent;
 
 use Exception;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Sculptor\Agent\Backup\Archives\Local;
 use Sculptor\Agent\Backup\Archives\S3;
@@ -35,7 +34,7 @@ class SculptorServiceProvider extends ServiceProvider
 
         app()->bind(Runner::class, RunnerImplementation::class);
 
-        app()->bind(Database::class, MySql::class);
+        app()->bind(Database::class, function() { return new MySql(); });
 
         app()->bind(Compressor::class, Zip::class);
 
@@ -84,10 +83,10 @@ class SculptorServiceProvider extends ServiceProvider
     {
         $driver = ConfigurationFacade::get('sculptor.database.default');
 
-        $database = ConfigurationFacade::get("sculptor.database.drivers.{$driver}");
+        $database = config("sculptor.database.drivers.{$driver}");
 
         $database['password'] = $this->password();
 
-        ConfigurationFacade::database(['database.connections.db_server' => $database]);
+        ConfigurationFacade::database($database);
     }
 }

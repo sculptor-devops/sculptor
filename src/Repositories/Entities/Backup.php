@@ -66,14 +66,26 @@ class Backup extends Model implements Transformable, BlueprintRecord
      */
     public function name(): string
     {
+        $domain = 'none';
+
+        $database = 'none';
+
+        if ($this->domain != null) {
+            $domain = $this->domain
+                ->name;
+        }
+
+        if ($this->database != null) {
+            $database = $this->database
+                ->name;
+        }
+
         switch ($this->type) {
             case BackupType::DOMAIN:
-                return $this->domain
-                    ->name;
+                return $domain;
 
             case BackupType::DATABASE:
-                return $this->database
-                    ->name;
+                return $database;
 
             case BackupType::BLUEPRINT:
                 return 'system';

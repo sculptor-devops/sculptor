@@ -57,7 +57,7 @@ class BackupShow extends CommandBase
             ];
         }
 
-        $this->table([ 'Index', 'Type', 'Resource', 'Cron', 'Destination', 'Status', 'Size', 'System', 'Error'], $tabled);
+        $this->table([ 'Index', 'Type', 'Resource', 'Cron', 'Destination', 'Status', 'Size', 'Run', 'Error'], $tabled);
 
         $this->info("Temp directory is " . config('sculptor.backup.temp'));
 
