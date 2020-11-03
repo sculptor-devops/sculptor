@@ -34,7 +34,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/flysystem-ziparchive": "^1.0",
         "prettus/l5-repository": "^2.6",
-        "sculptor-devops/foundation": "^0.2.0",
+        "sculptor-devops/foundation": "^0.2.1",
         "spatie/db-dumper": "^2.17",
         "symfony/yaml": "^5.1"
     },
