@@ -3,34 +3,21 @@ namespace Deployer;
 
 require 'recipe/common.php';
 
+// Project name
 set('application', '{NAME}');
 
+// Project repository
 set('repository', '{REPOSITORY}');
 
+// [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', false);
-set('http_user', '{USER}');
-set('http_group', '{USER}');
-set('writable_mode', 'chown');
-set('branch', 'master');
-set('writable_recursive', true);
-set('writable_chmod_mode', '0755');
-set('writable_chmod_recursive', true);
 
-set('shared_dirs', ['storage']);
-set('shared_files', ['.env']);
-set('writable_dirs', [
-    'bootstrap/cache',
-    'storage',
-    'storage/app',
-    'storage/app/public',
-    'storage/framework',
-    'storage/framework/cache',
-    'storage/framework/sessions',
-    'storage/framework/views',
-    'storage/logs',
-]);
+// Shared files/dirs between deploys
+set('shared_files', []);
+set('shared_dirs', []);
 
-set('log_files', 'storage/logs/*.log');
+// Writable dirs by web server
+set('writable_dirs', []);
 
 set('allow_anonymous_stats', false);
 
@@ -38,10 +25,12 @@ set('env', [
     #'GIT_SSH_COMMAND' => 'ssh -F {PATH}/ssh_config'
 ]);
 
+// Hosts
 localhost()
     ->set('deploy_path', '{PATH}')
     ->set('http_user', '{USER}');
 
+// Tasks
 desc('Deploy');
 task('deploy', [
     'deploy:info',
@@ -73,22 +62,14 @@ task('deploy:install', [
     'deploy:clear_paths',
     'deploy:symlink',
     'deploy:unlock',
-    'deploy:key',
     'deploy:owner',
     'cleanup',
     'success'
 ]);
 
-task('deploy:key', function () {
-    run("php {PATH}/current/artisan key:generate");
-});
-
-task('deploy:migrate', function () {
-    run("php {PATH}/current/artisan migrate --force");
-});
-
 task('deploy:owner', function () {
     run("chown -R {USER}:{USER} {PATH}/shared");
 });
 
+// [Optional] If deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
