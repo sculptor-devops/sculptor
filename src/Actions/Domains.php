@@ -14,6 +14,7 @@ use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Jobs\DomainConfigure;
 use Sculptor\Agent\Jobs\DomainCreate;
+use Sculptor\Agent\Jobs\DomainCrontab;
 use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Jobs\DomainDisable;
@@ -101,6 +102,8 @@ class Domains implements ActionInterface
 
             $this->action
                 ->run(new DomainDelete($domain));
+
+            $this->
 
             $domain->delete();
         } catch (Exception $e) {
@@ -267,8 +270,14 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            $domains = $this->domains
+                ->deployed();
+
             $this->action
                 ->run(new DomainDisable($domain));
+
+            $this->action
+                ->run(new DomainCrontab($domains->toArray()));
         } catch (Exception $e) {
             return $this->action
                 ->report("Disable domain {$name}: {$e->getMessage()}");

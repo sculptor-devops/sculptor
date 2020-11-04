@@ -25,17 +25,17 @@ class DomainCrontab implements ShouldQueue, ITraceable
     /**
      * @var array
      */
-    private $tabs;
+    private $domains;
 
     /**
      * Create a new job instance.
      *
-     * @param array $tabs
+     * @param array $domains
      */
     public function __construct(
-        array $tabs
+        array $domains
     ) {
-        $this->tabs = $tabs;
+        $this->domains = $domains;
     }
 
     /**
@@ -50,7 +50,7 @@ class DomainCrontab implements ShouldQueue, ITraceable
 
         try {
 
-            foreach ($this->tabs as $user => $tab) {
+            foreach ($this->compile() as $user => $tab) {
                 $filename = SCULPTOR_HOME . "/{$user}.crontab";
 
                 File::put($filename, $tab);
@@ -62,6 +62,23 @@ class DomainCrontab implements ShouldQueue, ITraceable
         } catch (Exception $e) {
             $this->report($e);
         }
+    }
+
+    private function compile(): array
+    {
+        $tabs = [];
+
+        foreach ($$this->domains as $domain) {
+            $cron = File::get("{$domain->root()}/cron.conf");
+
+            $tab = $tabs[$domain->user];
+
+            $tab = "{$tab}\n# CRONTAB DOMAIN {$domain->name}\n{$cron}";
+
+            $tabs[$domain->user] = $tab;
+        }
+
+        return $tabs;
     }
 
 }

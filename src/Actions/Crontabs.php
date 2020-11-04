@@ -29,36 +29,16 @@ class Crontabs implements ActionInterface
         $this->domains = $domains;
     }
 
-    private function compile(): array
-    {
-        $tabs = [];
-
-        $domains = $this->domains->all()->filter(function ($domain) {
-            return $domain->deployed();
-        });
-
-        foreach ($domains as $domain) {
-            $cron = File::get("{$domain->root()}/cron.conf");
-
-            $tab = $tabs[$domain->user];
-
-            $tab = "{$tab}\n# CRONTAB DOMAIN {$domain->name}\n{$cron}";
-
-            $tabs[$domain->user] = $tab;
-        }
-
-        return $tabs;
-    }
-
     public function update(): bool
     {
         Logs::actions()->info("Update crontabs");
 
         try {
-            $tabs = $this->compile();
+            $domains = $this->domains
+                ->deployed();
 
             $this->action
-                ->run(new DomainCrontab($tabs));
+                ->run(new DomainCrontab($domains->toArray()));
         } catch (Exception $e) {
             return $this->action
                 ->report("Update crontabs: {$e->getMessage()}");

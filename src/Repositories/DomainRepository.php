@@ -4,6 +4,8 @@ namespace Sculptor\Agent\Repositories;
 
 use Exception;
 use Illuminate\Container\Container as Application;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
@@ -134,5 +136,16 @@ class DomainRepository extends BaseRepository implements DomainRepositoryInterfa
         }
 
         throw new Exception("Invalid domain type {$type}");
+    }
+
+    /**
+     * @return Collection
+     */
+    public function deployed(): Collection
+    {
+        return $this->all()
+            ->filter(function ($domain) {
+                return $domain->deployed();
+            });
     }
 }
