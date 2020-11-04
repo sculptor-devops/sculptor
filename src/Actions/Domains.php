@@ -100,10 +100,14 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            $domains = $this->domains
+                ->deployed();
+
             $this->action
                 ->run(new DomainDelete($domain));
 
-            $this->
+            $this->action
+                ->run(new DomainCrontab($domains->toArray()));
 
             $domain->delete();
         } catch (Exception $e) {
@@ -243,10 +247,16 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
+            $domains = $this->domains
+                ->deployed();
+
             $this->machine->can($domain->status, DomainStatusType::DEPLOYED);
 
             $this->action
                 ->run(new DomainEnable($domain));
+
+            $this->action
+                ->run(new DomainCrontab($domains->toArray()));
         } catch (Exception $e) {
             return $this->action
                 ->report("Enable domain {$name}: {$e->getMessage()}");
