@@ -44,7 +44,8 @@ class Deployer implements DomainAction
 
         Logs::actions()->debug("Deploy setup for {$domain->name}");
 
-        $template = File::get("{$domain->configs()}/deployer.php");
+        $template = $this->compiler
+            ->load($domain->configs(), 'deployer.php', $domain->type);
 
         $compiled = $this->compiler
             ->replace($template, $domain)

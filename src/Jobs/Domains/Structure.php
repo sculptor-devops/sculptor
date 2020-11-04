@@ -61,6 +61,7 @@ class Structure implements DomainAction
                 "{$domain->type}/env" => 'env',
                 "{$domain->type}/nginx.conf" => 'nginx.conf',
                 "{$domain->type}/logrotate.conf" => 'logrotate.conf',
+                "{$domain->type}//ssh_config" => 'ssh_config'
             ] as $filename => $destination
         ) {
             $source = "{$templates}/{$filename}";

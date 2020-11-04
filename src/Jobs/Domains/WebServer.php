@@ -40,28 +40,32 @@ class WebServer implements DomainAction
     {
         Logs::actions()->debug("Webserver setup for {$domain->name}");
 
-        $nginx = File::get("{$domain->configs()}/nginx.conf");
+        $certificates = $this->compiler
+            ->certificates($domain);
 
-        $logrotate = File::get("{$domain->configs()}/logrotate.conf");
+        foreach (
+            [
+                'nginx.conf' => '/etc/nginx/sites-available',
+                'logrotate.conf' => '/etc/logrotate.d'
+            ] as $filename => $destination) {
+            $content = $this->compiler
+                ->load($domain->configs(), 'nginx.conf', $domain->type);
 
-        $certificates = $this->compiler->certificates($domain);
+            $compiled = $this->compiler
+                ->replace($content, $domain)
+                ->replace('{DOMAINS}', $domain->serverNames())
+                ->replace('{CERTIFICATE}', $certificates['crt'])
+                ->replace('{CERTIFICATE_KEY}', $certificates['key'])
+                ->replace('{RETAIN}', "366")
+                ->value();
 
-        $nginx = $this->compiler
-            ->replace($nginx, $domain)
-            ->replace('{DOMAINS}', $domain->serverNames())
-            ->replace('{CERTIFICATE}', $certificates['crt'])
-            ->replace('{CERTIFICATE_KEY}', $certificates['key'])
-            ->value();
+            if (!$this->compiler
+                ->save("{$destination}/{$filename}", $compiled)) {
+                throw new Exception("Unable to write {$destination}/{$filename}");
+            }
+        }
 
-        $logrotate = $this->compiler
-            ->replace($logrotate, $domain)
-            ->replace('{RETAIN}', "366")
-            ->value();
-
-        return $this->compiler
-                ->save("/etc/nginx/sites-available/{$domain->name}.conf", $nginx) &&
-            $this->compiler
-                ->save("/etc/logrotate.d/{$domain->name}.conf", $logrotate);
+        return true;
     }
 
     /**

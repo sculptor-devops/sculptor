@@ -34,6 +34,10 @@ set('log_files', 'storage/logs/*.log');
 
 set('allow_anonymous_stats', false);
 
+set('env', [
+    #'GIT_SSH_COMMAND' => 'ssh -F {PATH}/ssh_config'
+]);
+
 localhost()
     ->set('deploy_path', '{PATH}')
     ->set('http_user', '{USER}');

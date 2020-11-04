@@ -31,18 +31,22 @@ class Env implements DomainAction
     {
         Logs::actions()->debug("Env setup for {$domain->name}");
 
-        $filename = "{$domain->configs()}/env";
+        foreach (['env' => 'shared/.env', 'ssh_config' => 'ssh_config'] as $filename => $destination) {
+            $content = $this->compiler->load($domain->configs(), $filename, $domain->type);
 
-        $template = File::get($filename);
+            $database = $this->database($content, $domain);
 
-        $database = $this->database($template, $domain);
+            $compiled = $this->compiler
+                ->replace($database->value(), $domain)
+                ->value();
 
-        $compiled = $this->compiler
-            ->replace($database->value(), $domain)
-            ->value();
+            if (!$this->compiler
+                ->save("{$destination}/{$filename}", $compiled)) {
+                throw new Exception("Unable to save env {$destination}/{$filename}");
+            }
+        }
 
-        return $this->compiler
-            ->save("{$domain->root()}/shared/.env", $compiled);
+        return true;
     }
 
     private function database(string $template, Domain $domain): Replacer

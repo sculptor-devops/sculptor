@@ -37,7 +37,8 @@ class Worker implements DomainAction
     {
         Logs::actions()->debug("Worker setup for {$domain->name}");
 
-        $template = File::get("{$domain->configs()}/worker.conf");
+        $template = $this->compiler
+            ->load($domain->configs(), 'worker.conf', $domain->type);
 
         $compiled = $this->compiler
             ->replace($template, $domain)

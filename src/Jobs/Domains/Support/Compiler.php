@@ -28,6 +28,23 @@ class Compiler
     }
 
     /**
+     * @param string $path
+     * @param string $filename
+     * @param string $type
+     * @return string
+     */
+    public function load(string $path, string $filename, string $type): string
+    {
+        if (!File::exists("{$path}/{$filename}")) {
+            $templates = base_path("templates/{$type}");
+
+            File::copy("{$templates}/{$filename}", "{$path}/{$filename}");
+        }
+
+        return File::get( "{$path}/{$filename}");
+    }
+
+    /**
      * @param string $filename
      * @param string $compiled
      * @return bool

@@ -1,9 +1,0 @@
-[program:{NAME}]
-process_name=%(program_name)s_%(process_num)02d
-command=/usr/bin/php {PATH}/artisan queue:work --daemon
-autostart=true
-autorestart=true
-user={USER}
-numprocs={COUNT}
-redirect_stderr=true
-stdout_logfile={PATH}/logs/worker.log
