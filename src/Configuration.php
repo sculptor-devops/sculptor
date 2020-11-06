@@ -251,7 +251,7 @@ class Configuration
         if ($key == null) {
             return $values;
         }
-
+        
         return $values[$key];
     }
 
