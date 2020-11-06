@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Exception;
+use Sculptor\Agent\Actions\Domains\StatusMachine;
 use Sculptor\Agent\Ip;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Support\CommandBase;
@@ -38,15 +39,16 @@ class DomainShow extends CommandBase
      *
      * @param DomainRepository $domains
      * @param Ip $ip
+     * @param StatusMachine $machine
      * @return int
      * @throws Exception
      */
-    public function handle(DomainRepository $domains, Ip $ip): int
+    public function handle(DomainRepository $domains, Ip $ip, StatusMachine $machine): int
     {
         $domain = $this->argument('domain');
 
         if ($domain) {
-            $this->show($domain, $domains, $ip);
+            $this->show($domain, $domains, $ip, $machine);
 
             return 0;
         }
@@ -60,9 +62,10 @@ class DomainShow extends CommandBase
      * @param string $domain
      * @param DomainRepository $domains
      * @param Ip $ip
+     * @param StatusMachine $machine
      * @throws Exception
      */
-    private function show(string $domain, DomainRepository $domains, Ip $ip): void
+    private function show(string $domain, DomainRepository $domains, Ip $ip, StatusMachine $machine): void
     {
         $item = $domains->byName($domain);
 
@@ -85,7 +88,7 @@ class DomainShow extends CommandBase
             ['name' => 'name', 'value' => $item->name],
             ['name' => 'alias', 'value' => $item->alias ?? 'none'],
             ['name' => 'type', 'value' => $item->type],
-            ['name' => 'status', 'value' => $item->status],
+            ['name' => 'status', 'value' => $item->status . ' (can switch to ' . $machine->next($item->status) . ')'],
             ['name' => 'certificate type', 'value' => $item->certificate],
             ['name' => 'certificate email', 'value' => $item->email ?? 'none'],
             ['name' => 'www', 'value' => $this->yesNo($item->www)],

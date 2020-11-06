@@ -16,6 +16,36 @@ class StatusMachine
      */
     private $configuration;
 
+    private $from = [
+        DomainStatusType::DEPLOYING => [],
+
+        DomainStatusType::ERROR => [],
+
+        DomainStatusType::NEW => [
+            DomainStatusType::NEW,
+            DomainStatusType::CONFIGURED
+        ],
+
+        DomainStatusType::CONFIGURED => [
+            DomainStatusType::NEW,
+            DomainStatusType::DEPLOYED,
+            DomainStatusType::SETUP,
+            DomainStatusType::CONFIGURED
+        ],
+
+        DomainStatusType::DEPLOYED => [
+            DomainStatusType::CONFIGURED,
+            DomainStatusType::DEPLOYED
+        ],
+
+        DomainStatusType::SETUP => [
+            DomainStatusType::DEPLOYED,
+            DomainStatusType::CONFIGURED,
+            DomainStatusType::SETUP,
+            DomainStatusType::NEW
+        ]
+    ];
+
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
@@ -29,51 +59,24 @@ class StatusMachine
      */
     public function can(string $from, string $to): bool
     {
-        if ($to == DomainStatusType::ERROR || $from == DomainStatusType::ERROR) {
+        $available = $this->from[$to];
+
+        if (in_array($from, $available) || count($available) == 0) {
             return true;
         }
-
-        if ($from == DomainStatusType::DEPLOYING) {
-            return true;
-        }
-
-        if ($to == DomainStatusType::NEW && in_array($from,
-                [
-                    DomainStatusType::NEW,
-                    DomainStatusType::CONFIGURED
-                ])) {
-            return true;
-        }
-
-        if ($to == DomainStatusType::CONFIGURED && in_array($from,
-                [
-                    DomainStatusType::NEW,
-                    DomainStatusType::DEPLOYED,
-                    DomainStatusType::SETUP,
-                    DomainStatusType::CONFIGURED
-                ])) {
-            return true;
-        }
-
-        if ($to == DomainStatusType::DEPLOYED && in_array($from,
-                [
-                    DomainStatusType::CONFIGURED,
-                    DomainStatusType::DEPLOYED
-                ])) {
-            return true;
-        }
-
-        if ($to == DomainStatusType::SETUP && in_array($from,
-                [
-                    DomainStatusType::DEPLOYED,
-                    DomainStatusType::CONFIGURED,
-                    DomainStatusType::SETUP,
-                    DomainStatusType::NEW
-                ])) {
-            return true;
-        }
-
+        
         throw new DomainStatusException($from, $to);
+    }
+
+    public function next(string $status): string
+    {
+        $statuses = $this->from[$status];
+
+        if (count($statuses) == 0) {
+            return "Can go in any status";
+        }
+
+        return implode(', ', $statuses);
     }
 
     /**
