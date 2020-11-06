@@ -31,7 +31,7 @@ class Github implements DeployProvider
             $payload = $request->json();
 
             if ($payload->get('ref') != "refs/heads/{$branch}") {
-               return false;
+                return false;
             }
 
             return true;

@@ -58,7 +58,7 @@ class DeployDomainWebhookController extends Controller
         }
 
         if (!$provider->branch($request, $domain->branch)) {
-            Logs::batch()->notice("Web hook was not for {$domain->branch} branch");
+            Logs::batch()->notice("Web hook {$domain->name} was not for {$domain->branch} branch");
 
             return DeployDomainWebhookController::DONE;
         }
