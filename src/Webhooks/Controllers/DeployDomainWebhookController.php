@@ -13,6 +13,8 @@ use Sculptor\Agent\Webhooks\Providers\Factory;
 
 class DeployDomainWebhookController extends Controller
 {
+    const DONE = 'done';
+
     /**
      * @var DomainRepository
      */
@@ -43,21 +45,29 @@ class DeployDomainWebhookController extends Controller
         $domain = $this->domains->byHash($hash);
 
         if ($domain->token != $token) {
+            Logs::batch()->warning("Web hook invalid token");
+
             abort(400, 'Invalid token');
         }
 
         $provider = Factory::deploy($domain->provider);
 
-        Logs::job()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} received");
+        Logs::batch()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} received");
 
         if (!$provider->valid($request, $domain->branch)) {
             abort(400, $provider->error());
+        }
+
+        if (!$provider->branch($request, $domain->branch)) {
+            Logs::batch()->notice("Web hook was not for {$domain->branch} branch");
+
+            return DeployDomainWebhookController::DONE;
         }
 
         if (!$this->actions->deploy($domain)) {
             abort(500, $this->actions->error());
         }
 
-        return 'done';
+        return DeployDomainWebhookController::DONE;
     }
 }

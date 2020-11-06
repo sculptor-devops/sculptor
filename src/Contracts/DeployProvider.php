@@ -10,5 +10,7 @@ interface DeployProvider
 
     public function valid(Request $request, string $branch): bool;
 
+    public function branch(Request $request, string $branch): bool;
+
     public function error(): ?string;
 }

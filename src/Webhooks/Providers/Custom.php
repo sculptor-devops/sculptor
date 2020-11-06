@@ -18,6 +18,11 @@ class Custom implements DeployProvider
         return true;
     }
 
+    public function branch(Request $request, string $branch): bool
+    {
+        return true;
+    }
+
     public function error(): ?string
     {
         return null;
