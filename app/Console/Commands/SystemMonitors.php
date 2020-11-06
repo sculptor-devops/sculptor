@@ -67,7 +67,6 @@ class SystemMonitors extends CommandBase
                     $value['key'] = $formatter->name($value['key']);
                 }
 
-
                 $this->table(['Monitor', 'Value'], $values);
 
                 return 0;
