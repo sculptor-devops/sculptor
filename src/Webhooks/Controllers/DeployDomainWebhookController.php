@@ -54,6 +54,8 @@ class DeployDomainWebhookController extends Controller
         Logs::batch()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} received");
 
         if (!$provider->valid($request, $domain->branch)) {
+            Logs::batch()->error("Webhook deploy {$domain->name} error, payload invalid for {$provider->name()}");
+
             abort(400, $provider->error());
         }
 
