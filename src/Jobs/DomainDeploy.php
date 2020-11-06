@@ -74,7 +74,7 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $elapsed = now()->longAbsoluteDiffForHumans($started);
 
-            Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$elapsed}s");
+            Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$elapsed}");
 
             $this->ok();
         } catch (Exception $e) {
