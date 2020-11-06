@@ -56,6 +56,7 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'deploy:owner',
+    'deploy:migrate',
     'cleanup',
     'success'
 ]);
@@ -75,7 +76,6 @@ task('deploy:install', [
     'deploy:unlock',
     'deploy:key',
     'deploy:owner',
-    'deploy:migrate',
     'cleanup',
     'success'
 ]);
