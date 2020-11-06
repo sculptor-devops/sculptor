@@ -67,7 +67,7 @@ class DeployDomainWebhookController extends Controller
 
         Logs::batch()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} deploy appended");
 
-        if (!$this->actions->deployBatch($domain)) {
+        if (!$this->actions->deployBatch($domain->name)) {
             abort(500, $this->actions->error());
         }
 
