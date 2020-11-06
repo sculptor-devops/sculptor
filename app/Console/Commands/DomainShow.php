@@ -87,6 +87,7 @@ class DomainShow extends CommandBase
             ['name' => 'type', 'value' => $item->type],
             ['name' => 'status', 'value' => $item->status],
             ['name' => 'certificate type', 'value' => $item->certificate],
+            ['name' => 'certificate email', 'value' => $item->email ?? 'none'],
             ['name' => 'www', 'value' => $this->yesNo($item->www)],
             ['name' => 'user', 'value' => $item->user],
             ['name' => 'root', 'value' => $item->root()],
@@ -100,7 +101,6 @@ class DomainShow extends CommandBase
             ['name' => 'deploy branch', 'value' => $item->branch ?? 'None' ],
         ]);
     }
-
 
     /**
      * @param DomainRepository $domains
