@@ -37,7 +37,7 @@ class CreateDomainsTable extends Migration
             $table->string('vcs')->nullable();
             $table->string('branch')->default('master');
             $table->string('token')->nullable();
-            
+
             $table->unsignedInteger('database_id')->nullable();
             $table->unsignedInteger('database_user_id')->nullable();
             $table->timestamps();
