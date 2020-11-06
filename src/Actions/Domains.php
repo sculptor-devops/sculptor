@@ -75,7 +75,8 @@ class Domains implements ActionInterface
         Logs::actions()->info("Create domain {$name}");
 
         try {
-            $domain = $this->domains->factory($name, $type);
+            $domain = $this->domains
+                ->factory($name, $type);
 
             $this->action
                 ->run(new DomainCreate($domain));
