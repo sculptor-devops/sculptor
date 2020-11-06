@@ -64,7 +64,7 @@ class DeployDomainWebhookController extends Controller
             return DeployDomainWebhookController::DONE;
         }
 
-        if (!$this->actions->deploy($domain)) {
+        if (!$this->actions->deployBatch($domain)) {
             abort(500, $this->actions->error());
         }
 
