@@ -160,17 +160,12 @@ class Domains implements ActionInterface
     {
         Logs::actions()->info("Deploy domain {$name}");
 
-        $domain = $this->domains
-            ->byName($name);
-
-        $this->machine
-            ->change($domain, DomainStatusType::DEPLOYED);
-
         try {
             $domain = $this->domains
                 ->byName($name);
 
-            $this->machine->change($domain, DomainStatusType::DEPLOYING);
+            $this->machine
+                ->change($domain, DomainStatusType::DEPLOYING);
 
             $this->action
                 ->runIndefinite(new DomainDeploy($domain, $command));
@@ -196,7 +191,8 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
-            $this->machine->change($domain, DomainStatusType::DEPLOYING);
+            $this->machine
+                ->change($domain, DomainStatusType::DEPLOYING);
 
             $this->action
                 ->runAndExit(new DomainDeploy($domain, $command));
