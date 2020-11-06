@@ -112,6 +112,6 @@ class Logs implements LogsInterface
      */
     public function job(array $context = []): LoggerInterface
     {
-        return new LogsContext($this->tag(LogContextType::LOGIN)->context($context), $this->repository);
+        return new LogsContext($this->tag(LogContextType::JOB)->context($context), $this->repository);
     }
 }
