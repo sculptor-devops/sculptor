@@ -67,7 +67,6 @@ class DomainShow extends CommandBase
      */
     private function show(string $domain, DomainRepository $domains, Ip $ip, StatusMachine $machine): void
     {
-
         $item = $domains->byName($domain);
 
         $database = 'none';
