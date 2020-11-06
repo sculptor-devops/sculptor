@@ -61,7 +61,7 @@ class StatusMachine
     {
         $available = $this->from[$to];
 
-        if (in_array($from, $available) || count($available) == 0) {
+        if (in_array($from, $available) || count($available) == 0 || $available == null) {
             return true;
         }
 

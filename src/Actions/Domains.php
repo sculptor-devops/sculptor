@@ -164,7 +164,7 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
-            $domain->update([ 'status' => DomainStatusType::DEPLOYING ]);
+            $this->machine->change($domain, DomainStatusType::DEPLOYING);
 
             $this->action
                 ->runIndefinite(new DomainDeploy($domain, $command));
@@ -193,7 +193,7 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
-            $domain->update([ 'status' => DomainStatusType::DEPLOYING ]);
+            $this->machine->change($domain, DomainStatusType::DEPLOYING);
 
             $this->action
                 ->runAndExit(new DomainDeploy($domain, $command));
