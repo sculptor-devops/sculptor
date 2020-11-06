@@ -67,11 +67,7 @@ class Deployer implements DomainAction
     {
         $this->deploy('deploy:unlock', $domain);
 
-        $deploy = null;
-
-        if ($domain->status == DomainStatusType::CONFIGURED) {
-            $deploy = $domain->deployer ?? SITES_DEPLOY;
-        }
+        $deploy = $domain->deployer ?? SITES_DEPLOY;
 
         if ($domain->status == DomainStatusType::NEW) {
             $deploy = $domain->install ?? SITES_INSTALL;
@@ -84,6 +80,8 @@ class Deployer implements DomainAction
         if ($deploy == null) {
             throw new Exception("Command deploy cannot be null for {$domain->name}");
         }
+
+        $domain->update([ 'status' => DomainStatusType::DEPLOYING ]);
 
         $this->deploy($deploy, $domain);
 

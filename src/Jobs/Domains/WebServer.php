@@ -51,8 +51,8 @@ class WebServer implements DomainAction
 
         foreach (
             [
-                'nginx.conf' => '/etc/nginx/sites-available',
-                'logrotate.conf' => '/etc/logrotate.d'
+                'nginx.conf' => "/etc/nginx/sites-available/{$domain->name}.conf",
+                'logrotate.conf' => "/etc/logrotate.d/$domain->name}.conf"
             ] as $filename => $destination) {
             $content = $this->compiler
                 ->load($domain->configs(), 'nginx.conf', $domain->type);
@@ -66,8 +66,8 @@ class WebServer implements DomainAction
                 ->value();
 
             if (!$this->compiler
-                ->save("{$destination}/{$filename}", $compiled)) {
-                throw new Exception("Unable to write {$destination}/{$filename}");
+                ->save("{$destination}", $compiled)) {
+                throw new Exception("Unable to write {$destination}");
             }
         }
 
@@ -87,6 +87,7 @@ class WebServer implements DomainAction
 
         if (File::exists($destination) &&
             File::exists($origin)) {
+
             return true;
         }
 

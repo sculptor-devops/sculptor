@@ -60,11 +60,9 @@ class DomainDeploy implements ShouldQueue, ITraceable
         Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command}");
 
         try {
-            $this->domain->update([ 'status' => DomainStatusType::DEPLOYING ]);
-
             $deploy->compile($this->domain);
 
-            $deploy->run($this->domain, $this->command);
+            // $deploy->run($this->domain, $this->command);
 
             $web->enable($this->domain);
 
@@ -74,9 +72,9 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $this->ok();
         } catch (Exception $e) {
-            $this->domain->update([ 'status' => DomainStatusType::ERROR ]);
-
             $this->report($e);
+
+            $this->domain->update([ 'status' => DomainStatusType::ERROR ]);
         }
     }
 }
