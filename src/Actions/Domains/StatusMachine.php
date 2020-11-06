@@ -64,7 +64,7 @@ class StatusMachine
         if (in_array($from, $available) || count($available) == 0) {
             return true;
         }
-        
+
         throw new DomainStatusException($from, $to);
     }
 
