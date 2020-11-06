@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Sculptor\Agent\Repositories\EventRepository;
 use Sculptor\Agent\Support\CommandBase;
+use Throwable;
 
 class SystemClear extends CommandBase
 {
@@ -41,11 +42,10 @@ class SystemClear extends CommandBase
      * Execute the console command.
      *
      * @return int
+     * @throws Throwable
      */
     public function handle(): int
     {
-
-
         return 0;
     }
 }

@@ -101,6 +101,7 @@ class DomainShow extends CommandBase
             ['name' => 'install command', 'value' => $item->install],
             ['name' => 'git uri', 'value' => $item->vcs],
             ['name' => 'deploy url', 'value' => $item->deployUrl() ?? 'No token configured' ],
+            ['name' => 'deploy provider', 'value' => $item->provider ],
             ['name' => 'deploy branch', 'value' => $item->branch ?? 'None' ],
         ]);
     }
