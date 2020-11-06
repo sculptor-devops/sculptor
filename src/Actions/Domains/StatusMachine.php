@@ -57,7 +57,6 @@ class StatusMachine
 
         if ($to == DomainStatusType::DEPLOYED && in_array($from,
                 [
-                    DomainStatusType::SETUP,
                     DomainStatusType::CONFIGURED,
                     DomainStatusType::DEPLOYED
                 ])) {
@@ -66,6 +65,7 @@ class StatusMachine
 
         if ($to == DomainStatusType::SETUP && in_array($from,
                 [
+                    DomainStatusType::DEPLOYED,
                     DomainStatusType::CONFIGURED,
                     DomainStatusType::SETUP,
                     DomainStatusType::NEW
