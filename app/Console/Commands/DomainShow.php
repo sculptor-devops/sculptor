@@ -67,6 +67,7 @@ class DomainShow extends CommandBase
      */
     private function show(string $domain, DomainRepository $domains, Ip $ip, StatusMachine $machine): void
     {
+
         $item = $domains->byName($domain);
 
         $database = 'none';
@@ -92,10 +93,10 @@ class DomainShow extends CommandBase
             ['name' => 'certificate type', 'value' => $item->certificate],
             ['name' => 'certificate email', 'value' => $item->email ?? 'none'],
             ['name' => 'www', 'value' => $this->yesNo($item->www)],
-            ['name' => 'user', 'value' => $item->user],
-            ['name' => 'root', 'value' => $item->root()],
             ['name' => 'http user', 'value' => $item->user],
-            ['name' => 'home', 'value' => $item->home()],
+            ['name' => 'root', 'value' => $item->root()],
+            ['name' => 'current', 'value' => $item->current()],
+            ['name' => 'public', 'value' => $item->home()],
             ['name' => 'database', 'value' => $database . ' (user ' . ( $databaseUser ?? 'none' ) . ')'],
             ['name' => 'deploy command', 'value' => $item->deployer],
             ['name' => 'install command', 'value' => $item->install],
