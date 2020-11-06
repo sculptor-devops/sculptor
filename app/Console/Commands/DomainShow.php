@@ -92,7 +92,7 @@ class DomainShow extends CommandBase
             ['name' => 'root', 'value' => $item->root()],
             ['name' => 'http user', 'value' => $item->user],
             ['name' => 'home', 'value' => $item->home()],
-            ['name' => 'database', 'value' => $database . ( ' (user ' . $databaseUser ?? 'none' . ')')],
+            ['name' => 'database', 'value' => $database . ' (user ' . ( $databaseUser ?? 'none' ) . ')'),
             ['name' => 'deploy command', 'value' => $item->deployer],
             ['name' => 'install command', 'value' => $item->install],
             ['name' => 'git uri', 'value' => $item->vcs],
