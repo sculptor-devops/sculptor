@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Str;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -20,6 +21,7 @@ class DomainTemplates extends CommandBase
      * @var string
      */
     protected $description = 'Overwrite domain templates in configs directory';
+
     /**
      * Create a new command instance.
      *
@@ -40,14 +42,23 @@ class DomainTemplates extends CommandBase
     {
         $domain = $this->argument('domain');
 
+        $answer = $this->ask("This operation will <fg=red>DELETE ALL</> customizations to {$domain} configs, do you want to continue? \n(type <fg=yellow>yes or y</> to continue)");
+
+        if (Str::lower($answer) != 'yes' && Str::lower($answer) != 'y') {
+            return 1;
+        }
+
         $this->startTask("Domain templates {$domain}");
 
         if (!$domains->templates($domain)) {
             return $this->errorTask($domains->error());
         }
 
+        $this->completeTask();
 
-        return $this->completeTask();
+        $this->warn("Now you need to run domain:configure {$domain} to make modifications");
+
+        return 0;
     }
 
 }

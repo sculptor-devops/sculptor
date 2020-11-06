@@ -75,6 +75,7 @@ task('deploy:install', [
     'deploy:unlock',
     'deploy:key',
     'deploy:owner',
+    'deploy:migrate',
     'cleanup',
     'success'
 ]);
