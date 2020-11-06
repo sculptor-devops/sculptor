@@ -68,7 +68,7 @@ class DomainCrontab implements ShouldQueue, ITraceable
     {
         $tabs = [];
 
-        foreach ($$this->domains as $domain) {
+        foreach ($this->domains as $domain) {
             $cron = File::get("{$domain->root()}/cron.conf");
 
             $tab = $tabs[$domain->user];

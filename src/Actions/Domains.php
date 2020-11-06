@@ -113,7 +113,7 @@ class Domains implements ActionInterface
             $domain->delete();
         } catch (Exception $e) {
             return $this->action
-                ->report("Deploy domain {$name}: {$e->getMessage()}");
+                ->report("Delete domain {$name}: {$e->getMessage()}");
         }
 
         return true;

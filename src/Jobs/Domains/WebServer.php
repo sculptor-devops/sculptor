@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
-use Sculptor\Agent\Jobs\DaemonService;
+use Sculptor\Agent\Jobs\Daemons\Operations;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Facades\Logs;
@@ -23,12 +23,18 @@ class WebServer implements DomainAction
      * @var Compiler
      */
     private $compiler;
+    /**
+     * @var Operations
+     */
+    private $operations;
 
-    public function __construct(System $system, Compiler $compiler)
+    public function __construct(System $system, Compiler $compiler, Operations $operations)
     {
         $this->system = $system;
 
         $this->compiler = $compiler;
+
+        $this->operations = $operations;
     }
 
     /**
@@ -138,7 +144,7 @@ class WebServer implements DomainAction
         Logs::actions()
             ->debug("Reloading services for www");
 
-        dispatch(new DaemonService(DaemonGroupType::WEB, DaemonOperationsType::RELOAD));
+        $this->operations->group(DaemonGroupType::WEB, DaemonOperationsType::RELOAD);
 
         return true;
     }

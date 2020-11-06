@@ -12,6 +12,7 @@ use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Facades\Logs;
+use Sculptor\Agent\Jobs\Daemons\Operations;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Foundation\Services\Daemons;
@@ -47,73 +48,21 @@ class DaemonService implements ShouldQueue, ITraceable
     }
 
     /**
-     * @param Daemons $daemons
-     * @param Configuration $configuration
+     * @param Operations $operations
      * @throws Exception
      */
-    public function handle(Daemons $daemons, Configuration $configuration): void
+    public function handle(Operations $operations): void
     {
         $this->transaction = ($this->group != DaemonGroupType::DATABASE);
 
         $this->running();
 
         try {
-            if (!$this->run($daemons, $configuration)) {
-                $this->error("Unable to start {$this->group}: {$daemons->error()}");
-
-                return;
-            }
+            $operations->group($this->group, $this->operation);
 
             $this->ok();
         } catch (Exception $e) {
             $this->report($e);
         }
-    }
-
-    /**
-     * @param Daemons $daemons
-     * @param Configuration $configuration
-     * @return bool
-     * @throws Exception
-     */
-    private function run(Daemons $daemons, Configuration $configuration): bool
-    {
-        Logs::job()->info("Daemon {$this->group} {$this->operation}");
-
-        foreach ($configuration->services($this->group) as $service) {
-
-            if (!$this->apply($daemons, $service)) {
-                throw new Exception("Unable to {$this->operation} service $service: {$daemons->error()}");
-            }
-        }
-
-        return true;
-    }
-
-    private function apply(Daemons $daemons, string $service): bool
-    {
-        Logs::job()->debug("Daemon {$this->operation} {$service}");
-
-        switch ($this->operation) {
-            case DaemonOperationsType::START:
-                return $daemons->start($service);
-
-            case DaemonOperationsType::STOP:
-                return $daemons->stop($service);
-
-            case DaemonOperationsType::RELOAD:
-                return $daemons->reload($service);
-
-            case DaemonOperationsType::RESTART:
-                return $daemons->restart($service);
-
-            case DaemonOperationsType::ENABLE:
-                return $daemons->enable($service);
-
-            case DaemonOperationsType::DISABLE:
-                return $daemons->disable($service);
-        }
-
-        throw new Exception("Unknown daemon operation {$this->operation}");
     }
 }

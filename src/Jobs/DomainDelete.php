@@ -61,6 +61,8 @@ class DomainDelete implements ShouldQueue, ITraceable
             ) {
                 $stage = resolve($step);
 
+                Logs::job()->debug("Domain deletion running step {$step}");
+
                 $stage->delete($this->domain);
             }
 
