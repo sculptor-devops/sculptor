@@ -38,13 +38,15 @@ class Io
                     "{$this->name()}.tps.{$device}" => $disk['tps'],
                     "{$this->name()}.kbreads.{$device}" => $disk["kB_read/s"],
                     "{$this->name()}.kbwrtns.{$device}" => $disk["kB_wrtn/s"],
-                    // "{$this->name()}.kbread.{$device}" => $disk['kB_read'],
-                    // "{$this->name()}.kbwrtn.{$device}" => $disk['kB_wrtn']
                 ];
             }
         }
 
-        throw new Exception("Cannot find device {$device}");
+        return [
+            "{$this->name()}.tps.{$device}" => 0,
+            "{$this->name()}.kbreads.{$device}" => 0,
+            "{$this->name()}.kbwrtns.{$device}" => 0,
+        ];
     }
 
     public function name(): string

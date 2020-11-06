@@ -2,6 +2,8 @@
 
 namespace Sculptor\Agent\Monitors\System;
 
+use Exception;
+
 class Disk
 {
     public function values(array $configuration = []): array
@@ -10,15 +12,17 @@ class Disk
 
         $device = $configuration['device'];
 
-        $free = disk_free_space($path);
-        $total = disk_total_space($path);
-        $percent = (100 - ceil(($free / $total) * 100));
-
-        return [
-            "{$this->name()}.free.{$device}" => $free,
-            "{$this->name()}.total.{$device}" => $total,
-            // "{$this->name()}.percent.{$device}" => $percent
-        ];
+        try {
+            return [
+                "{$this->name()}.free.{$device}" => disk_free_space($path),
+                "{$this->name()}.total.{$device}" => disk_total_space($path),
+            ];
+        } catch (Exception $e) {
+            return [
+                "{$this->name()}.free.{$device}" => 0,
+                "{$this->name()}.total.{$device}" => 0,
+            ];
+        }
     }
 
     public function name(): string
