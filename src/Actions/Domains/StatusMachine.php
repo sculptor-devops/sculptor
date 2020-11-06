@@ -29,17 +29,20 @@ class StatusMachine
         DomainStatusType::CONFIGURED => [
             DomainStatusType::NEW,
             DomainStatusType::DEPLOYED,
+            DomainStatusType::DEPLOYING,
             DomainStatusType::SETUP,
             DomainStatusType::CONFIGURED
         ],
 
         DomainStatusType::DEPLOYED => [
             DomainStatusType::CONFIGURED,
-            DomainStatusType::DEPLOYED
+            DomainStatusType::DEPLOYED,
+            DomainStatusType::DEPLOYING
         ],
 
         DomainStatusType::SETUP => [
             DomainStatusType::DEPLOYED,
+            DomainStatusType::DEPLOYING,
             DomainStatusType::CONFIGURED,
             DomainStatusType::SETUP,
             DomainStatusType::NEW

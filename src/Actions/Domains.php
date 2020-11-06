@@ -160,6 +160,12 @@ class Domains implements ActionInterface
     {
         Logs::actions()->info("Deploy domain {$name}");
 
+        $domain = $this->domains
+            ->byName($name);
+
+        $this->machine
+            ->change($domain, DomainStatusType::DEPLOYED);
+
         try {
             $domain = $this->domains
                 ->byName($name);
@@ -172,9 +178,6 @@ class Domains implements ActionInterface
             return $this->action
                 ->report("Deploy domain {$name}: {$e->getMessage()}");
         }
-
-        $this->machine
-            ->change($domain, DomainStatusType::DEPLOYED);
 
         return true;
     }
@@ -201,9 +204,6 @@ class Domains implements ActionInterface
             return $this->action
                 ->report("Deploy domain {$name}: {$e->getMessage()}");
         }
-
-        $this->machine
-            ->change($domain, DomainStatusType::DEPLOYED);
 
         return true;
     }
