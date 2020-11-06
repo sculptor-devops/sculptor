@@ -74,7 +74,12 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
 
     public function home(): string
     {
-        return "{$this->root()}/current/{$this->home}";
+        return "{$this->current()}/{$this->home}";
+    }
+
+    public function current(): string
+    {
+        return "{$this->root()}/current";
     }
 
     public function configs(): string

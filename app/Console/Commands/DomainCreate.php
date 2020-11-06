@@ -48,6 +48,10 @@ class DomainCreate extends CommandBase
             return $this->errorTask($domains->error());
         }
 
-        return $this->completeTask();
+        $this->completeTask();
+
+        $this->warn("Now you need to run domain:setup {$name} to make modifications");
+
+        return 0;
     }
 }

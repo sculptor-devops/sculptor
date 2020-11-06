@@ -1,2 +1,2 @@
-# * * * * * cd php {PATH}/artisan schedule:run >> /dev/null 2>&1
+# * * * * * cd php {CURRENT}/artisan schedule:run >> /dev/null 2>&1
 

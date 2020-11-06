@@ -48,6 +48,10 @@ class DomainConfigure extends CommandBase
             return $this->errorTask($domains->error());
         }
 
-        return $this->completeTask();
+        $this->completeTask();
+
+        $this->warn("Now you need to run domain:deploy {$name} to apply modifications");
+
+        return 0;
     }
 }

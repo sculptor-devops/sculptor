@@ -13,6 +13,7 @@ use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Jobs\Domains\Crontab;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
+use Sculptor\Agent\Repositories\DomainRepository;
 
 class DomainCrontab implements ShouldQueue, ITraceable
 {
@@ -40,20 +41,24 @@ class DomainCrontab implements ShouldQueue, ITraceable
 
     /**
      * @param Crontab $crontab
+     * @param DomainRepository $domains
      * @throws Exception
      */
-    public function handle(Crontab $crontab): void
+    public function handle(Crontab $crontab, DomainRepository $domains): void
     {
         $this->running();
 
         Logs::job()->info("Domains crontab");
 
         try {
-
-            foreach ($this->compile() as $user => $tab) {
+            foreach ($this->compile($domains) as $user => $tab) {
                 $filename = SCULPTOR_HOME . "/{$user}.crontab";
 
-                File::put($filename, $tab);
+                Logs::job()->debug("Creating crontab {$filename}");
+
+                if (!File::put($filename, $tab)) {
+                    throw new Exception("Cannot write crontab file {$filename}");
+                }
 
                 $crontab->update($filename, $user);
             }
@@ -64,12 +69,24 @@ class DomainCrontab implements ShouldQueue, ITraceable
         }
     }
 
-    private function compile(): array
+    /**
+     * @param DomainRepository $domains
+     * @return array
+     * @throws Exception
+     */
+    private function compile(DomainRepository $domains): array
     {
         $tabs = [];
 
         foreach ($this->domains as $domain) {
+
+            $domain = $domains->byName($domain['name']);
+
             $cron = File::get("{$domain->root()}/cron.conf");
+
+            if (!array_key_exists($domain->user, $tabs)) {
+                $tabs[$domain->user] = '';
+            }
 
             $tab = $tabs[$domain->user];
 
@@ -77,7 +94,7 @@ class DomainCrontab implements ShouldQueue, ITraceable
 
             $tabs[$domain->user] = $tab;
         }
-
+        
         return $tabs;
     }
 

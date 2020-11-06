@@ -22,8 +22,9 @@ class Compiler
             ->replace('{URL}', "https://{$domain->name}")
             ->replace('{NAME}', $domain->name)
             ->replace('{PATH}', $domain->root())
-            ->replace('{HOME}', $domain->home)
             ->replace('{PUBLIC}', $domain->home())
+            ->replace('{CURRENT}', $domain->current())
+            ->replace('{HOME}', $domain->home)
             ->replace('{USER}', $domain->user);
     }
 
