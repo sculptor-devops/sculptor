@@ -94,7 +94,7 @@ class DomainCrontab implements ShouldQueue, ITraceable
 
             $tabs[$domain->user] = $tab;
         }
-        
+
         return $tabs;
     }
 

@@ -20,6 +20,7 @@ use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Jobs\DomainDisable;
 use Sculptor\Agent\Jobs\DomainEnable;
 use Sculptor\Agent\Facades\Logs;
+use Sculptor\Agent\Jobs\DomainTemplates;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 
@@ -294,6 +295,24 @@ class Domains implements ActionInterface
         }
 
         $domain->update(['enabled' => false]);
+
+        return true;
+    }
+
+    public function templates(string $name): bool
+    {
+        Logs::actions()->info("Domain templates {$name}");
+
+        try {
+            $domain = $this->domains
+                ->byName($name);
+
+            $this->action
+                ->run(new DomainTemplates($domain));
+        } catch (Exception $e) {
+            return $this->action
+                ->report("Domain templates {$name}: {$e->getMessage()}");
+        }
 
         return true;
     }
