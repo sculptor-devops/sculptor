@@ -42,7 +42,7 @@ class DomainTemplates extends CommandBase
     {
         $domain = $this->argument('domain');
 
-        $answer = $this->ask("This operation will <fg=red>DELETE ALL</> customizations to {$domain} configs, do you want to continue? \n(type <fg=yellow>yes or y</> to continue)");
+        $answer = $this->ask("This operation will <fg=red>DELETE ALL</> customizations to {$domain} configs and deploy, do you want to continue? \n(type <fg=yellow>yes or y</> to continue)");
 
         if (Str::lower($answer) != 'yes' && Str::lower($answer) != 'y') {
             return 1;
