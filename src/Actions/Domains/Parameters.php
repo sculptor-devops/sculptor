@@ -89,17 +89,22 @@ class Parameters
             return true;
         }
 
+        $domain->update(["{$name}" => $this->normalize($value)]);
+
+        return true;
+    }
+
+    private function normalize(string $value): string
+    {
         if ($value == 'true') {
-            $value = 1;
+            return '1';
         }
 
         if ($value == 'false') {
-            $value = 0;
+            return '0';
         }
 
-        $domain->update(["{$name}" => "{$value}"]);
-
-        return true;
+        return $value;
     }
 
     /**
