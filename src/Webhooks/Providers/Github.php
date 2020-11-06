@@ -11,6 +11,8 @@ use Sculptor\Agent\Facades\Logs;
 
 class Github implements DeployProvider
 {
+    private $error;
+
     public function name(): string
     {
         return VersionControlType::GITHUB;
@@ -20,20 +22,20 @@ class Github implements DeployProvider
     {
         try {
             if (!$request->isJson()) {
-                Logs::batch()->error('The request is not a valid json');
-
-                return false;
+                throw new Exception("Is not a valid json");
             }
 
             $payload = $request->json();
 
             if ($payload->get('ref') != "refs/heads/{$branch}") {
-                return false;
+                throw new Exception("Invalid branch");
             }
 
             return true;
         } catch (Exception $e) {
             Logs::batch()->report($e);
+
+            $this->error = $e->getMessage();
 
             return false;
         }
@@ -41,6 +43,6 @@ class Github implements DeployProvider
 
     public function error(): ?string
     {
-        return 'none';
+        return $this->error();
     }
 }
