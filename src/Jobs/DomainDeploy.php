@@ -59,6 +59,8 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
         Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} start");
 
+        $started = now();
+
         try {
             $deploy->compile($this->domain);
 
@@ -70,7 +72,9 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $this->domain->update([ 'status' => DomainStatusType::DEPLOYED ]);
 
-            Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done");
+            $elapsed = now()->longAbsoluteDiffForHumans($started);
+
+            Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$elapsed}s");
 
             $this->ok();
         } catch (Exception $e) {
