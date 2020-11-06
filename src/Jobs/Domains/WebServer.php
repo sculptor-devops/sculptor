@@ -52,7 +52,7 @@ class WebServer implements DomainAction
         foreach (
             [
                 'nginx.conf' => "/etc/nginx/sites-available/{$domain->name}.conf",
-                'logrotate.conf' => "/etc/logrotate.d/$domain->name}.conf"
+                'logrotate.conf' => "/etc/logrotate.d/{$domain->name}.conf"
             ] as $filename => $destination) {
             $content = $this->compiler
                 ->load($domain->configs(), 'nginx.conf', $domain->type);
