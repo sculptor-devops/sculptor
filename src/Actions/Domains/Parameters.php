@@ -89,6 +89,14 @@ class Parameters
             return true;
         }
 
+        if ($value == 'true') {
+            $value = 1;
+        }
+
+        if ($value == 'false') {
+            $value = 0;
+        }
+
         $domain->update(["{$name}" => "{$value}"]);
 
         return true;
