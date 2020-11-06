@@ -39,6 +39,7 @@ class DeployDomainWebhookController extends Controller
      */
     public function deploy(Request $request, string $hash, string $token)
     {
+
         $domain = $this->domains->byHash($hash);
 
         if ($domain->token != $token) {
@@ -49,7 +50,7 @@ class DeployDomainWebhookController extends Controller
 
         Logs::job()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} received");
 
-        if ($provider->valid($request)) {
+        if (!$provider->valid($request, $domain->branch)) {
             abort(400, $provider->error());
         }
 

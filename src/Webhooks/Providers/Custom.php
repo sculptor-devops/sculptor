@@ -13,7 +13,7 @@ class Custom implements DeployProvider
         return VersionControlType::CUSTOM;
     }
 
-    public function valid(Request $request): bool
+    public function valid(Request $request, string $branch): bool
     {
         return true;
     }

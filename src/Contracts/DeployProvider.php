@@ -8,7 +8,7 @@ interface DeployProvider
 {
     public function name(): string;
 
-    public function valid(Request $request): bool;
+    public function valid(Request $request, string $branch): bool;
 
     public function error(): ?string;
 }
