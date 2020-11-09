@@ -28,7 +28,7 @@ trait Traceable
     /**
      * @var bool
      */
-    protected $transaction = true;
+    protected $transaction = false;
 
     /**
      * @return Queue
