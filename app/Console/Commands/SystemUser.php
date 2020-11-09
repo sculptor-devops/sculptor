@@ -61,9 +61,10 @@ class SystemUser extends CommandBase
                     $option2 = $passwords->create();
                 }
 
-                $users->updateOrCreate([
+                $user = $users->updateOrCreate([ 'email' => $email ]);
+
+                $user->update([
                     'name' => $option1 ?? $email,
-                    'email' => $email,
                     'password' => Hash::make($option2)
                 ]);
 
