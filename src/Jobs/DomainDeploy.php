@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Jobs;
 
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -77,7 +78,7 @@ class DomainDeploy implements ShouldQueue, ITraceable
             Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$elapsed}");
 
             $this->ok();
-        } catch (Exception $e) {
+        } catch (Exception | Error $e) {
             $this->report($e);
 
             $this->domain->update([ 'status' => DomainStatusType::ERROR ]);
