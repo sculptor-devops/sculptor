@@ -35,6 +35,7 @@ use Sculptor\Agent\Facades\Configuration;
  * @property int id
  * @property string provider
  * @property string branch
+ * @property string engine
  */
 class Domain extends Model implements Transformable, EncryptInterface, BlueprintRecord
 {

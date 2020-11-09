@@ -3,7 +3,7 @@
 namespace Sculptor\Agent\Jobs\Domains;
 
 use Exception;
-use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Facades\Logs;
@@ -16,10 +16,16 @@ class Env implements DomainAction
      * @var Compiler
      */
     private $compiler;
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
-    public function __construct(Compiler $compiler)
+    public function __construct(Compiler $compiler, Configuration $configuration)
     {
         $this->compiler = $compiler;
+
+        $this->configuration = $configuration;
     }
 
     /**
@@ -57,12 +63,26 @@ class Env implements DomainAction
 
         $password = 'secret';
 
+        $host = '127.0.0.1';
+
+        $driver = 'mysql';
+
+        $port = '3306';
+
         $db = $domain->database;
 
         $user = $domain->databaseUser;
 
         if ($db) {
             $database = $db->name;
+
+            $connection = $this->configuration->connection($db->driver);
+
+            $host = $connection['host'];
+
+            $port = $connection['port'];
+
+            $driver = $db->driver;
         }
 
         if ($user) {
@@ -72,6 +92,9 @@ class Env implements DomainAction
         }
 
         return Replacer::make($template)
+            ->replace('{DATABASE_DRIVER}', $driver)
+            ->replace('{DATABASE_HOST}', $host)
+            ->replace('{DATABASE_PORT}', $port)
             ->replace('{DATABASE}', $database)
             ->replace('{DATABASE_USERNAME}', $username)
             ->replace('{DATABASE_PASSWORD}', $password);

@@ -211,6 +211,16 @@ class Configuration
         config(['database.connections.db_server' => $connection]);
     }
 
+    public function connection(string $driver): array
+    {
+        return config("sculptor.database.drivers.{$driver}");
+    }
+
+    public function php(): string
+    {
+        return config('sculptor.php.version');
+    }
+
     public function toArray(): array
     {
         $values = [];

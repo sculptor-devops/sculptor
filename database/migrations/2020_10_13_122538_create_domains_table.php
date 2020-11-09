@@ -26,6 +26,7 @@ class CreateDomainsTable extends Migration
             $table->boolean('enabled')->default(true);
             $table->boolean('www')->default(true);
             $table->string('type')->default(DomainType::LARAVEL);
+            $table->string('engine')->default( config('sculptor.php.version'));
             $table->string('certificate')->default(CertificatesTypes::SELF_SIGNED);
 
             $table->string('user')->default(SITES_USER);

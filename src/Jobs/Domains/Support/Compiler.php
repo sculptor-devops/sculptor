@@ -4,12 +4,23 @@ namespace Sculptor\Agent\Jobs\Domains\Support;
 
 use Exception;
 use Illuminate\Support\Facades\File;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Support\Replacer;
 
 class Compiler
 {
+    /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    public function __construct(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
     /**
      * @param string $template
      * @param Domain $domain
@@ -25,7 +36,8 @@ class Compiler
             ->replace('{PUBLIC}', $domain->home())
             ->replace('{CURRENT}', $domain->current())
             ->replace('{HOME}', $domain->home)
-            ->replace('{USER}', $domain->user);
+            ->replace('{USER}', $domain->user)
+            ->replace('{PHP_VERSION}', $this->configuration->php());
     }
 
     /**
