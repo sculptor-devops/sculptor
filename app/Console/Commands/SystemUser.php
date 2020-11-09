@@ -110,8 +110,9 @@ class SystemUser extends CommandBase
 
                 $list = $users->all();
 
-                $this->table(['Name', 'Email'], $list->map(function ($user) {
+                $this->table([ 'Id', 'Name', 'Email'], $list->map(function ($user) {
                     return [
+                        'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email
                     ];
