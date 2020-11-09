@@ -61,7 +61,15 @@ class SystemUser extends CommandBase
                     $option2 = $passwords->create();
                 }
 
-                $user = $users->updateOrCreate([ 'email' => $email ]);
+                $user = $users->findWhere(['email' => $email])->first();
+
+                if ($user == null) {
+                    $user = $users->updateOrCreate([
+                        'email' => $email,
+                        'name' => $option1 ?? $email,
+                        'password' => Hash::make($option2)
+                    ]);
+                }
 
                 $user->update([
                     'name' => $option1 ?? $email,
@@ -111,7 +119,7 @@ class SystemUser extends CommandBase
 
                 $list = $users->all();
 
-                $this->table([ 'Id', 'Name', 'Email'], $list->map(function ($user) {
+                $this->table(['Id', 'Name', 'Email'], $list->map(function ($user) {
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
