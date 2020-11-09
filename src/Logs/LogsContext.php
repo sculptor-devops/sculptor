@@ -93,7 +93,7 @@ class LogsContext implements LoggerInterface
 
         Log::error($message, $context);
 
-        $this->event($message, LogContextLevel::DEBUG, $context);
+        $this->event($message, LogContextLevel::ERROR, $context);
     }
 
     /**

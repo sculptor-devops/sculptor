@@ -35,7 +35,6 @@ class Operations
     public function group(string $group, string $operation): bool
     {
         foreach ($this->configuration->services($group) as $service) {
-
             if (!$this->run($service, $operation)) {
                 throw new Exception("Unable to {$operation} service $service: {$this->daemons->error()}");
             }
