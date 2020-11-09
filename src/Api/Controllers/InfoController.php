@@ -36,7 +36,8 @@ class InfoController extends Controller
             'os' => $this->version->name(),
             'arch' => $this->version->arch(),
             'bits' => $this->version->bits(),
-            'modules' => explode(',', env('SCULPTOR_INSTALLED_MODULES'))
+            'modules' => explode(',', env('SCULPTOR_INSTALLED_MODULES')),
+            'ts' => time()
         ]);
     }
 }
