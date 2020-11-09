@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/v1/login', '\Sculptor\Agent\Api\Controllers\AuthController@login')->name('v1.api.login');
+Route::post('/v1/info', '\Sculptor\Agent\Api\Controllers\InfoController@index')->name('v1.api.info');
