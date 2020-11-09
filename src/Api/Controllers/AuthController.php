@@ -8,6 +8,11 @@ use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
+    public function index()
+    {
+        return response()->json([]);
+    }
+
     public function login(Request $request)
     {
         $login = $request->validate([

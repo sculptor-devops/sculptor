@@ -14,5 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('login', '\Sculptor\Agent\Api\Controllers\AuthController@index')->name('login');
 Route::post('/v1/login', '\Sculptor\Agent\Api\Controllers\AuthController@login')->name('v1.api.login');
-Route::post('/v1/info', '\Sculptor\Agent\Api\Controllers\InfoController@index')->name('v1.api.info');
+
+Route::group(['middleware' => 'auth:api'], function(){
+    Route::get('/v1/info', '\Sculptor\Agent\Api\Controllers\InfoController@index')->name('v1.api.info');
+});
+
+
+
