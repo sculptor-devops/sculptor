@@ -5,7 +5,7 @@ namespace Sculptor\Agent\Actions;
 use Exception;
 use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Support\Action;
-use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
@@ -18,7 +18,7 @@ use Sculptor\Agent\Repositories\Entities\Backup;
 
 class Backups implements ActionInterface
 {
-    use Report;
+    use Actionable;
 
     /**
      * @var DomainRepository

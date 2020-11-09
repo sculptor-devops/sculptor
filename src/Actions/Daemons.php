@@ -4,7 +4,7 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
-use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Exceptions\ActionJobRunException;
@@ -19,7 +19,7 @@ use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Daemons implements ActionInterface
 {
-    use Report;
+    use Actionable;
 
     /**
      * @var Services

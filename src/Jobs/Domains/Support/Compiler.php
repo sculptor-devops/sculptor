@@ -37,7 +37,7 @@ class Compiler
             ->replace('{CURRENT}', $domain->current())
             ->replace('{HOME}', $domain->home)
             ->replace('{USER}', $domain->user)
-            ->replace('{PHP_VERSION}', $this->configuration->php());
+            ->replace('{PHP_VERSION}', $this->configuration->php($domain->engine));
     }
 
     /**

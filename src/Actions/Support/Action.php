@@ -10,6 +10,7 @@ use Sculptor\Agent\Exceptions\QueueJobNotTraceableException;
 use Sculptor\Agent\Exceptions\QueueJobTimeoutException;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Queues;
+use Sculptor\Agent\Repositories\Entities\Queue;
 
 class Action
 {
@@ -22,6 +23,11 @@ class Action
      * @var string
      */
     protected $error;
+
+    /**
+     * @var Queue|null
+     */
+    protected $inserted;
 
     /**
      * Action constructor.
@@ -43,14 +49,14 @@ class Action
      */
     public function run(ITraceable $job, int $timeout = QUEUE_TASK_TIMEOUT): bool
     {
-        $result = $this->queues
+        $this->inserted = $this->queues
             ->await($job, 'system', $timeout);
 
-        if ($result->ok()) {
+        if ($this->inserted->ok()) {
             return true;
         }
 
-        throw new ActionJobRunException($result->error);
+        throw new ActionJobRunException($this->inserted->error);
     }
 
     /**
@@ -63,13 +69,13 @@ class Action
      */
     public function runIndefinite(ITraceable $job): bool
     {
-        $result = $this->queues->await($job, 'system', QUEUE_TASK_NO_TIMEOUT);
+        $this->inserted = $this->queues->await($job, 'system', QUEUE_TASK_NO_TIMEOUT);
 
-        if ($result->ok()) {
+        if ($this->inserted->ok()) {
             return true;
         }
 
-        throw new ActionJobRunException($result->error);
+        throw new ActionJobRunException($this->inserted->error);
     }
 
     /**
@@ -79,9 +85,17 @@ class Action
      */
     public function runAndExit(ITraceable $job): bool
     {
-        $this->queues->insert($job, 'system');
+        $this->inserted = $this->queues->insert($job, 'system');
 
         return true;
+    }
+
+    /**
+     * @return Queue|null
+     */
+    public function inserted(): ?Queue
+    {
+        return $this->inserted;
     }
 
     /**
@@ -105,6 +119,11 @@ class Action
         return false;
     }
 
+    /**
+     * @param string $description
+     * @param ITraceable $job
+     * @return bool
+     */
     public function job(string $description, ITraceable $job): bool
     {
         Logs::actions()->info($description);

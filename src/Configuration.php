@@ -216,9 +216,13 @@ class Configuration
         return config("sculptor.database.drivers.{$driver}");
     }
 
-    public function php(): string
+    public function php(string $engine): string
     {
-        return config('sculptor.php.version');
+        if ($engine == null) {
+            return config('sculptor.php.version');
+        }
+
+        return $engine;
     }
 
     public function toArray(): array

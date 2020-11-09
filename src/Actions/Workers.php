@@ -4,7 +4,7 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
-use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Jobs\DomainWorkerDisable;
 use Sculptor\Agent\Jobs\DomainWorkerEnable;
@@ -13,7 +13,7 @@ use Sculptor\Agent\Repositories\DomainRepository;
 
 class Workers implements ActionInterface
 {
-    use Report;
+    use Actionable;
 
     /**
      * @var DomainRepository

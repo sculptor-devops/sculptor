@@ -6,7 +6,7 @@ use Exception;
 use Sculptor\Agent\Actions\Domains\Parameters;
 use Sculptor\Agent\Actions\Domains\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
-use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
@@ -26,7 +26,7 @@ use Sculptor\Agent\Contracts\Action as ActionInterface;
 
 class Domains implements ActionInterface
 {
-    use Report;
+    use Actionable;
 
     /**
      * @var DomainRepository

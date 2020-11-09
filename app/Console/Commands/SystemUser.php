@@ -85,7 +85,7 @@ class SystemUser extends CommandBase
                     return $this->errorTask("User {$email} not found");
                 }
 
-                $user->update([ 'password' => Hash::make($option1) ]);
+                $user->update(['password' => Hash::make($option1)]);
 
                 $this->completeTask();
 
@@ -110,7 +110,7 @@ class SystemUser extends CommandBase
 
                 $list = $users->all();
 
-                $this->table(['Name', 'Email'], $list->map(function($user) {
+                $this->table(['Name', 'Email'], $list->map(function ($user) {
                     return [
                         'name' => $user->name,
                         'email' => $user->email

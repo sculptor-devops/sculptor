@@ -5,7 +5,7 @@ namespace Sculptor\Agent\Actions;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Actions\Support\Action;
-use Sculptor\Agent\Actions\Support\Report;
+use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Jobs\DomainCrontab;
 use Sculptor\Agent\Facades\Logs;
@@ -13,7 +13,7 @@ use Sculptor\Agent\Repositories\DomainRepository;
 
 class Crontabs implements ActionInterface
 {
-    use Report;
+    use Actionable;
 
     /**
      * @var DomainRepository
