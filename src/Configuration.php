@@ -216,7 +216,7 @@ class Configuration
         return config("sculptor.database.drivers.{$driver}");
     }
 
-    public function php(string $engine): string
+    public function php(?string $engine): string
     {
         if ($engine == null) {
             return config('sculptor.php.version');
