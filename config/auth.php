@@ -46,6 +46,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'webhooks' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*
