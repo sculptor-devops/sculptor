@@ -1,7 +1,7 @@
 <?php
 define('COMMAND_INTERFACE', 1);
 define('BLUEPRINT_VERSION', 1);
-define('API_VERSION', 0);
+define('API_VERSION', 1);
 define('SITES_HOME', '/home');
 define('SITES_USER', 'www');
 define('SITES_PUBLIC', 'public');
