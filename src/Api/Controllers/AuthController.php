@@ -10,16 +10,18 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $loginData = $request->validate([
+        $login = $request->validate([
             'email' => 'email|required',
             'password' => 'required'
         ]);
 
-        if (!Auth::attempt($loginData)) {
+        if (!Auth::attempt($login)) {
             return response(['message' => 'Invalid Credentials']);
         }
 
-        $accessToken = Auth::user()->createToken('authToken')->accessToken;
+        $user = Auth::user();
+
+        $accessToken = $user->createToken('authToken')->accessToken;
 
         return response(['access_token' => $accessToken]);
     }

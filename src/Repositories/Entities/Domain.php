@@ -99,7 +99,7 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
 
     public function deployUrl(): string
     {
-        return route('v1.api.webhook.deploy', [
+        return route('v1.webhook.deploy', [
             'hash' => $this->externalId(),
             'token' => $this->token ?? '!invalid'
         ]);
