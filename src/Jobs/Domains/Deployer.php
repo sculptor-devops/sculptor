@@ -108,7 +108,7 @@ class Deployer implements DomainAction
                 ],
                 null,
                 function ($type, $buffer) {
-                    Logs::job()->notice($buffer);
+                    Logs::job()->notice("Deployer ({$type}): {$buffer}");
                 }
             );
 
