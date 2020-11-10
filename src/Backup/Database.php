@@ -15,6 +15,12 @@ use Sculptor\Agent\Repositories\Entities\Database as DatabaseItem;
 use Spatie\DbDumper\Exceptions\CannotStartDump;
 use Spatie\DbDumper\Exceptions\DumpFailed;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class Database implements BackupInterface
 {
     /**

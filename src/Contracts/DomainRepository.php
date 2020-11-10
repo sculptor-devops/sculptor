@@ -4,11 +4,12 @@ namespace Sculptor\Agent\Contracts;
 
 use Prettus\Repository\Contracts\RepositoryInterface;
 
-/**
- * Interface DatabaseRepository.
- *
- * @package namespace Sculptor\Agent\Repositories\Contracts;
- */
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 interface DomainRepository extends RepositoryInterface
 {
     //

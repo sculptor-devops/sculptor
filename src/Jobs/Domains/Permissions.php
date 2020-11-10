@@ -8,6 +8,12 @@ use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class Permissions implements DomainAction
 {
     /**

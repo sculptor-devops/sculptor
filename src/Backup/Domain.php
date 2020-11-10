@@ -10,6 +10,12 @@ use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class Domain implements BackupInterface
 {
     /**

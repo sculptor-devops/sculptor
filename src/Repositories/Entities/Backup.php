@@ -12,6 +12,12 @@ use Sculptor\Agent\Enums\BackupStatusType;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Support\BlueprintSerializer;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 /**
  * @property string type
  * @property Database database

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 define('COMMAND_INTERFACE', 1);
 define('BLUEPRINT_VERSION', 1);
 define('API_VERSION', 1);

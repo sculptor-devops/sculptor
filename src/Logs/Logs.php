@@ -8,6 +8,12 @@ use Sculptor\Agent\Enums\LogContextType;
 use Sculptor\Agent\Repositories\EventRepository;
 use Sculptor\Agent\Contracts\Logs as LogsInterface;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class Logs implements LogsInterface
 {
     /*

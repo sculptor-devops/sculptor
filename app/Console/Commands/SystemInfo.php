@@ -2,11 +2,16 @@
 
 namespace App\Console\Commands;
 
-
 use Illuminate\Support\Str;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Support\CommandBase;
 use Sculptor\Foundation\Support\Version;
+
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
 
 class SystemInfo extends CommandBase
 {

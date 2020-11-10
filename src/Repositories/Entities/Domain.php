@@ -13,6 +13,12 @@ use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Support\BlueprintSerializer;
 use Sculptor\Agent\Facades\Configuration;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 /**
  * @property string type
  * @property string user

@@ -17,6 +17,12 @@ use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Foundation\Services\Daemons;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class DaemonService implements ShouldQueue, ITraceable
 {
     use Dispatchable;

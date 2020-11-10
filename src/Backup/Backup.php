@@ -5,7 +5,7 @@ namespace Sculptor\Agent\Backup;
 use Exception;
 use Sculptor\Agent\Enums\BackupStatusType;
 use Sculptor\Agent\Enums\BackupType;
-use Sculptor\Agent\Logs\Logs;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 
@@ -14,6 +14,7 @@ use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
  *  For the full copyright and license information, please view the LICENSE
  *  file that was distributed with this source code.
  */
+
 class Backup implements BackupInterface
 {
     /**
@@ -127,5 +128,10 @@ class Backup implements BackupInterface
 
             return false;
         }
+    }
+
+    public function size(): int
+    {
+        // TODO: Implement size() method.
     }
 }

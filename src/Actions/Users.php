@@ -2,11 +2,16 @@
 
 namespace Sculptor\Agent\Actions;
 
-
 use Illuminate\Support\Facades\Hash;
 use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Repositories\UserRepository;
+
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
 
 class Users implements ActionInterface
 {

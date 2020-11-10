@@ -16,6 +16,12 @@ use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Repositories\Entities\Backup;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class Backups implements ActionInterface
 {
     use Actionable;

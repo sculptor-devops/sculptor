@@ -5,6 +5,12 @@ namespace Sculptor\Agent\Backup\Contracts;
 use Sculptor\Agent\Backup\Tag;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 interface Backup
 {
     public function create(Item $backup): bool;

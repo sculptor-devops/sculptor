@@ -10,6 +10,12 @@ use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Contracts\DatabaseRepository as DatabaseRepositoryInterface;
 use Sculptor\Agent\Repositories\Entities\Database;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 /**
  * Class DatabaseRepository.
  *
