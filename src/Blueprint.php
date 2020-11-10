@@ -345,11 +345,11 @@ class Blueprint
         $result = 'Ok';
 
         try {
-            // $code = Artisan::call($name, $parameters);
+            $code = Artisan::call($name, $parameters);
 
-            // if ($code > 0) {
-            // throw new Exception("Error code {$code}");
-            //}
+            if ($code > 0) {
+                throw new Exception("Error code {$code}");
+            }
         } catch (Exception $e) {
             report($e);
 
