@@ -56,15 +56,13 @@ class DomainDeploy implements ShouldQueue, ITraceable
      */
     public function handle(WebServer $web, Deployer $deploy, Permissions $permission): void
     {
+        $started = now();
+
         $this->running();
 
         Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} start");
 
-        $started = now();
-
         try {
-            $deploy->compile($this->domain);
-
             $deploy->run($this->domain, $this->command);
 
             $web->enable($this->domain);

@@ -1,9 +1,8 @@
 <?php
 
-
 namespace Sculptor\Agent\Jobs;
 
-
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,7 +51,7 @@ class DomainWorkerEnable implements ShouldQueue, ITraceable
             $worker->enable($this->domain);
 
             $this->ok();
-        } catch (Exception $e) {
+        } catch (Exception | Error $e) {
             $this->report($e);
         }
     }

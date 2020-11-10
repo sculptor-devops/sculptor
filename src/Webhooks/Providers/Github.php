@@ -2,7 +2,6 @@
 
 namespace Sculptor\Agent\Webhooks\Providers;
 
-
 use Exception;
 use Illuminate\Http\Request;
 use Sculptor\Agent\Contracts\DeployProvider;

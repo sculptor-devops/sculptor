@@ -2,7 +2,6 @@
 
 namespace Sculptor\Agent\Backup;
 
-
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;

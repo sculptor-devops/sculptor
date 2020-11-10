@@ -106,7 +106,10 @@ class Deployer implements DomainAction
                     'dep',
                     $command
                 ],
-                null
+                null,
+                function ($type, $buffer) {
+                    Logs::job()->notice($buffer);
+                }
             );
 
         return true;

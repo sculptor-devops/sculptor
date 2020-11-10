@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Jobs;
 
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,7 +35,7 @@ class DomainEnable implements ShouldQueue, ITraceable
     public function __construct(Domain $domain)
     {
         $this->domain = $domain;
-}
+    }
 
     /**
      * @param WebServer $web
@@ -50,7 +51,7 @@ class DomainEnable implements ShouldQueue, ITraceable
             $web->enable($this->domain);
 
             $this->ok();
-        } catch (Exception $e) {
+        } catch (Exception | Error $e) {
             $this->report($e);
         }
     }

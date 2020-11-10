@@ -93,7 +93,6 @@ class Blueprint
             $blueprint = ['header' => ['version' => 1, 'timestamp' => now()]];
 
             foreach ($this->repositories as $class => $name) {
-
                 $values = $this->serialize($class);
 
                 if (count($values) == 0) {
@@ -110,7 +109,7 @@ class Blueprint
             if (!File::put($filename, Yaml::dump($blueprint, 999))) {
                 throw new Exception("Unable to write {$filename}");
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             report($e);
 
             $this->error = $e->getMessage();
@@ -345,7 +344,6 @@ class Blueprint
             // if ($code > 0) {
             // throw new Exception("Error code {$code}");
             //}
-
         } catch (Exception $e) {
             report($e);
 

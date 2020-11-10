@@ -117,7 +117,6 @@ class Configuration
         $keys = explode('.', $key);
 
         foreach ($keys as $key) {
-
             if (!is_array($result)) {
                 return null;
             }
@@ -163,7 +162,7 @@ class Configuration
         return $this;
     }
 
-    function assignArrayByPath(array &$arr, string $path, ?string $value): void
+    private function assignArrayByPath(array &$arr, string $path, ?string $value): void
     {
         $path = Str::replaceFirst('sculptor.', '', $path);
 
@@ -246,8 +245,10 @@ class Configuration
 
         foreach ($all as $key => $value) {
             if (is_array($value)) {
-                $values = array_merge($values,
-                    $this->recourseConfig($value, "{$root}.{$key}"));
+                $values = array_merge(
+                    $values,
+                    $this->recourseConfig($value, "{$root}.{$key}")
+                );
 
                 continue;
             }

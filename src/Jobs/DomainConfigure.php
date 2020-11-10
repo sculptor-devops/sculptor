@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Jobs;
 
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -69,7 +70,7 @@ class DomainConfigure implements ShouldQueue, ITraceable
             }
 
             $this->ok();
-        } catch (Exception $e) {
+        } catch (Exception | Error $e) {
             $this->report($e);
         }
     }

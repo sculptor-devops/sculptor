@@ -61,7 +61,6 @@ class Zip implements Compressor
 
         foreach ($local->list('/') as $file) {
             if ($file['type'] == 'file') {
-
                 $content = $local->get($file['path']);
 
                 $this->filesystem

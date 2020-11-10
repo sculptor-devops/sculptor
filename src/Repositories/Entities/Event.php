@@ -9,7 +9,6 @@ use Sculptor\Agent\Contracts\BlueprintRecord;
 use Sculptor\Agent\Contracts\Encrypt as EncryptInterface;
 use Sculptor\Agent\Support\BlueprintSerializer;
 
-
 /**
  * @property string message
  * @property string tag

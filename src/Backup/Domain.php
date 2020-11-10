@@ -121,7 +121,7 @@ class Domain implements BackupInterface
             throw new Exception("Backup must define a domain");
         }
 
-        if($backup->destination == null) {
+        if ($backup->destination == null) {
             throw new Exception("Backup must define a destination");
         }
 

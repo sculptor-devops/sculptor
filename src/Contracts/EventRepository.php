@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Sculptor\Agent\Contracts;
-
 
 use Prettus\Repository\Contracts\RepositoryInterface;
 

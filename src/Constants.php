@@ -1,4 +1,5 @@
 <?php
+
 define('COMMAND_INTERFACE', 1);
 define('BLUEPRINT_VERSION', 1);
 define('API_VERSION', 1);

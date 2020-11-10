@@ -88,12 +88,14 @@ class Structure implements DomainAction
         Logs::actions()->debug("Deleting domain root {$domain->root()}");
 
         $this->system
-            ->run(SITES_HOME . "/{$domain->user}",
+            ->run(
+                SITES_HOME . "/{$domain->user}",
                 [
                     'rm',
                     '-rf',
                     $domain->root()
-                ]);
+                ]
+            );
 
         return true;
     }

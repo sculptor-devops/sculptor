@@ -19,7 +19,7 @@ class CommandBase extends Command
 
     public function completeTask(): int
     {
-        $this->endTask( true);
+        $this->endTask(true);
 
         return 0;
     }

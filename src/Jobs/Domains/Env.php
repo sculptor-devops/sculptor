@@ -46,8 +46,10 @@ class Env implements DomainAction
                 ->replace($database->value(), $domain)
                 ->value();
 
-            if (!$this->compiler
-                ->save("{$domain->root()}/{$destination}", $compiled)) {
+            if (
+                !$this->compiler
+                ->save("{$domain->root()}/{$destination}", $compiled)
+            ) {
                 throw new Exception("Unable to save env {$destination}/{$filename}");
             }
         }

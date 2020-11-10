@@ -8,9 +8,9 @@ class Uptime
     {
         // $result = posix_times();
 
-        $uptime = @file_get_contents( "/proc/uptime");
+        $uptime = @file_get_contents("/proc/uptime");
 
-        return ["{$this->name()}.ticks" => explode(" ",$uptime)[0] /*$result['ticks']*/];
+        return ["{$this->name()}.ticks" => explode(" ", $uptime)[0] /*$result['ticks']*/];
     }
 
     public function name(): string

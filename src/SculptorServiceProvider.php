@@ -34,7 +34,9 @@ class SculptorServiceProvider extends ServiceProvider
 
         app()->bind(Runner::class, RunnerImplementation::class);
 
-        app()->bind(Database::class, function() { return new MySql(); });
+        app()->bind(Database::class, function () {
+            return new MySql();
+        });
 
         app()->bind(Compressor::class, Zip::class);
 

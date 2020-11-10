@@ -2,7 +2,6 @@
 
 namespace Sculptor\Agent\Enums;
 
-
 class DaemonGroupType
 {
     public const WEB = 'web';

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Sculptor\Agent\Repositories;
-
 
 use App\User;
 use Prettus\Repository\Eloquent\BaseRepository;

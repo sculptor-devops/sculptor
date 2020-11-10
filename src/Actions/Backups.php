@@ -67,7 +67,8 @@ class Backups implements ActionInterface
                 break;
 
             case BackupType::DOMAIN:
-                $domain = $this->domains->byName($name);;
+                $domain = $this->domains->byName($name);
+                ;
 
                 $backup->domain()
                     ->associate($domain)
@@ -96,7 +97,6 @@ class Backups implements ActionInterface
             if ($name != null) {
                 $this->associate($backup, $name);
             }
-
         } catch (Exception $e) {
             $backup->delete();
 

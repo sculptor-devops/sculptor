@@ -60,7 +60,7 @@ class PkZip implements Compressor
         $local = new Local($name);
 
         foreach ($local->list('/') as $file) {
-            if($file['type'] == 'file') {
+            if ($file['type'] == 'file') {
                 $content = $local->get($file['path']);
 
                 $this->filesystem->put($file['path'], $content);

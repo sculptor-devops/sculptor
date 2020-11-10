@@ -54,7 +54,7 @@ class Compiler
             File::copy("{$templates}/{$filename}", "{$path}/{$filename}");
         }
 
-        return File::get( "{$path}/{$filename}");
+        return File::get("{$path}/{$filename}");
     }
 
     /**

@@ -50,8 +50,8 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
 
     public function clean(): int
     {
-        $older = Carbon::now()->subDays( 30 );
+        $older = Carbon::now()->subDays(30);
 
-        return Queue::where( 'created_at', '<=', $older )->delete();
+        return Queue::where('created_at', '<=', $older)->delete();
     }
 }

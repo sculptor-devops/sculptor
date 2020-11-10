@@ -18,7 +18,7 @@ trait BlueprintSerializer
         }
 
         return collect($this->toArray())
-            ->reject(function ($value, $key) use($filters) {
+            ->reject(function ($value, $key) use ($filters) {
                 return in_array($key, $filters);
             })->toArray();
     }

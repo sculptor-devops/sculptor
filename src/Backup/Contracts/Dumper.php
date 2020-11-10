@@ -1,5 +1,6 @@
-<?php namespace Sculptor\Agent\Backup\Contracts;
+<?php
 
+namespace Sculptor\Agent\Backup\Contracts;
 
 interface Dumper
 {

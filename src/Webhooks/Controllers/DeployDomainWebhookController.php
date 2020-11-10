@@ -13,7 +13,7 @@ use Sculptor\Agent\Webhooks\Providers\Factory;
 
 class DeployDomainWebhookController extends Controller
 {
-    const DONE = 'done';
+    public const DONE = 'done';
 
     /**
      * @var DomainRepository

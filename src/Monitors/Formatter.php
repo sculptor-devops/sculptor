@@ -77,7 +77,7 @@ class Formatter
 
     private function uptime(int $value): string
     {
-        $num = intval($value/ 60);
+        $num = intval($value / 60);
         $minutes = $num % 60;
         $num = (int)($num / 60);
         $hours = $num % 24;

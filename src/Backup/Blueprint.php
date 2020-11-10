@@ -86,10 +86,12 @@ class Blueprint implements BackupInterface
 
     public function clean(Item $backup): bool
     {
-        foreach ([
+        foreach (
+            [
                      $backup->destination,
                      $compressed = $this->tag->compressed('blueprint')
-                 ] as $file) {
+                 ] as $file
+        ) {
             if (File::exists($file)) {
                 File::delete($file);
             }

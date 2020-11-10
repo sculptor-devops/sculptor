@@ -81,7 +81,8 @@ class Certificates implements DomainAction
                     "{$path}/{$domain->name}.key",
                     '-subj',
                     "/CN={$domain->name}"
-                ]);
+                ]
+            );
 
         // "/C=IT/ST=Italy/L=Italy/O=IT/CN=www.example.com"
     }
@@ -112,7 +113,8 @@ class Certificates implements DomainAction
                     $domain->email,
                     '-d',
                     $names
-                ]);
+                ]
+            );
     }
 
     /**

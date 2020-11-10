@@ -77,12 +77,14 @@ class Worker implements DomainAction
         $this->reload($domain);
 
         $this->system
-            ->run("{$domain->root()}",
+            ->run(
+                "{$domain->root()}",
                 [
                     'supervisorctl',
                     'start',
                     "{$domain->name}:*"
-                ]);
+                ]
+            );
 
         return true;
     }
@@ -99,12 +101,14 @@ class Worker implements DomainAction
         }
 
         $this->system
-            ->run($domain->root(),
+            ->run(
+                $domain->root(),
                 [
                     'supervisorctl',
                     'stop',
                     "{$domain->name}:*"
-                ]);
+                ]
+            );
 
         $this->system
             ->deleteIfExists("/etc/supervisor/conf.d/{$domain->name}.conf");
@@ -117,17 +121,21 @@ class Worker implements DomainAction
     private function reload(Domain $domain): void
     {
         $this->system
-            ->run($domain->root(),
+            ->run(
+                $domain->root(),
                 [
                     'supervisorctl',
                     'reread'
-                ]);
+                ]
+            );
 
         $this->system
-            ->run($domain->root(),
+            ->run(
+                $domain->root(),
                 [
                     'supervisorctl',
                     'update'
-                ]);
+                ]
+            );
     }
 }

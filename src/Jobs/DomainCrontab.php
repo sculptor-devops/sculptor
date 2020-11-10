@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Jobs;
 
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -64,7 +65,7 @@ class DomainCrontab implements ShouldQueue, ITraceable
             }
 
             $this->ok();
-        } catch (Exception $e) {
+        } catch (Exception | Error $e) {
             $this->report($e);
         }
     }
@@ -79,7 +80,6 @@ class DomainCrontab implements ShouldQueue, ITraceable
         $tabs = [];
 
         foreach ($this->domains as $domain) {
-
             $domain = $domains->byName($domain['name']);
 
             $cron = File::get("{$domain->root()}/cron.conf");
@@ -97,5 +97,4 @@ class DomainCrontab implements ShouldQueue, ITraceable
 
         return $tabs;
     }
-
 }

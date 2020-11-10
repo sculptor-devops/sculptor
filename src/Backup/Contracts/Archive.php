@@ -1,4 +1,6 @@
-<?php namespace Sculptor\Agent\Backup\Contracts;
+<?php
+
+namespace Sculptor\Agent\Backup\Contracts;
 
 use Sculptor\Agent\Backup\Archives\Local;
 

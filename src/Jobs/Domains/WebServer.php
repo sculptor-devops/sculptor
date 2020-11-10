@@ -53,7 +53,8 @@ class WebServer implements DomainAction
             [
                 'nginx.conf' => "/etc/nginx/sites-available/{$domain->name}.conf",
                 'logrotate.conf' => "/etc/logrotate.d/{$domain->name}.conf"
-            ] as $filename => $destination) {
+            ] as $filename => $destination
+        ) {
             $content = $this->compiler
                 ->load($domain->configs(), 'nginx.conf', $domain->type);
 
@@ -65,8 +66,10 @@ class WebServer implements DomainAction
                 ->replace('{RETAIN}', "366")
                 ->value();
 
-            if (!$this->compiler
-                ->save("{$destination}", $compiled)) {
+            if (
+                !$this->compiler
+                ->save("{$destination}", $compiled)
+            ) {
                 throw new Exception("Unable to write {$destination}");
             }
         }
@@ -85,9 +88,10 @@ class WebServer implements DomainAction
 
         $destination = "/etc/nginx/sites-enabled/{$domain->name}.conf";
 
-        if (File::exists($destination) &&
-            File::exists($origin)) {
-
+        if (
+            File::exists($destination) &&
+            File::exists($origin)
+        ) {
             return true;
         }
 

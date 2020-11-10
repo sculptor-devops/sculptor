@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Exception;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Support\CommandBase;
+use Sculptor\Foundation\Runner\Runner;
+use Symfony\Component\Process\Process;
 
 class DomainDeploy extends CommandBase
 {
@@ -21,6 +23,7 @@ class DomainDeploy extends CommandBase
      * @var string
      */
     protected $description = 'System deploy for a domain';
+
     /**
      * Create a new command instance.
      *

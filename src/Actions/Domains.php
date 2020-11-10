@@ -138,7 +138,6 @@ class Domains implements ActionInterface
 
             $this->action
                 ->run(new DaemonService(DaemonGroupType::WEB, DaemonOperationsType::RELOAD));
-
         } catch (Exception $e) {
             return $this->action
                 ->report("Configure domain {$name}: {$e->getMessage()}");
@@ -219,8 +218,10 @@ class Domains implements ActionInterface
             $domain = $this->domains
                 ->byName($name);
 
-            if ($this->machine
-                ->can($domain->status, DomainStatusType::SETUP)) {
+            if (
+                $this->machine
+                ->can($domain->status, DomainStatusType::SETUP)
+            ) {
                 $this->parameters
                     ->set($domain, $parameter, $value);
             }

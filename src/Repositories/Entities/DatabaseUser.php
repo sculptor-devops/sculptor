@@ -55,7 +55,7 @@ class DatabaseUser extends Model implements Transformable, EncryptInterface, Blu
 
     public function serialize(): array
     {
-        $values = $this->serializeFiler( [ 'database_id' ]);
+        $values = $this->serializeFiler([ 'database_id' ]);
 
         $values['database'] = $this->toName($this->database);
 
