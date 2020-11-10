@@ -2,7 +2,12 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Sculptor\Agent\Facades\Logs;
+use Sculptor\Agent\Repositories\Criteria\OlderRecords;
 use Sculptor\Agent\Repositories\EventRepository;
+use Sculptor\Agent\Repositories\QueueRepository;
 use Sculptor\Agent\Support\CommandBase;
 use Throwable;
 
@@ -41,11 +46,32 @@ class SystemClear extends CommandBase
     /**
      * Execute the console command.
      *
+     * @param QueueRepository $tasks
+     * @param EventRepository $events
      * @return int
-     * @throws Throwable
      */
-    public function handle(): int
+    public function handle(QueueRepository $tasks, EventRepository $events): int
     {
+        foreach ([ QueueRepository::class, EventRepository::class ] as $class) {
+            $deleted = 0;
+
+            $repository = resolve($class);
+
+            $repository->pushCriteria(OlderRecords::class);
+
+            foreach ($repository->all() as $record) {
+                $deleted++;
+
+                $record->delete();
+            }
+
+            $message = "Cleaned {$deleted} from " . Str::afterLast($class, "\\") ;
+            
+            $this->warn($message);
+
+            Logs::batch()->notice($message);
+        }
+
         return 0;
     }
 }
