@@ -80,6 +80,10 @@ return [
                 'region' => env('S3_REGION', 'region'),
                 'endpoint' => env('S3_END_POINT', 'url'),
                 'bucket' => env('S3_BUCKET', 'bucket')
+            ],
+
+            'dropbox' => [
+                'key' => env('DROPBOX_KEY', 'key')
             ]
         ]
     ]

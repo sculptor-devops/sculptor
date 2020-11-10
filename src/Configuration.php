@@ -42,13 +42,15 @@ class Configuration
         'sculptor.backup.drivers.s3.secret',
         'sculptor.backup.drivers.s3.region',
         'sculptor.backup.drivers.s3.endpoint',
-        'sculptor.backup.drivers.s3.bucket'
+        'sculptor.backup.drivers.s3.bucket',
+        'sculptor.backup.drivers.dropbox.key'
     ];
 
     private $sensible = [
         'sculptor.security.key',
         'sculptor.backup.drivers.s3.key',
-        'sculptor.backup.drivers.s3.secret'
+        'sculptor.backup.drivers.s3.secret',
+        'sculptor.backup.drivers.dropbox.key'
     ];
 
     public function __construct()

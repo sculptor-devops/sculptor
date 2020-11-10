@@ -5,6 +5,7 @@ namespace Sculptor\Agent;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Sculptor\Agent\Backup\Archives\Dropbox;
 use Sculptor\Agent\Backup\Archives\Local;
 use Sculptor\Agent\Backup\Archives\S3;
 use Sculptor\Agent\Backup\Compression\Zip;
@@ -55,6 +56,9 @@ class SculptorServiceProvider extends ServiceProvider
 
                 case BackupArchiveType::S3:
                     return resolve(S3::class);
+
+                case BackupArchiveType::DROPBOX:
+                    return resolve(Dropbox::class);
 
                 default:
                     throw new Exception("Invalid {$driver} archive driver");
