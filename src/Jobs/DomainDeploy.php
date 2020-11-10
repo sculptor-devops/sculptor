@@ -60,7 +60,7 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
         $this->running();
 
-        Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} start");
+        Logs::job()->info("Domain deploy {$this->domain->name} start");
 
         try {
             $deploy->run($this->domain, $this->command);

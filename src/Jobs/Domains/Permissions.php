@@ -31,6 +31,8 @@ class Permissions implements DomainAction
      */
     public function compile(Domain $domain): bool
     {
+        Logs::job()->info("Domain {$domain->name} permission");
+
         $user = $domain->user;
 
         $root = $domain->root();

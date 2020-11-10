@@ -96,7 +96,7 @@ class Deployer implements DomainAction
      */
     private function deploy(string $command, Domain $domain): bool
     {
-        Logs::actions()->debug("Deploy run {$command} on {$domain->name}");
+        Logs::actions()->info("Deploy run {$command} on {$domain->name}");
 
         $this->system
             ->runAs(

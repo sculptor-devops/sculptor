@@ -84,6 +84,8 @@ class WebServer implements DomainAction
      */
     public function enable(Domain $domain): bool
     {
+        Logs::job()->info("Domain {$domain->name} enable");
+
         $origin = "/etc/nginx/sites-available/{$domain->name}.conf";
 
         $destination = "/etc/nginx/sites-enabled/{$domain->name}.conf";
