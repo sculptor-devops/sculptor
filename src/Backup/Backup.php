@@ -3,6 +3,9 @@
 namespace Sculptor\Agent\Backup;
 
 use Exception;
+use Sculptor\Agent\Backup\Subjects\Blueprint;
+use Sculptor\Agent\Backup\Subjects\Database;
+use Sculptor\Agent\Backup\Subjects\Domain;
 use Sculptor\Agent\Enums\BackupStatusType;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Facades\Logs;
@@ -141,6 +144,6 @@ class Backup implements BackupInterface
 
     public function size(): int
     {
-        // TODO: Implement size() method.
+        return 0;
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace Sculptor\Agent\Backup;
+namespace Sculptor\Agent\Backup\Subjects;
 
 use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
+use Sculptor\Agent\Backup\Tag;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 
