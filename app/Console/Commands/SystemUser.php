@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Support\Facades\Hash;
 use Prettus\Validator\Exceptions\ValidatorException;
+use Sculptor\Agent\Actions\Users;
 use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Repositories\UserRepository;
 use Sculptor\Agent\Support\CommandBase;
@@ -37,12 +38,11 @@ class SystemUser extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param UserRepository $users
+     * @param Users $users
      * @param PasswordGenerator $passwords
      * @return int
-     * @throws ValidatorException
      */
-    public function handle(UserRepository $users, PasswordGenerator $passwords): int
+    public function handle(Users $users, PasswordGenerator $passwords): int
     {
         $operation = $this->argument('operation');
 
@@ -56,45 +56,26 @@ class SystemUser extends CommandBase
 
         switch ($operation) {
             case 'create':
-
                 if ($option2 == null) {
                     $option2 = $passwords->create();
                 }
 
-                $user = $users->findWhere(['email' => $email])->first();
-
-                if ($user == null) {
-                    $user = $users->updateOrCreate([
-                        'email' => $email,
-                        'name' => $option1 ?? $email,
-                        'password' => Hash::make($option2)
-                    ]);
+                if (!$users->create($option1 ?? $email, $email, $option2)) {
+                    $this->error($users->error());
                 }
 
-                $user->update([
-                    'name' => $option1 ?? $email,
-                    'password' => Hash::make($option2)
-                ]);
-
                 $this->completeTask();
-
-                $this->warn("Password is {$option2}");
 
                 return 0;
 
             case 'password':
-                $user = $users->findWhere(['email' => $email])
-                    ->first();
-
                 if ($option1 == null) {
                     $option1 = $passwords->create();
                 }
 
-                if ($user == null) {
-                    return $this->errorTask("User {$email} not found");
+                if (!$users->password($email, $option1)) {
+                    $this->error($users->error());
                 }
-
-                $user->update(['password' => Hash::make($option1)]);
 
                 $this->completeTask();
 
@@ -103,31 +84,40 @@ class SystemUser extends CommandBase
                 return 0;
 
             case 'delete':
-                $user = $users->findWhere(['email' => $email])
-                    ->first();
-
-                if ($user == null) {
-                    return $this->errorTask("User {$email} not found");
+                if (!$users->delete($email)) {
+                    $this->error($users->error());
                 }
-
-                $user->delete();
 
                 return $this->completeTask();
 
             case 'show':
                 $this->completeTask();
 
-                $list = $users->all();
+                $users = $users->show();
 
-                $this->table(['Id', 'Name', 'Email'], $list->map(function ($user) {
-                    return [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email
-                    ];
+                $this->table(['Id', 'Name', 'Email'], $users);
+
+                return 0;
+
+            case 'token':
+                $this->completeTask();
+
+                $tokens = $users->token($email);
+
+                $this->table([], collect($tokens)->map(function($token) {
+                    $token['revoked'] = $this->noYes($token['revoked']);
+
+                    return $token;
                 })->toArray());
 
                 return 0;
+
+            case 'revoke':
+                if (!$users->revoke($email, $option1)) {
+                    $this->error($users->error());
+                }
+
+                return $this->completeTask();
         }
 
         return $this->errorTask("Operation {$operation} unknown");

@@ -56,6 +56,11 @@ class CommandBase extends Command
         return $check ? '<info>YES</info>' : '<error>NO</error>';
     }
 
+    public function noYes(?bool $check): string
+    {
+        return $check ? '<error>YES</error>' : '<info>NO</info>';
+    }
+
     public function toKeyValue(array $values): array
     {
         $result = [];
