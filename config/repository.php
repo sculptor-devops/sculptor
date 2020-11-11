@@ -59,7 +59,7 @@ return [
          | Cache Minutes
          |--------------------------------------------------------------------------
          |
-         | Time of expiration cache
+         | Days of expiration cache
          |
          */
         'minutes'    => 30,

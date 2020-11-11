@@ -73,8 +73,7 @@ class Backups implements ActionInterface
                 break;
 
             case BackupType::DOMAIN:
-                $domain = $this->domains->byName($name);
-                ;
+                $domain = $this->domains->byName($name);;
 
                 $backup->domain()
                     ->associate($domain)
@@ -91,21 +90,18 @@ class Backups implements ActionInterface
      * @param string $type
      * @param string|null $name
      * @return bool
-     * @throws ValidatorException
      */
     public function create(string $type, ?string $name = null): bool
     {
-        $backup = $this->backups->create(['type' => $type]);
-
         try {
+            $backup = $this->backups->make($type);
+
             Logs::backup()->info("Create backup {$type} database {$name}");
 
             if ($name != null) {
                 $this->associate($backup, $name);
             }
         } catch (Exception $e) {
-            $backup->delete();
-
             return $this->action
                 ->report("System backup: {$e->getMessage()}");
         }
@@ -163,5 +159,15 @@ class Backups implements ActionInterface
         }
 
         return true;
+    }
+
+    public function check(int $id): bool
+    {
+        //
+    }
+
+    public function rotate(int $id): bool
+    {
+        //
     }
 }

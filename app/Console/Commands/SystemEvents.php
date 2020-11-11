@@ -58,7 +58,7 @@ class SystemEvents extends CommandBase
         $items = $this->limit($limit, $page - 1);
 
         $this->table([
-            'Date/Time',
+            'Date/Days',
             'Tag',
             'Level',
             'Message'

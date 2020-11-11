@@ -2,8 +2,13 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Lorisleiva\CronTranslator\CronParsingException;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Repositories\BackupRepository;
 use Sculptor\Agent\Support\CommandBase;
+use Lorisleiva\CronTranslator\CronTranslator;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -41,36 +46,55 @@ class BackupShow extends CommandBase
      * Execute the console command.
      *
      * @param BackupRepository $backups
+     * @param Configuration $configuration
      * @return int
+     * @throws CronParsingException
      */
-    public function handle(BackupRepository $backups): int
+    public function handle(BackupRepository $backups, Configuration $configuration): int
+    {
+        $all = $backups->all();
+
+        $this->padded('Current system time is', now());
+
+        $this->padded('Temp directory is', $configuration->get('sculptor.backup.temp'));
+
+        $this->padded('Default compression driver is ', 'Zip');
+
+        $this->padded('Default archive driver is ', $configuration->get('sculptor.backup.drivers.default'));
+
+        $this->padded('Default rotation policy is ', $configuration->get('sculptor.backup.rotation'));
+
+        $this->padded('Total backups batch', $all->count());
+
+        $this->tabled($all);
+
+        return 0;
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @param Collection $all
+     * @throws CronParsingException
+     */
+    private function tabled(Collection $all): void
     {
         $tabled = [];
-
-        $all = $backups->all();
 
         foreach ($all as $item) {
             $tabled[] = [
                 'id' => $item->id,
                 'type' => $item->type,
                 'name' => $item->name(),
-                'cron' => $item->cron,
+                'cron' => CronTranslator::translate($item->cron),
                 'destination' => $item->destination ?? 'Not defined',
                 'status' => $item->status,
-                'size' => $item->size ?? 'none',
+                'size' => byteToHumanReadable($item->size ?? 0),
                 'run' => $item->run ?? 'Never',
-                'error' => $item->error
+                'error' => "<fg=red>{$item->error}</>"
             ];
         }
 
-        $this->table([ 'Index', 'Type', 'Resource', 'Cron', 'Destination', 'Status', 'Size', 'Run', 'Error'], $tabled);
-
-        $this->info("Temp directory is " . config('sculptor.backup.temp'));
-
-        $this->info("Archive driver is Zip");
-
-        $this->info("Compression with " . config('sculptor.backup.drivers.default'));
-
-        return 0;
+        $this->table(['Index', 'Type', 'Resource', 'Cron', 'Destination', 'Status', 'Size', 'Run', 'Error'], $tabled);
     }
 }

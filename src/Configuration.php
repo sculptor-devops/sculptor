@@ -33,6 +33,7 @@ class Configuration
         'sculptor.security.password.max',
         'sculptor.monitors.rotate',
         'sculptor.backup.archive',
+        'sculptor.backup.rotation',
         'sculptor.backup.temp',
         'sculptor.backup.compression',
         'sculptor.backup.drivers.default',
@@ -125,6 +126,10 @@ class Configuration
         $keys = explode('.', $key);
 
         foreach ($keys as $key) {
+            if ($key == 'sculptor') {
+                continue;
+            }
+
             if (!is_array($result)) {
                 return null;
             }
@@ -163,7 +168,7 @@ class Configuration
 
         $this->assignArrayByPath($this->configurations, $name, $value);
 
-        Cache::add($this->key($name), $value);
+        Cache::put($this->key($name), $value);
 
         File::put($this->fileName(), Yaml::dump($this->configurations, 10));
 

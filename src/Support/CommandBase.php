@@ -2,9 +2,11 @@
 
 namespace Sculptor\Agent\Support;
 
+use App\Console\Commands\BackupShow;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -15,6 +17,8 @@ use Illuminate\Support\Collection;
 class CommandBase extends Command
 {
     private $taskName;
+
+    public const PAD = 30;
 
     public function startTask(string $name, string $loading = 'running...'): void
     {
@@ -72,7 +76,7 @@ class CommandBase extends Command
         $result = [];
 
         foreach ($values as $key => $value) {
-            $result[] = [ 'key' => $key, 'value' => $value];
+            $result[] = ['key' => $key, 'value' => $value];
         }
 
         return $result;
@@ -96,5 +100,10 @@ class CommandBase extends Command
             ->join(', ');
 
         return $name == '' ? 'none' : $name;
+    }
+
+    public function padded(string $key, string $value, int $pad = CommandBase::PAD): void
+    {
+        $this->info(Str::padRight($key, $pad) . ": <fg=white>{$value}</>");
     }
 }

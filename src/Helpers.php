@@ -15,3 +15,18 @@ if (!function_exists('whoami')) {
         return $processUser['name'];
     }
 }
+
+if (!function_exists('byteToHumanReadable')) {
+    function byteToHumanReadable(int $size, int $precision = 2): string
+    {
+        $i = 0;
+        $step = 1024;
+        $units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+        while (($size / $step) > 0.9) {
+            $size = $size / $step;
+            $i++;
+        }
+        return round($size, $precision) . $units[$i];
+    }
+}

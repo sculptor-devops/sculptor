@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Jobs;
 
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,6 +15,7 @@ use Sculptor\Agent\Enums\BackupStatusType;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Backup;
+use Sculptor\Agent\Support\Chronometer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -53,6 +55,8 @@ class BackupRun implements ShouldQueue, ITraceable
     {
         $this->running();
 
+        $stopwatch = Chronometer::start();
+
         try {
             Logs::backup()->info("Running backup {$this->backup->name()}...");
 
@@ -70,10 +74,10 @@ class BackupRun implements ShouldQueue, ITraceable
 
             $this->backup->change(BackupStatusType::OK);
 
-            $this->ok();
+            Logs::backup()->info("Running backup {$this->backup->name()} done in {$stopwatch->stop()}");
 
-            return;
-        } catch (Exception $e) {
+            $this->ok();
+        } catch (Exception | Error $e) {
             $this->report($e);
 
             $this->backup->change(BackupStatusType::ERROR, $e->getMessage());

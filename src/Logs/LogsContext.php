@@ -73,7 +73,7 @@ class LogsContext implements LoggerInterface
 
         Log::alert($message, $context);
 
-        $this->event($message, $context);
+        $this->event($message, LogContextLevel::ALERT, $context);
     }
 
     /**

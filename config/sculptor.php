@@ -63,6 +63,7 @@ return [
 
     'backup' => [
         'archive' => env('BACKUP_ARCHIVE', 'local'),
+        'rotation' => env('BACKUP_ROTATION', 'number'),
         'temp' => env('BACKUP_TMP', '/tmp'),
         'compression' => env('BACKUP_COMPRESSION', 'zip'),
 

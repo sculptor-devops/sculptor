@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Api\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Sculptor\Agent\Facades\Logs;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -31,6 +32,8 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
+        Logs::login()->info("Api login {$user->email}");
 
         $accessToken = $user->createToken('authToken')->accessToken;
 

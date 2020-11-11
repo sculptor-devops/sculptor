@@ -6,6 +6,8 @@ use Exception;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
+use Prettus\Validator\Exceptions\ValidatorException;
+use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Repositories\Entities\Backup;
 use Sculptor\Agent\Contracts\BackupRepository as BackupRepositoryInterface;
 
@@ -50,5 +52,20 @@ class BackupRepository extends BaseRepository implements BackupRepositoryInterfa
         }
 
         return $backup;
+    }
+
+    /**
+     * @param string $type
+     * @return Backup
+     * @throws ValidatorException
+     * @throws Exception
+     */
+    public function make(string $type): Backup
+    {
+        if (!in_array($type, [BackupType::BLUEPRINT, BackupType::DATABASE, BackupType::DOMAIN])) {
+            throw new Exception("Unknown backup type {$type}");
+        }
+
+        return $this->create(['type' => $type]);
     }
 }

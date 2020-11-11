@@ -53,7 +53,7 @@ class Formatter
 
         switch ($formatter) {
             case 'toByteHr':
-                return $this->toByteHr($value, 0);
+                return byteToHumanReadable($value, 0);
 
             case 'uptime':
                 return $this->uptime($value);
@@ -66,19 +66,6 @@ class Formatter
         }
 
         return $value;
-    }
-
-    private function toByteHr(int $size, int $precision = 2): string
-    {
-        $i = 0;
-        $step = 1024;
-        $units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-        while (($size / $step) > 0.9) {
-            $size = $size / $step;
-            $i++;
-        }
-        return round($size, $precision) . $units[$i];
     }
 
     private function uptime(int $value): string

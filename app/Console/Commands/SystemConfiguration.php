@@ -19,7 +19,7 @@ class SystemConfiguration extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'system:configuration {operation} {name?} {value?}';
+    protected $signature = 'system:configuration {operation=show} {name?} {value?}';
 
     /**
      * The console command description.

@@ -57,16 +57,20 @@ class SystemUpgrades extends CommandBase
                 return 0;
 
             case 'check':
-                $event = $logs->last();
+                if (count($logs->events()) == 0) {
+                    $this->warn("No logs to parse");
 
-                if ($event == null) {
                     return 0;
                 }
 
-                if ($event->recent()) {
-                    $this->info('System upgraded recently');
+                $event = $logs->last();
 
-                    Logs::security()->alert("System unattended upgrades " . implode(', ', $event->packages()));
+                if ($event->recent()) {
+                    $packages = implode(', ', $event->packages());
+
+                    $this->info("System upgraded recently to {$packages}");
+
+                    Logs::security()->alert("System unattended upgrades {$packages}");
                 }
 
                 return 0;

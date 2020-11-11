@@ -17,6 +17,7 @@ use Sculptor\Agent\Jobs\Domains\WebServer;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Queues\Traceable;
 use Sculptor\Agent\Repositories\Entities\Domain;
+use Sculptor\Agent\Support\Chronometer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -62,7 +63,7 @@ class DomainDeploy implements ShouldQueue, ITraceable
      */
     public function handle(WebServer $web, Deployer $deploy, Permissions $permission): void
     {
-        $started = now();
+        $stopwatch = Chronometer::start();
 
         $this->running();
 
@@ -77,9 +78,7 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             $this->domain->update([ 'status' => DomainStatusType::DEPLOYED ]);
 
-            $elapsed = now()->longAbsoluteDiffForHumans($started);
-
-            Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$elapsed}");
+            Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$stopwatch->stop()}");
 
             $this->ok();
         } catch (Exception | Error $e) {

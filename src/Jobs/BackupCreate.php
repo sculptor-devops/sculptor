@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Jobs;
 
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -67,7 +68,7 @@ class BackupCreate implements ShouldQueue, ITraceable
             $this->backup->change(BackupStatusType::OK);
 
             $this->ok();
-        } catch (Exception $e) {
+        } catch (Exception | Error $e) {
             $this->backup->change(BackupStatusType::ERROR, $e->getMessage());
 
             $this->report($e);
