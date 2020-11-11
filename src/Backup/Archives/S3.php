@@ -68,7 +68,7 @@ class S3 implements Archive
      */
     public function delete(string $file)
     {
-        return $this->filesystem->delete($file);
+        return $this->filesystem->delete("{$this->path}/{$file}");
     }
 
     /**
@@ -77,7 +77,7 @@ class S3 implements Archive
      */
     public function list(string $file)
     {
-        return $this->filesystem->listContents($file, true);
+        return $this->filesystem->listContents("{$this->path}/{$file}", true);
     }
 
     /**
@@ -86,6 +86,6 @@ class S3 implements Archive
      */
     public function get(string $file)
     {
-        return $this->filesystem->get($file);
+        return $this->filesystem->get("{$this->path}/{$file}");
     }
 }
