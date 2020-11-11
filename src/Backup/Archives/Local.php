@@ -34,15 +34,18 @@ class Local implements Archive
     /**
      * @param string $file
      * @param $content
+     * @return Archive
      * @throws FileExistsException
      */
-    public function put(string $file, $content)
+    public function put(string $file, $content): Archive
     {
         if (!File::exists(dirname($file))) {
             File::makeDirectory(dirname($file), 0755, true);
         }
 
         $this->filesystem->write($file, $content);
+
+        return $this;
     }
 
     /**
@@ -57,19 +60,30 @@ class Local implements Archive
 
     /**
      * @param string $file
+     * @return Archive
      * @throws FileNotFoundException
+     * @throws \Exception
      */
-    public function delete(string $file)
+    public function delete(string $file): Archive
     {
-        $this->filesystem->delete($file);
+        if (!$this->filesystem->delete($file)) {
+            throw new \Exception("Cannot delete file {$file}");
+        }
+
+        Return $this;
     }
 
     /**
      * @param string $file
      * @return array
      */
-    public function list(string $file)
+    public function list(string $file): array
     {
         return $this->filesystem->listContents($file, true);
+    }
+
+    public function has(string $file): bool
+    {
+        return $this->filesystem->has($file);
     }
 }

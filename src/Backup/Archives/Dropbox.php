@@ -2,7 +2,12 @@
 
 namespace Sculptor\Agent\Backup\Archives;
 
+use Exception;
+use League\Flysystem\Directory;
+use League\Flysystem\File;
+use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Handler;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Configuration;
 use Spatie\Dropbox\Client;
@@ -32,6 +37,10 @@ class Dropbox implements Archive
         $this->filesystem = new Filesystem($adapter, ['case_sensitive' => false]);
     }
 
+    /**
+     * @param string $path
+     * @return $this|Archive
+     */
     public function create(string $path): Archive
     {
         $this->path = $path;
@@ -39,27 +48,61 @@ class Dropbox implements Archive
         return $this;
     }
 
-    public function put(string $file, $content)
+    /**
+     * @param string $file
+     * @param $content
+     * @return $this|Archive
+     */
+    public function put(string $file, $content): Archive
     {
         if (!$this->filesystem->has($this->path)) {
             $this->filesystem->createDir($this->path);
         }
 
         $this->filesystem->put("{$this->path}/{$file}", $content);
+
+        return $this;
     }
 
+    /**
+     * @param string $file
+     * @return Directory|File|Handler|mixed|null
+     */
     public function get(string $file)
     {
         return $this->filesystem->get("{$this->path}/{$file}");
     }
 
-    public function delete(string $file)
+    /**
+     * @param string $file
+     * @return $this|Archive
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+    public function delete(string $file): Archive
     {
-        return $this->filesystem->delete("{$this->path}/{$file}");
+        if (!$this->filesystem->delete("{$this->path}/{$file}")) {
+            throw new Exception("Cannot delete file {$this->path}/{$file}");
+        }
+
+        return $this;
     }
 
-    public function list(string $file)
+    /**
+     * @param string $file
+     * @return array
+     */
+    public function list(string $file): array
     {
         return $this->filesystem->listContents("{$this->path}/{$file}", true);
+    }
+
+    /**
+     * @param string $file
+     * @return bool
+     */
+    public function has(string $file): bool
+    {
+        return $this->filesystem->has("{$this->path}/{$file}");
     }
 }

@@ -21,9 +21,9 @@ interface Archive
     /**
      * @param string $file
      * @param $content
-     * @return mixed
+     * @return Archive
      */
-    public function put(string $file, $content);
+    public function put(string $file, $content): Archive;
 
     /**
      * @param string $file
@@ -33,13 +33,19 @@ interface Archive
 
     /**
      * @param string $file
-     * @return mixed
+     * @return Archive
      */
-    public function delete(string $file);
+    public function delete(string $file): Archive;
 
     /**
      * @param string $file
-     * @return mixed
+     * @return array
      */
-    public function list(string $file);
+    public function list(string $file): array;
+
+    /**
+     * @param string $file
+     * @return bool
+     */
+    public function has(string $file): bool;
 }

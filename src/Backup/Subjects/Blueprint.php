@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Backup\Subjects;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
@@ -48,8 +49,13 @@ class Blueprint implements BackupInterface
      */
     private $size;
 
-    public function __construct(Configuration $configuration, BlueprintService $blueprint, Archive $archive, Compressor $compressor, Tag $tag)
-    {
+    public function __construct(
+        Configuration $configuration,
+        BlueprintService $blueprint,
+        Archive $archive,
+        Compressor $compressor,
+        Tag $tag
+    ) {
         $this->configuration = $configuration;
 
         $this->blueprint = $blueprint;
@@ -95,9 +101,9 @@ class Blueprint implements BackupInterface
     {
         foreach (
             [
-                     $backup->destination,
-                     $compressed = $this->tag->compressed('blueprint')
-                 ] as $file
+                $this->tag->temp($backup->database->name),
+                $this->tag->compressed('blueprint')
+            ] as $file
         ) {
             if (File::exists($file)) {
                 File::delete($file);
@@ -114,11 +120,39 @@ class Blueprint implements BackupInterface
 
     public function archives(Item $backup): array
     {
-        return [];
+        return $this->archive
+            ->create($backup->destination)
+            ->list('/');
     }
 
+    /**
+     * @param Item $backup
+     * @return bool
+     * @throws Exception
+     */
     public function check(Item $backup): bool
     {
+        $testFile = '/.sculptor.test.' . time();
+
+        if (!File::exists($this->tmp)) {
+            throw new Exception("Backup temp must exists");
+        }
+
+        if ($backup->destination == null) {
+            throw new Exception("Backup destination cannot be null");
+        }
+
+        if (!$this->archive
+            ->create($backup->destination)
+            ->put($testFile, time())
+            ->has($testFile)) {
+            throw new Exception("Cannot write test file in destination {$backup->destination}");
+        }
+
+        $this->archive
+            ->create($backup->destination)
+            ->delete($testFile);
+
         return true;
     }
 
