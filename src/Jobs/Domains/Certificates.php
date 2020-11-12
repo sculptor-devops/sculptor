@@ -134,6 +134,8 @@ class Certificates implements DomainAction
                 ->push($alias);
         }
 
+        Logs::job()->debug("Calling certbot " . implode(' ', $command->toArray()));
+
         $this->system
             ->run("{$domain->root()}/certs", $command->toArray());
     }

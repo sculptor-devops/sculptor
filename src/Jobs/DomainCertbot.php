@@ -62,17 +62,32 @@ class DomainCertbot implements ShouldQueue, ITraceable
     {
         $this->running();
 
-        Logs::job()->info("Domain certbot {$this->domain->name}");
+        Logs::job()->info("Domain certbot {$this->domain->name} {$this->hook}");
 
         try {
-            $certificates->copy($this->domain);
+            switch ($this->hook) {
+                case 'create':
+                    $certificates->compile($this->domain);
 
-            $certificates->apply($this->domain);
+                    break;
 
-            $permissions->compile($this->domain);
+                case 'deploy':
+                    $certificates->copy($this->domain);
 
-            if ($this->hook == 'deploy') {
-                $webServer->enable($this->domain);
+                    $certificates->apply($this->domain);
+
+                    $permissions->compile($this->domain);
+
+                    $webServer->enable($this->domain);
+
+                    break;
+
+                    case 'pre':
+                        $permissions->compile($this->domain);
+
+                        break;
+                default:
+                    throw new Exception("Received invalid {$this->hook} hook");
             }
 
             $this->ok();
