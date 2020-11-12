@@ -49,7 +49,8 @@ class Certificates implements DomainAction
                 break;
 
             case CertificatesTypes::LETS_ENCRYPT:
-                // $this->selfSigned($domain, "{$domain->root()}/certs");
+                $this->selfSigned($domain, "{$domain->root()}/certs");
+
                 $this->letsEncrypt($domain);
 
                 break;
@@ -120,18 +121,19 @@ class Certificates implements DomainAction
             $domain->home(),
 
             '--deploy-hook',
-            "sculptor domain:certbot {$domain->name} deploy",
+            "/usr/bin/sculptor domain:certbot {$domain->name} deploy",
             '--pre-hook',
-            "sculptor domain:certbot {$domain->name} pre",
-            // '--post-hook',
-            // "sculptor domain:certbot {$domain->name} post",
+            "/usr/bin/sculptor domain:certbot {$domain->name} pre",
+
             '-d',
             $domain->name
         ]);
 
         foreach (explode(' ', $domain->alias) as $alias) {
-            $command->push('-d')
-                ->push($alias);
+            if ($alias != null && $alias != '') {
+                $command->push('-d')
+                    ->push($alias);
+            }
         }
 
         Logs::job()->debug("Calling certbot " . implode(' ', $command->toArray()));

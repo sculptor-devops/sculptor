@@ -71,7 +71,8 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
         'provider',
         'vcs',
         'token',
-        'branch'
+        'branch',
+        'email'
     ];
 
     public function root(): string
