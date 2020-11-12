@@ -12,6 +12,7 @@ use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
 use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\DaemonService;
+use Sculptor\Agent\Jobs\DomainCertbot;
 use Sculptor\Agent\Jobs\DomainConfigure;
 use Sculptor\Agent\Jobs\DomainCreate;
 use Sculptor\Agent\Jobs\DomainCrontab;
@@ -306,6 +307,10 @@ class Domains implements ActionInterface
         return true;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function templates(string $name): bool
     {
         Logs::actions()->info("Domain templates {$name}");
@@ -319,6 +324,29 @@ class Domains implements ActionInterface
         } catch (Exception $e) {
             return $this->action
                 ->report("Domain templates {$name}: {$e->getMessage()}");
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $name
+     * @param string $hook
+     * @return bool
+     */
+    public function certbot(string $name, string $hook): bool
+    {
+        Logs::actions()->info("Domain certbot {$name} hook {$hook}");
+
+        try {
+            $domain = $this->domains
+                ->byName($name);
+
+            $this->action
+                ->run(new DomainCertbot($domain, $hook));
+        } catch (Exception $e) {
+            return $this->action
+                ->report("Domain certbot {$name}: {$e->getMessage()}");
         }
 
         return true;

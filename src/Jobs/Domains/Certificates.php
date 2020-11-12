@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Jobs\Domains;
 
 use Exception;
+use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Jobs\Domains\Support\System;
@@ -105,22 +106,80 @@ class Certificates implements DomainAction
 
         Logs::job()->debug("Creating let's encrypt certificates for {{$domain->serverName()}} with email {$domain->email}");
 
-        $names = str_replace($domain->serverName(), ' ', '-d ');
+        $command = collect([
+            'certbot',
+            'certonly',
+            '--webroot',
+            '--agree-tos',
+            '-n',
+
+            '-m',
+            $domain->email,
+
+            '--webroot-path',
+            $domain->home(),
+
+            '--deploy-hook',
+            "sculptor domain:certbot {$domain->name} deploy",
+            '--pre-hook',
+            "sculptor domain:certbot {$domain->name} pre",
+            // '--post-hook',
+            // "sculptor domain:certbot {$domain->name} post",
+            '-d',
+            $domain->name
+        ]);
+
+        foreach (explode(' ', $domain->alias) as $alias) {
+            $command->push('-d')
+                ->push($alias);
+        }
 
         $this->system
-            ->run(
-                "{$domain->root()}/certs",
-                [
-                    'certbot',
-                    '--nginx ',
-                    '--agree-tos',
-                    '-n',
-                    '-m',
-                    $domain->email,
-                    '-d',
-                    $names
-                ]
-            );
+            ->run("{$domain->root()}/certs", $command->toArray());
+    }
+
+    /**
+     * @param Domain $domain
+     * @throws Exception
+     */
+    public function copy(Domain $domain): void
+    {
+        Logs::job()->debug("Copy certbot certificates of {$domain->name}");
+
+        foreach ([
+                     'cert.pem',
+                     'chain.pem',
+                     'fullchain.pem',
+                     'privkey.pem'
+                 ] as $cert) {
+
+            $from = "/etc/letsencrypt/live/{$domain->name}/{$cert}";
+
+            $to = "{$domain->root()}/certs/{$domain->name}.{$cert}";
+
+            if (!File::copy($from, $to)) {
+                throw new Exception("Cannot copy certbot certificates from {$from} to {$to}");
+            }
+
+            Logs::job()->debug("Copy certbot certificates from {$from} to {$to}");
+        }
+    }
+
+    /**
+     * @param Domain $domain
+     * @throws Exception
+     */
+    public function apply(Domain $domain): void
+    {
+        Logs::job()->debug("Apply certbot certificates of {$domain->name}");
+
+        $path = "{$domain->root()}/certs/{$domain->name}";
+
+        foreach (["{$path}/.cert.pem" => "{$path}/.crt", "{$path}/.privkey.pem" => "{$path}.key"] as $from => $to) {
+            if (!File::copy($from, $to)) {
+                throw new Exception("Cannot copy certificate from {$from} to {$to}");
+            }
+        }
     }
 
     /**
