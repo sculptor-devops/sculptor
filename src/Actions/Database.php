@@ -63,7 +63,7 @@ class Database implements ActionInterface
                 throw new DatabaseAlreadyExistsException($name);
             }
 
-             $this->action
+            $this->action
                 ->run(new DatabaseCreate($name));
 
             $this->database
@@ -89,12 +89,20 @@ class Database implements ActionInterface
             $database = $this->database
                 ->byName($name);
 
-            $this->action
-                ->run(new DatabaseDelete($name));
+            if ($database->domains()->count() > 0) {
+                $domains = implode(', ', $database->domains->map(function ($database) {
+                    return $database->name;
+                })->toArray());
+
+                throw new Exception("Database {$name} is in use on {$domains}");
+            }
 
             foreach ($database->users as $user) {
                 $this->drop($user->name, $name);
             }
+
+            $this->action
+                ->run(new DatabaseDelete($name));
 
             $database->delete();
 

@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Repositories\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Sculptor\Agent\Contracts\BlueprintRecord;
@@ -23,6 +24,7 @@ use Sculptor\Agent\Support\BlueprintSerializer;
  * @property DatabaseUser users
  * @property string name
  * @property string driver
+ * @property Collection domains
  * @package namespace Sculptor\Agent\Entities;
  */
 class Database extends Model implements Transformable, BlueprintRecord
@@ -37,6 +39,9 @@ class Database extends Model implements Transformable, BlueprintRecord
      * @var array
      */
     protected $fillable = ['name', 'driver'];
+    /**
+     * @var mixed
+     */
 
     public function users(): HasMany
     {
