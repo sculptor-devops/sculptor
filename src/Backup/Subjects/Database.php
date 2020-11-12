@@ -180,20 +180,12 @@ class Database implements BackupInterface
      */
     public function check(Item $backup): bool
     {
-        if (!File::exists($this->tmp)) {
-            throw new Exception("Backup temp must exists");
-        }
-
         if ($backup->database == null) {
             throw new Exception("Backup must define a database");
         }
 
         if ($backup->database->users()->count() == 0) {
             throw new Exception("Backup must define a database with at least one user");
-        }
-
-        if ($backup->destination == null) {
-            throw new Exception("Backup must define a destination");
         }
 
         return true;

@@ -9,7 +9,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Factory;
+use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Contracts\ITraceable;
 use Sculptor\Agent\Enums\BackupStatusType;
 use Sculptor\Agent\Facades\Logs;
@@ -49,9 +51,10 @@ class BackupRun implements ShouldQueue, ITraceable
 
     /**
      * @param Factory $backups
+     * @param Configuration $configuration
      * @throws Exception
      */
-    public function handle(Factory $backups): void
+    public function handle(Factory $backups, Configuration $configuration): void
     {
         $this->running();
 
@@ -59,6 +62,8 @@ class BackupRun implements ShouldQueue, ITraceable
 
         try {
             Logs::backup()->info("Running backup {$this->backup->name()}...");
+
+            $this->check($backups, $configuration);
 
             $batch = $backups->make($this->backup);
 
@@ -82,5 +87,38 @@ class BackupRun implements ShouldQueue, ITraceable
 
             $this->backup->change(BackupStatusType::ERROR, $e->getMessage());
         }
+    }
+
+    /**
+     * @param Factory $backups
+     * @param Configuration $configuration
+     * @throws Exception
+     */
+    private function check(Factory $backups, Configuration $configuration): void
+    {
+        $testFile = '/.sculptor.test.' . time();
+
+        $destination = $this->backup->destination;
+
+        $archive = $backups->archive($this->backup->archive);
+
+        $temp = $configuration->get('sculptor.backup.temp');
+
+        if (!File::exists($temp)) {
+            throw new Exception("Backup temp must exists");
+        }
+
+        if ($destination == null) {
+            throw new Exception("Backup destination cannot be null");
+        }
+
+        if (!$archive->create($destination)
+            ->put($testFile, time())
+            ->has($testFile)) {
+            throw new Exception("Cannot write test file in destination {$destination}");
+        }
+
+        $archive->create($destination)
+            ->delete($testFile);
     }
 }

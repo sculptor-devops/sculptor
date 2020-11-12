@@ -132,27 +132,6 @@ class Blueprint implements BackupInterface
      */
     public function check(Item $backup): bool
     {
-        $testFile = '/.sculptor.test.' . time();
-
-        if (!File::exists($this->tmp)) {
-            throw new Exception("Backup temp must exists");
-        }
-
-        if ($backup->destination == null) {
-            throw new Exception("Backup destination cannot be null");
-        }
-
-        if (!$this->archive
-            ->create($backup->destination)
-            ->put($testFile, time())
-            ->has($testFile)) {
-            throw new Exception("Cannot write test file in destination {$backup->destination}");
-        }
-
-        $this->archive
-            ->create($backup->destination)
-            ->delete($testFile);
-
         return true;
     }
 
