@@ -52,11 +52,6 @@ class DomainCertbot extends CommandBase
 
         $this->startTask("Certbot {$name} hook {$hook}");
 
-        if ($hook == 'pre') {
-
-            return $this->completeTask();
-        }
-
         if (!$domains->certbot($name, $hook)) {
             return $this->errorTask($domains->error());
         }

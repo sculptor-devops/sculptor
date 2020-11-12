@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Jobs\Domains;
 
 use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Jobs\Domains\Support\System;
@@ -130,7 +131,9 @@ class Certificates implements DomainAction
         ]);
 
         foreach (explode(' ', $domain->alias) as $alias) {
-            if ($alias != null && $alias != '') {
+            if (Str::of($alias)
+                ->trim()
+                ->isNotEmpty()) {
                 $command->push('-d')
                     ->push($alias);
             }
