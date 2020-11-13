@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Monitors\Constraints;
 
 use Exception;
 use Sculptor\Agent\Contracts\Constraint;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\Parametrizer;
 use Sculptor\Agent\Monitors\System as Monitors;
 
@@ -74,7 +75,13 @@ class System implements Constraint
             'monitor' => $monitor
         ];
 
-        return $this->evaluate($alarmed, $rearm, $value, $limit);
+        $evaluation = $this->evaluate($alarmed, $rearm, $value, $limit);
+
+        if ($evaluation && $this->act) {
+            Logs::batch()->notice("System monitor limit on {$monitor} is {$value} > {$limit}");
+        }
+
+        return $evaluation;
     }
 
     /**
