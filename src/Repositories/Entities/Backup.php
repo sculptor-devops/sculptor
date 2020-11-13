@@ -29,6 +29,7 @@ use Sculptor\Agent\Support\BlueprintSerializer;
  * @property string cron
  * @property string path
  * @property string archive
+ * @property int id
  */
 class Backup extends Model implements Transformable, BlueprintRecord
 {

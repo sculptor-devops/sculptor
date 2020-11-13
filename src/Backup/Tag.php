@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Backup;
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Str;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Configuration;
@@ -69,5 +70,10 @@ class Tag
     public function destination(string $name, string $destination): string
     {
         return "{$this->type}-{$name}-{$this->tag}.{$this->compressor}";
+    }
+
+    public function match(string $name, string $compare): bool
+    {
+        return Str::startsWith($compare, "{$this->type}-{$name}-");
     }
 }

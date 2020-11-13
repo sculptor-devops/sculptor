@@ -132,4 +132,9 @@ class Factory
 
         throw new Exception("Invalid {$type} rotation policy");
     }
+
+    public function tag(): Tag
+    {
+        return $this->tag;
+    }
 }
