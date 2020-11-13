@@ -64,15 +64,15 @@ class DomainCreate implements ShouldQueue, ITraceable
         try {
             foreach (
                 [
-                         Structure::class,
-                         Certificates::class,
-                         Env::class,
-                         Worker::class,
-                         Crontab::class,
-                         Deployer::class,
-                         WebServer::class,
-                         Permissions::class
-                     ] as $step
+                    Structure::class,
+                    Env::class,
+                    Deployer::class,
+                    Worker::class,
+                    Crontab::class,
+                    Certificates::class,
+                    WebServer::class,
+                    Permissions::class
+                ] as $step
             ) {
                 $stage = resolve($step);
 
