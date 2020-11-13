@@ -59,8 +59,29 @@ class Deployer implements DomainAction
             ->replace('{BRANCH}', $domain->branch ?? 'master')
             ->value();
 
-        return $this->compiler
-            ->save("{$domain->root()}/deploy.php", $compiled);
+        if (!$this->compiler
+            ->save("{$domain->root()}/deploy.php", $compiled)) {
+            throw new Exception("Cannot write deploy configuration");
+        }
+
+        $this->prepare($domain);
+
+        return true;
+    }
+
+    /**
+     * @param Domain $domain
+     * @throws Exception
+     */
+    private function prepare(Domain $domain): void
+    {
+        if (!File::exists($domain->current())) {
+            $this->deploy('deploy:prepare', $domain);
+
+            $this->deploy('deploy:release', $domain);
+
+            $this->deploy('deploy:symlink', $domain);
+        }
     }
 
     /**
@@ -72,14 +93,6 @@ class Deployer implements DomainAction
     public function run(Domain $domain, string $command = null): bool
     {
         $this->deploy('deploy:unlock', $domain);
-
-        if (!File::exists($domain->current())) {
-            $this->deploy('deploy:prepare', $domain);
-
-            $this->deploy('deploy:release', $domain);
-
-            $this->deploy('deploy:symlink', $domain);
-        }
 
         $deploy = $domain->deployer ?? SITES_DEPLOY;
 
