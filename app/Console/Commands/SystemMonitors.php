@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Monitors\Collector;
+use Sculptor\Agent\Monitors\System;
 use Sculptor\Agent\Monitors\Formatter;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -41,11 +41,11 @@ class SystemMonitors extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Collector $monitors
+     * @param System $monitors
      * @param Formatter $formatter
      * @return int
      */
-    public function handle(Collector $monitors, Formatter $formatter): int
+    public function handle(System $monitors, Formatter $formatter): int
     {
         $operation = $this->argument('operation');
 

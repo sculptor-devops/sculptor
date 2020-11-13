@@ -9,11 +9,14 @@ use App\Console\Commands\DatabaseUserCreate;
 use App\Console\Commands\DatabaseDelete;
 use App\Console\Commands\DatabaseUserDelete;
 use App\Console\Commands\SystemTasks;
+use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\BackupRepository;
+use Sculptor\Agent\Repositories\MonitorRepository;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,19 +36,52 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('system:monitors', [ 'write' ])->everyMinute();
+        $this->system($schedule);
 
-        $schedule->command('system:upgrades', [ 'check' ])->cron('59 23 * * *');
+        $this->backups($schedule);
 
-        $schedule->command('system:clear' )->daily();
+        $this->monitors($schedule);
+    }
 
-        $backups = resolve(BackupRepository::class);
+    private function system(Schedule $schedule): void
+    {
+        try {
+            $schedule->command('system:monitors', ['write'])->everyMinute();
 
-        foreach ($backups->all() as $backup) {
-            $schedule->command('backup:run', [ $backup->id ])->cron($backup->cron);
+            $schedule->command('system:upgrades', ['check'])->cron('59 23 * * *');
+
+            $schedule->command('system:clear')->daily();
+
+            // $schedule->command('queue:restart')->daily();
+        } catch (Exception $e) {
+            Logs::batch()->report($e);
         }
+    }
 
-        // $schedule->command('queue:restart', [ 'write' ])->daily();
+    private function backups(Schedule $schedule): void
+    {
+        try {
+            $backups = resolve(BackupRepository::class);
+
+            foreach ($backups->all() as $backup) {
+                $schedule->command('backup:run', [$backup->id])->cron($backup->cron);
+            }
+        } catch (Exception $e) {
+            Logs::batch()->report($e);
+        }
+    }
+
+    private function monitors(Schedule $schedule): void
+    {
+        try {
+            $monitors = resolve(MonitorRepository::class);
+
+            foreach ($monitors->all() as $monitor) {
+                $schedule->command('monitors:run', [$monitor->id])->cron($monitor->cron);
+            }
+        } catch (Exception $e) {
+            Logs::batch()->report($e);
+        }
     }
 
     /**

@@ -66,7 +66,7 @@ class DomainCertbot implements ShouldQueue, ITraceable
 
         try {
             switch ($this->hook) {
-                case 'create':
+                case 'register':
                     $certificates->compile($this->domain);
 
                     break;

@@ -18,7 +18,7 @@ use Sculptor\Agent\Monitors\System\Uptime;
  *  file that was distributed with this source code.
 */
 
-class Collector
+class System
 {
     /**
      * @var string[]

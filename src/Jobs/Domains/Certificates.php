@@ -106,6 +106,12 @@ class Certificates implements DomainAction
             throw new Exception("Domain {$domain->name} has no email configured");
         }
 
+        if (!File::exists($domain->current())) {
+            Logs::job()->notice("Public folder {$domain->name} not yet created, skipping let's encrypt registration");
+
+            return;
+        }
+
         Logs::job()->debug("Creating let's encrypt certificates for {{$domain->serverName()}} with email {$domain->email}");
 
         $command = collect([
