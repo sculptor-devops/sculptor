@@ -40,13 +40,11 @@ class Alarms implements ActionInterface
                 'message' => Str::ucfirst("{$type} monitor"),
                 'type' => $type
             ]);
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report($e->getMessage());
+            return $this->action->report($e->getMessage());
         }
 
-        return false;
+        return true;
     }
 
     public function delete(int $id): bool
@@ -55,13 +53,11 @@ class Alarms implements ActionInterface
             $monitor = $this->monitors->byId($id);
 
             $monitor->delete();
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report($e->getMessage());
+            return  $this->action->report($e->getMessage());
         }
 
-        return false;
+        return true;
     }
 
     public function setup(int $id, string $key, string $value): bool
@@ -72,13 +68,11 @@ class Alarms implements ActionInterface
             $monitor->update([
                 "{$key}" => "{$value}"
             ]);
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report($e->getMessage());
+            return $this->action->report($e->getMessage());
         }
 
-        return false;
+        return true;
     }
 
     public function rearm(int $id): bool
@@ -92,13 +86,11 @@ class Alarms implements ActionInterface
                 'alarm_until' => null,
                 'error' => null
             ]);
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report($e->getMessage());
+            return $this->action->report($e->getMessage());
         }
 
-        return false;
+        return true;
     }
 
     public function run(int $id): bool
@@ -111,13 +103,11 @@ class Alarms implements ActionInterface
             if (!$alarm->run()) {
                 throw new Exception("{$monitor->error}");
             }
-
-            return true;
         } catch (Exception $e) {
-            $this->action->report($e->getMessage());
+            return $this->action->report($e->getMessage());
         }
 
-        return false;
+        return true;
     }
 
     public function show(): array
