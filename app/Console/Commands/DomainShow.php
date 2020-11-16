@@ -133,7 +133,7 @@ class DomainShow extends CommandBase
 
         $this->table([
             'Name',
-            'Alias',
+            'DomainAlias',
             'Type',
             'Status',
             'Database',

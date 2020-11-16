@@ -3,8 +3,9 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Validator as Validation;
 
-class Fqdn implements Rule
+class Vcs implements Rule
 {
     /**
      * Create a new rule instance.
@@ -25,19 +26,17 @@ class Fqdn implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        $rule = '/^(?!:\/\/)(?=.{1,255}$)((.{1,63}\.){1,127}(?![0-9]*$)[a-z0-9-]+\.?)$/i';
+        $validated = Validation::make(["url" => $value], [ 'url' => [ 'required', 'url']]);
 
-        foreach (explode(' ', $value) as $domain) {
-            if (!preg_match($rule, $domain)) {
-                return false;
-            }
+        if (!$validated->fails()) {
+            return true;
         }
 
-        if (!preg_match($rule, $value)) {
-            return false;
+        if (preg_match('/^(([A-Za-z0-9]+@|http(|s)\:\/\/)|(http(|s)\:\/\/[A-Za-z0-9]+@))([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git){1}$/i', $value)) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -47,6 +46,6 @@ class Fqdn implements Rule
      */
     public function message(): string
     {
-        return 'Invalid FQDN.';
+        return 'This is not a valid git url or ssh';
     }
 }

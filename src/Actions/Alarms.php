@@ -10,6 +10,7 @@ use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Monitors\Alarms as UserAlarm;
 use Sculptor\Agent\Repositories\AlarmRepository;
+use Sculptor\Agent\Validation\Validator;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -64,6 +65,12 @@ class Alarms implements ActionInterface
     {
         try {
             $monitor = $this->monitors->byId($id);
+
+            $validator = Validator::make('Alarm');
+
+            if (!$validator->validate($key, $value)) {
+                throw new Exception($validator->error());
+            }
 
             $monitor->update([
                 "{$key}" => "{$value}"

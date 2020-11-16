@@ -15,6 +15,7 @@ use Sculptor\Agent\Repositories\BackupRepository;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Repositories\Entities\Backup;
+use Sculptor\Agent\Validation\Validator;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -146,10 +147,12 @@ class Backups implements ActionInterface
         try {
             $backup = $this->backups->byId($id);
 
+            $validator = Validator::make('Alarm');
+
             Logs::backup()->info("Setup backup {$backup->name()} {$parameter}={$value}");
 
-            if (!in_array($parameter, ['cron', 'destination', 'rotate'])) {
-                throw new Exception("Invalid backup parameter {$parameter}");
+            if (!$validator->validate($parameter, $value)) {
+                throw new Exception($validator->error());
             }
 
             $backup->update(["{$parameter}" => $value]);

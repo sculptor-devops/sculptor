@@ -10,6 +10,7 @@ use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\Entities\Domain;
+use Sculptor\Agent\Validation\Validator;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -72,6 +73,8 @@ class Parameters
      */
     public function set(Domain $domain, string $name, string $value): bool
     {
+        $validator = Validator::make('Domain');
+
         if (!in_array($name, Parameters::ALLOWED)) {
             throw new ParameterInvalidException($name);
         }
@@ -92,6 +95,10 @@ class Parameters
             $domain->update(['token', $this->password->token()]);
 
             return true;
+        }
+
+        if (!$validator->validate($name, $value)) {
+            throw new ParameterInvalidException($name);
         }
 
         $domain->update(["{$name}" => $this->normalize($value)]);
