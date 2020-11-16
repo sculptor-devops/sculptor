@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Monitors;
+use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -12,21 +12,21 @@ use Sculptor\Agent\Support\CommandBase;
 */
 
 
-class MonitorDelete extends CommandBase
+class AlarmCreate extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monitor:delete {index}';
+    protected $signature = 'alarm:create {type}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete monitor';
+    protected $description = 'Create an alarm';
 
     /**
      * Create a new command instance.
@@ -41,16 +41,16 @@ class MonitorDelete extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Monitors $monitors
+     * @param Alarms $monitors
      * @return int
      */
-    public function handle(Monitors $monitors): int
+    public function handle(Alarms $monitors): int
     {
-        $index = $this->argument('index');
+        $type = $this->argument('type');
 
-        $this->startTask("Delete monitor {$index}");
+        $this->startTask("Create monitor {$type}");
 
-        if (!$monitors->delete($index)) {
+        if (!$monitors->create($type)) {
             return $this->errorTask($monitors->error());
         }
 

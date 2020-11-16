@@ -1,9 +1,9 @@
 <?php
 
-namespace Sculptor\Agent\Monitors\Constraints;
+namespace Sculptor\Agent\Monitors\Conditions;
 
 use Exception;
-use Sculptor\Agent\Contracts\Constraint;
+use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\Parametrizer;
 use Sculptor\Agent\Monitors\System as Monitors;
@@ -14,7 +14,7 @@ use Sculptor\Agent\Monitors\System as Monitors;
  *  file that was distributed with this source code.
 */
 
-class System implements Constraint
+class System implements AlarmCondition
 {
     /**
      * @var Monitors

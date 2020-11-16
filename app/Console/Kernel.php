@@ -16,7 +16,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\BackupRepository;
-use Sculptor\Agent\Repositories\MonitorRepository;
+use Sculptor\Agent\Repositories\AlarmRepository;
 
 class Kernel extends ConsoleKernel
 {
@@ -74,7 +74,7 @@ class Kernel extends ConsoleKernel
     private function monitors(Schedule $schedule): void
     {
         try {
-            $monitors = resolve(MonitorRepository::class);
+            $monitors = resolve(AlarmRepository::class);
 
             foreach ($monitors->all() as $monitor) {
                 $schedule->command('monitors:run', [$monitor->id])->cron($monitor->cron);

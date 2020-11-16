@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Monitors;
+use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -12,21 +12,21 @@ use Sculptor\Agent\Support\CommandBase;
 */
 
 
-class MonitorRun extends CommandBase
+class AlarmDelete extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monitor:run {index}';
+    protected $signature = 'alarm:delete {index}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Run monitor';
+    protected $description = 'Delete an alarm';
 
     /**
      * Create a new command instance.
@@ -41,16 +41,16 @@ class MonitorRun extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Monitors $monitors
+     * @param Alarms $monitors
      * @return int
      */
-    public function handle(Monitors $monitors): int
+    public function handle(Alarms $monitors): int
     {
         $index = $this->argument('index');
 
-        $this->startTask("Run monitor {$index}");
+        $this->startTask("Delete monitor {$index}");
 
-        if (!$monitors->run($index)) {
+        if (!$monitors->delete($index)) {
             return $this->errorTask($monitors->error());
         }
 

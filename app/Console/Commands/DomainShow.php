@@ -137,7 +137,7 @@ class DomainShow extends CommandBase
             'Type',
             'Status',
             'Database',
-            'User',
+            'Alarm',
             'Home'
         ], $tabled);
     }

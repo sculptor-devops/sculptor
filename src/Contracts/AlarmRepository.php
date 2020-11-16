@@ -8,11 +8,7 @@ namespace Sculptor\Agent\Contracts;
  *  file that was distributed with this source code.
 */
 
-interface Constraint
+interface AlarmRepository
 {
-    public function threshold(bool $alarmed, string $rearm, string $threshold): bool;
 
-    public function act(): bool;
-
-    public function context(): array;
 }

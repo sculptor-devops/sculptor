@@ -8,7 +8,7 @@ namespace Sculptor\Agent\Contracts;
  *  file that was distributed with this source code.
 */
 
-interface MonitorRepository
+interface AlarmAction
 {
-
+    public function emit(string $to, string $message, array $context): void;
 }

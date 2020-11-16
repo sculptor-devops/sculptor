@@ -5,10 +5,10 @@ namespace Sculptor\Agent\Repositories;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
-use Sculptor\Agent\Contracts\MonitorRepository as MonitorRepositoryInterface;
-use Sculptor\Agent\Repositories\Entities\Monitor;
+use Sculptor\Agent\Contracts\AlarmRepository as AlarmRepositoryInterface;
+use Sculptor\Agent\Repositories\Entities\Alarm;
 
-class MonitorRepository extends BaseRepository implements MonitorRepositoryInterface
+class AlarmRepository extends BaseRepository implements AlarmRepositoryInterface
 {
     /**
      * Specify Model class name
@@ -17,7 +17,7 @@ class MonitorRepository extends BaseRepository implements MonitorRepositoryInter
      */
     public function model(): string
     {
-        return Monitor::class;
+        return Alarm::class;
     }
 
     /**
@@ -29,7 +29,7 @@ class MonitorRepository extends BaseRepository implements MonitorRepositoryInter
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
-    public function byId(int $id): Monitor
+    public function byId(int $id): Alarm
     {
         $domains = $this->find($id);
 

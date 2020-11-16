@@ -49,7 +49,7 @@ class SystemMonitors extends CommandBase
     {
         $operation = $this->argument('operation');
 
-        $this->startTask("Monitors {$operation}");
+        $this->startTask("Actions {$operation}");
 
         switch ($operation) {
             case 'reset':
@@ -73,7 +73,7 @@ class SystemMonitors extends CommandBase
                     $value['key'] = $formatter->name($value['key']);
                 }
 
-                $this->table(['Monitor', 'Value'], $values);
+                $this->table(['AlarmAction', 'Value'], $values);
 
                 return 0;
 

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Monitors;
+use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -11,22 +11,21 @@ use Sculptor\Agent\Support\CommandBase;
  *  file that was distributed with this source code.
 */
 
-
-class MonitorSetup extends CommandBase
+class AlarmRearm extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monitor:setup {index} {key} {value}';
+    protected $signature = 'alarm:rearm {index}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Setup a monitor';
+    protected $description = 'Rearm alarm';
 
     /**
      * Create a new command instance.
@@ -41,20 +40,16 @@ class MonitorSetup extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Monitors $monitors
+     * @param Alarms $monitors
      * @return int
      */
-    public function handle(Monitors $monitors): int
+    public function handle(Alarms $monitors): int
     {
         $index = $this->argument('index');
 
-        $key = $this->argument('key');
+        $this->startTask("Rearm monitor {$index}");
 
-        $value = $this->argument('value');
-
-        $this->startTask("Setup monitor {$index} {$key}={$value}");
-
-        if (!$monitors->setup($index, $key, $value)) {
+        if (!$monitors->rearm($index)) {
             return $this->errorTask($monitors->error());
         }
 

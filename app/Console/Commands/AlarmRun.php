@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Monitors;
+use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -11,21 +11,22 @@ use Sculptor\Agent\Support\CommandBase;
  *  file that was distributed with this source code.
 */
 
-class MonitorRearm extends CommandBase
+
+class AlarmRun extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monitor:rearm {index}';
+    protected $signature = 'alarm:run {index}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Rearm monitor';
+    protected $description = 'Run alarm';
 
     /**
      * Create a new command instance.
@@ -40,16 +41,16 @@ class MonitorRearm extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Monitors $monitors
+     * @param Alarms $monitors
      * @return int
      */
-    public function handle(Monitors $monitors): int
+    public function handle(Alarms $monitors): int
     {
         $index = $this->argument('index');
 
-        $this->startTask("Rearm monitor {$index}");
+        $this->startTask("Run monitor {$index}");
 
-        if (!$monitors->rearm($index)) {
+        if (!$monitors->run($index)) {
             return $this->errorTask($monitors->error());
         }
 

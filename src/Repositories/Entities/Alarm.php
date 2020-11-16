@@ -14,14 +14,14 @@ use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * @property string type
- * @property string $constraint
+ * @property string condition
  * @property bool alarm
  * @property string message
  * @property string to
  * @property string rearm
  * @property string error
  */
-class Monitor extends Model implements Transformable
+class Alarm extends Model implements Transformable
 {
     use TransformableTrait;
 

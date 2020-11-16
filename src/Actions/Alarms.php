@@ -8,8 +8,8 @@ use Illuminate\Support\Str;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
-use Sculptor\Agent\Monitors\User as CustomAlarm;
-use Sculptor\Agent\Repositories\MonitorRepository;
+use Sculptor\Agent\Monitors\Alarms as UserAlarm;
+use Sculptor\Agent\Repositories\AlarmRepository;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -17,16 +17,16 @@ use Sculptor\Agent\Repositories\MonitorRepository;
  *  file that was distributed with this source code.
 */
 
-class Monitors implements ActionInterface
+class Alarms implements ActionInterface
 {
     use Actionable;
 
     /**
-     * @var MonitorRepository
+     * @var AlarmRepository
      */
     private $monitors;
 
-    public function __construct(Action $action, MonitorRepository $monitors)
+    public function __construct(Action $action, AlarmRepository $monitors)
     {
         $this->action = $action;
 
@@ -106,7 +106,7 @@ class Monitors implements ActionInterface
         try {
             $monitor = $this->monitors->byId($id);
 
-            $alarm = new CustomAlarm($monitor);
+            $alarm = new UserAlarm($monitor);
 
             if (!$alarm->run()) {
                 throw new Exception("{$monitor->error}");

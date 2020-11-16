@@ -46,6 +46,11 @@ class Tag
         $this->tag = Carbon::now()->format("Ymd-His");
     }
 
+    private function prefix(string $name): string
+    {
+        return "{$this->type}-{$name}-";
+    }
+
     public function extensions(string $type, string $extension, string $compressor): Tag
     {
         $this->type = $type;
@@ -74,6 +79,6 @@ class Tag
 
     public function match(string $name, string $compare): bool
     {
-        return Str::startsWith($compare, "{$this->type}-{$name}-");
+        return Str::startsWith($compare, $this->prefix($name));
     }
 }

@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Support\Str;
+use Lorisleiva\CronTranslator\CronParsingException;
 use Lorisleiva\CronTranslator\CronTranslator;
-use Sculptor\Agent\Actions\Monitors;
+use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -13,21 +14,21 @@ use Sculptor\Agent\Support\CommandBase;
  *  file that was distributed with this source code.
 */
 
-class MonitorShow extends CommandBase
+class AlarmShow extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monitor:show {index?}';
+    protected $signature = 'alarm:show {index?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Enable or disable domain worker';
+    protected $description = 'Show alarms';
 
     /**
      * Create a new command instance.
@@ -42,10 +43,11 @@ class MonitorShow extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Monitors $monitors
+     * @param Alarms $monitors
      * @return int
+     * @throws CronParsingException
      */
-    public function handle(Monitors $monitors): int
+    public function handle(Alarms $monitors): int
     {
         $index = $this->argument('index');
 
@@ -56,14 +58,15 @@ class MonitorShow extends CommandBase
 
             $this->table([], $this->toKeyValue([
                 'Id' => $monitor['id'],
+                'Name' => $monitor['name'] ?? 'No name',
                 'Type' => $monitor['type'],
                 'Message' => $monitor['message'],
                 'To' => $monitor['to'] ?? 'None',
-                'Constraint' => $monitor['constraint'] ?? 'None',
+                'AlarmCondition' => $monitor['constraint'] ?? 'None',
                 'Cron' => CronTranslator::translate($monitor['cron']),
-                'Alarm' => $this->noYes($monitor['alarm']),
+                'AlarmAction' => $this->noYes($monitor['alarm']),
                 'Rearm' => $monitor['rearm'],
-                'Alarm start' => $monitor['alarm_at'] ?? 'Never',
+                'AlarmAction start' => $monitor['alarm_at'] ?? 'Never',
                 'Last check' => $monitor['alarm_until'] ?? 'Never',
                 'error' => $monitor['error'] ?? 'None'
             ]));
@@ -74,9 +77,10 @@ class MonitorShow extends CommandBase
         $this->table([
             'Index',
             'Type',
+            'Name',
             'Message',
             'To',
-            'Condition',
+            'Conditions',
             'Cron',
             'Alarmed',
             'Rearm',
@@ -85,6 +89,7 @@ class MonitorShow extends CommandBase
             return [
                 'id' => $monitor['id'],
                 'type' => $monitor['type'],
+                'name' => $monitor['name'] ?? 'No name',
                 'message' => $monitor['message'],
                 'to' => $monitor['to'] ?? 'None',
                 'constraint' => $monitor['constraint'] ?? 'None',

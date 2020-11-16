@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Monitors;
+use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -12,21 +12,21 @@ use Sculptor\Agent\Support\CommandBase;
 */
 
 
-class MonitorCreate extends CommandBase
+class AlarmSetup extends CommandBase
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monitor:create {type}';
+    protected $signature = 'alarm:setup {index} {key} {value}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a monitor';
+    protected $description = 'Setup an alarm';
 
     /**
      * Create a new command instance.
@@ -41,16 +41,20 @@ class MonitorCreate extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Monitors $monitors
+     * @param Alarms $monitors
      * @return int
      */
-    public function handle(Monitors $monitors): int
+    public function handle(Alarms $monitors): int
     {
-        $type = $this->argument('type');
+        $index = $this->argument('index');
 
-        $this->startTask("Create monitor {$type}");
+        $key = $this->argument('key');
 
-        if (!$monitors->create($type)) {
+        $value = $this->argument('value');
+
+        $this->startTask("Setup monitor {$index} {$key}={$value}");
+
+        if (!$monitors->setup($index, $key, $value)) {
             return $this->errorTask($monitors->error());
         }
 

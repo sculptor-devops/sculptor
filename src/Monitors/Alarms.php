@@ -4,10 +4,10 @@ namespace Sculptor\Agent\Monitors;
 
 use Exception;
 use Illuminate\Support\Str;
-use Sculptor\Agent\Contracts\Alarm;
-use Sculptor\Agent\Contracts\Constraint;
+use Sculptor\Agent\Contracts\AlarmAction;
+use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
-use Sculptor\Agent\Repositories\Entities\Monitor;
+use Sculptor\Agent\Repositories\Entities\Alarm;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -15,37 +15,37 @@ use Sculptor\Agent\Repositories\Entities\Monitor;
  *  file that was distributed with this source code.
 */
 
-class User
+class Alarms
 {
     /**
-     *
+     * @var string
      */
     public const NAMESPACE = 'Sculptor\\Agent\\Monitors\\';
 
     /**
-     * @var Monitor
+     * @var AlarmAction
      */
-    private $monitor;
+    private $action;
     /**
      * @var Alarm
      */
     private $alarm;
     /**
-     * @var Constraint
+     * @var AlarmCondition
      */
-    private $constraint;
+    private $condition;
     /**
      * @var string
      */
     private $threshold;
 
-    public function __construct(Monitor $monitor)
+    public function __construct(Alarm $alarm)
     {
-        $this->monitor = $monitor;
+        $this->alarm = $alarm;
 
-        $this->alarm = resolve($this->resolveType($monitor->type));
+        $this->action = resolve($this->resolveType($alarm->type));
 
-        $this->constraint = resolve($this->resolveConstraint($monitor->constraint));
+        $this->condition = resolve($this->resolveConstraint($alarm->condition));
     }
 
     /**
@@ -65,7 +65,7 @@ class User
      */
     private function resolveType(?string $type): string
     {
-        return User::NAMESPACE . 'Alarms\\' . $this->normalize($type);
+        return Alarms::NAMESPACE . 'Actions\\' . $this->normalize($type);
     }
 
     /**
@@ -78,7 +78,7 @@ class User
 
         $this->threshold = Str::after($type, Parametrizer::SEPARATOR);
 
-        return User::NAMESPACE . 'Constraints\\' . $this->normalize($name);
+        return Alarms::NAMESPACE . 'Conditions\\' . $this->normalize($name);
     }
 
     /**
@@ -87,14 +87,14 @@ class User
     private function valid(): void
     {
         if ($this->alarm == null) {
-            throw new Exception("Unable to find {$this->monitor->type} alarm type");
+            throw new Exception("Unable to find {$this->alarm->type} alarm type");
         }
 
-        if ($this->constraint == null) {
-            throw new Exception("Unable to find {$this->monitor->constraint} constraint type");
+        if ($this->condition == null) {
+            throw new Exception("Unable to find {$this->alarm->condition} constraint type");
         }
 
-        if ($this->monitor->to == null) {
+        if ($this->alarm->to == null) {
             throw new Exception("No destination given");
         }
     }
@@ -107,19 +107,19 @@ class User
         try {
             $this->valid();
 
-            if ($this->constraint->threshold($this->monitor->alarm, $this->monitor->rearm, $this->threshold)) {
+            if ($this->condition->threshold($this->alarm->alarm, $this->alarm->rearm, $this->threshold)) {
                 $this->alarmed();
             }
 
-            if ($this->constraint->act()) {
-                $this->alarm->emit($this->monitor->to, $this->monitor->message, $this->constraint->context());
+            if ($this->condition->act()) {
+                $this->action->emit($this->alarm->to, $this->alarm->message, $this->condition->context());
             }
 
             return true;
         } catch (Exception $e) {
             Logs::batch()->report($e);
 
-            $this->monitor->update([
+            $this->alarm->update([
                 'error' => Str::limit($e->getMessage(), 250)
             ]);
         }
@@ -129,8 +129,8 @@ class User
 
     private function alarmed(): void
     {
-        if ($this->monitor->alarm) {
-            $this->monitor->update([
+        if ($this->alarm->alarm) {
+            $this->alarm->update([
                 'alarm_until' => now(),
                 'error' => null
             ]);
@@ -138,7 +138,7 @@ class User
             return;
         }
 
-        $this->monitor->update([
+        $this->alarm->update([
             'alarm' => true,
             'alarm_at' => now(),
             'alarm_until' => now(),

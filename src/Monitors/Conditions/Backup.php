@@ -1,14 +1,15 @@
 <?php
 
-namespace Sculptor\Agent\Monitors\Constraints;
+namespace Sculptor\Agent\Monitors\Conditions;
 
+use Exception;
 use Sculptor\Agent\Backup\Factory;
-use Sculptor\Agent\Contracts\Constraint;
+use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\Parametrizer;
 use Sculptor\Agent\Repositories\BackupRepository;
 
-class Backup implements Constraint
+class Backup implements AlarmCondition
 {
     /**
      * @var array
@@ -40,7 +41,7 @@ class Backup implements Constraint
      * @param string $rearm
      * @param string $threshold
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function threshold(bool $alarmed, string $rearm, string $threshold): bool
     {

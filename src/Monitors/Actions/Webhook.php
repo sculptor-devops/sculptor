@@ -1,10 +1,10 @@
 <?php
 
-namespace Sculptor\Agent\Monitors\Alarms;
+namespace Sculptor\Agent\Monitors\Actions;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
-use Sculptor\Agent\Contracts\Alarm;
+use Sculptor\Agent\Contracts\AlarmAction;
 use Sculptor\Agent\Monitors\Context;
 use Sculptor\Agent\Monitors\Parametrizer;
 
@@ -14,7 +14,7 @@ use Sculptor\Agent\Monitors\Parametrizer;
  *  file that was distributed with this source code.
 */
 
-class Webhook implements Alarm
+class Webhook implements AlarmAction
 {
     /**
      * @param string $to
