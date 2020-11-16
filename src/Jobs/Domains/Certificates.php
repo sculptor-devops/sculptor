@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Enums\CertificatesTypes;
+use Sculptor\Agent\Enums\DomainStatusType;
 use Sculptor\Agent\Jobs\Domains\Support\System;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
@@ -108,6 +109,12 @@ class Certificates implements DomainAction
 
         if (!File::exists($domain->current())) {
             Logs::job()->notice("Public folder {$domain->name} not yet created, skipping let's encrypt registration");
+
+            return;
+        }
+
+        if ($domain->status == DomainStatusType::DEPLOYED) {
+            Logs::job()->warning("Creating let's encrypt need a {$domain->name} to be deployed");
 
             return;
         }
