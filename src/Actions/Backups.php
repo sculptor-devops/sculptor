@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Prettus\Validator\Exceptions\ValidatorException;
+use Sculptor\Agent\Actions\Backups\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
@@ -39,12 +40,17 @@ class Backups implements ActionInterface
      * @var DatabaseRepository
      */
     private $databases;
+    /**
+     * @var StatusMachine
+     */
+    private $machine;
 
     public function __construct(
         Action $action,
         BackupRepository $backups,
         DomainRepository $domains,
-        DatabaseRepository $databases
+        DatabaseRepository $databases,
+        StatusMachine $machine
     ) {
         $this->action = $action;
 
@@ -53,6 +59,8 @@ class Backups implements ActionInterface
         $this->domains = $domains;
 
         $this->databases = $databases;
+
+        $this->machine = $machine;
     }
 
     /**

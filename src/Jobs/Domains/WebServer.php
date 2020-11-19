@@ -96,13 +96,6 @@ class WebServer implements DomainAction
 
         $destination = "/etc/nginx/sites-enabled/{$domain->name}.conf";
 
-        if (
-            File::exists($destination) &&
-            File::exists($origin)
-        ) {
-            return true;
-        }
-
         Logs::actions()
             ->debug("Enabling www domain root {$domain->name}");
 
@@ -114,6 +107,9 @@ class WebServer implements DomainAction
 
         $this->system
             ->errorIfNotExists($domain->home());
+
+        $this->system
+            ->deleteIfExists($destination);
 
         $this->system
             ->run(

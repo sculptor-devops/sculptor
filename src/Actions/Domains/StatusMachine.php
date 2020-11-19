@@ -2,12 +2,9 @@
 
 namespace Sculptor\Agent\Actions\Domains;
 
-use Exception;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DomainStatusType;
-use Sculptor\Agent\Exceptions\DomainStatusException;
-use Sculptor\Agent\Facades\Logs;
-use Sculptor\Agent\Repositories\Entities\Domain;
+use Sculptor\Agent\Support\StateMachine;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -15,95 +12,55 @@ use Sculptor\Agent\Repositories\Entities\Domain;
  *  file that was distributed with this source code.
 */
 
-class StatusMachine
+class StatusMachine extends StateMachine
 {
     /**
      * @var Configuration
      */
     private $configuration;
 
-    private $from = [
-        DomainStatusType::DEPLOYING => [],
-
-        DomainStatusType::ERROR => [],
-
+    public const STATUSES = [
         DomainStatusType::NEW => [
-            DomainStatusType::NEW,
-            DomainStatusType::CONFIGURED
-        ],
-
-        DomainStatusType::CONFIGURED => [
-            DomainStatusType::NEW,
-            DomainStatusType::DEPLOYED,
-            DomainStatusType::DEPLOYING,
             DomainStatusType::SETUP,
-            DomainStatusType::CONFIGURED
-        ],
-
-        DomainStatusType::DEPLOYED => [
             DomainStatusType::CONFIGURED,
-            DomainStatusType::DEPLOYED,
-            DomainStatusType::DEPLOYING
+            DomainStatusType::NEW,
+            DomainStatusType::ERROR
         ],
 
         DomainStatusType::SETUP => [
+            DomainStatusType::CONFIGURED,
+            DomainStatusType::SETUP,
+            DomainStatusType::ERROR
+        ],
+
+        DomainStatusType::CONFIGURED => [
+            DomainStatusType::DEPLOYED,
+            DomainStatusType::DEPLOYING,
+            DomainStatusType::SETUP,
+            DomainStatusType::CONFIGURED,
+            DomainStatusType::ERROR
+        ],
+
+        DomainStatusType::DEPLOYED => [
             DomainStatusType::DEPLOYED,
             DomainStatusType::DEPLOYING,
             DomainStatusType::CONFIGURED,
             DomainStatusType::SETUP,
-            DomainStatusType::NEW
-        ]
+            DomainStatusType::ERROR
+        ],
+
+        DomainStatusType::DEPLOYING => [
+            DomainStatusType::DEPLOYED,
+            DomainStatusType::ERROR
+        ],
+
+        DomainStatusType::ERROR => [ /* ALL */ ]
     ];
 
     public function __construct(Configuration $configuration)
     {
+        parent::__construct(StatusMachine::STATUSES);
+
         $this->configuration = $configuration;
-    }
-
-    /**
-     * @param string $from
-     * @param string $to
-     * @return bool
-     * @throws Exception
-     */
-    public function can(string $from, string $to): bool
-    {
-        $available = $this->from[$to];
-
-        if (in_array($from, $available) || count($available) == 0 || $available == null) {
-            return true;
-        }
-
-        throw new DomainStatusException($from, $to);
-    }
-
-    public function next(string $status): string
-    {
-        $statuses = $this->from[$status];
-
-        if (count($statuses) == 0) {
-            return "Can go in any status";
-        }
-
-        return implode(', ', $statuses);
-    }
-
-    /**
-     * @param Domain $domain
-     * @param string $status
-     * @return bool
-     * @throws Exception
-     */
-    public function change(Domain $domain, string $status): bool
-    {
-        if ($this->can($domain->status, $status)) {
-            $domain->update(['status' => $status]);
-
-            Logs::actions()->notice("Domain {$domain->name} status changed from {$domain->status} to {$status}");
-
-            return true;
-        }
-
-        return false;
     }
 }
