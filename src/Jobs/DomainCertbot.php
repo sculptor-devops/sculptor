@@ -46,7 +46,8 @@ class DomainCertbot implements ShouldQueue, ITraceable
      * @param Domain $domain
      * @param string $hook
      */
-    public function __construct( Domain $domain, string $hook) {
+    public function __construct(Domain $domain, string $hook)
+    {
         $this->domain = $domain;
 
         $this->hook = $hook;
@@ -82,10 +83,10 @@ class DomainCertbot implements ShouldQueue, ITraceable
 
                     break;
 
-                    case 'pre':
-                        $permissions->compile($this->domain);
+                case 'pre':
+                    $permissions->compile($this->domain);
 
-                        break;
+                    break;
                 default:
                     throw new Exception("Received invalid {$this->hook} hook");
             }

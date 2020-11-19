@@ -12,6 +12,5 @@ class Alias
 {
     public function toString(): string
     {
-        
     }
 }

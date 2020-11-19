@@ -70,7 +70,7 @@ class Local implements Archive
             throw new \Exception("Cannot delete file {$file}");
         }
 
-        Return $this;
+        return $this;
     }
 
     /**

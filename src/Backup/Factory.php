@@ -70,8 +70,13 @@ class Factory
                 return new Domain($this->configuration, $this->archive($archive), $this->compressor(), $this->tag);
 
             case BackupType::BLUEPRINT:
-                return new Blueprint($this->configuration, $this->blueprint, $this->archive($archive),
-                    $this->compressor(), $this->tag);
+                return new Blueprint(
+                    $this->configuration,
+                    $this->blueprint,
+                    $this->archive($archive),
+                    $this->compressor(),
+                    $this->tag
+                );
         }
 
         throw new Exception("Invalid backup type {$backup->type}");
@@ -97,7 +102,6 @@ class Factory
 
             case BackupArchiveType::DROPBOX:
                 return new Dropbox($this->configuration);
-
         }
 
         throw new Exception("Invalid {$type} archive driver");

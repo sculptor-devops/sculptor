@@ -56,7 +56,7 @@ class Backup implements BackupInterface
             case BackupType::DOMAIN:
                 return $this->domain;
 
-            case BackupType::BLUEPRINT;
+            case BackupType::BLUEPRINT:
                 return $this->blueprint;
         }
 

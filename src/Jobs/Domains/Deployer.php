@@ -59,8 +59,10 @@ class Deployer implements DomainAction
             ->replace('{BRANCH}', $domain->branch ?? 'master')
             ->value();
 
-        if (!$this->compiler
-            ->save("{$domain->root()}/deploy.php", $compiled)) {
+        if (
+            !$this->compiler
+            ->save("{$domain->root()}/deploy.php", $compiled)
+        ) {
             throw new Exception("Cannot write deploy configuration");
         }
 

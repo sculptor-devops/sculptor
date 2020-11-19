@@ -61,13 +61,15 @@ class Backup implements AlarmCondition
 
         $archives = collect($archive->list($backup->destination));
 
-        if ($archives
+        if (
+            $archives
             ->where('timestamp', '<', $limit)
             ->where('size', '>', 0)
-            ->filter(function ($item) use($tag, $backup) {
+            ->filter(function ($item) use ($tag, $backup) {
                 return $tag->match($backup->name(), $item['basename']);
             })
-            ->count()) {
+            ->count()
+        ) {
             $value = false;
         }
 

@@ -144,9 +144,11 @@ class Certificates implements DomainAction
         ]);
 
         foreach (explode(' ', $domain->alias) as $alias) {
-            if (Str::of($alias)
+            if (
+                Str::of($alias)
                 ->trim()
-                ->isNotEmpty()) {
+                ->isNotEmpty()
+            ) {
                 $command->push('-d')
                     ->push($alias);
             }
@@ -166,13 +168,14 @@ class Certificates implements DomainAction
     {
         Logs::job()->debug("Copy certbot certificates of {$domain->name}");
 
-        foreach ([
+        foreach (
+            [
                      'cert.pem',
                      'chain.pem',
                      'fullchain.pem',
                      'privkey.pem'
-                 ] as $cert) {
-
+                 ] as $cert
+        ) {
             $from = "/etc/letsencrypt/live/{$domain->name}/{$cert}";
 
             $to = "{$domain->root()}/certs/{$domain->name}.{$cert}";

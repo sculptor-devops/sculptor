@@ -112,9 +112,11 @@ class BackupRun implements ShouldQueue, ITraceable
             throw new Exception("Backup destination cannot be null");
         }
 
-        if (!$archive->create($destination)
+        if (
+            !$archive->create($destination)
             ->put($testFile, time())
-            ->has($testFile)) {
+            ->has($testFile)
+        ) {
             throw new Exception("Cannot write test file in destination {$destination}");
         }
 
