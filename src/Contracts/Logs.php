@@ -2,7 +2,7 @@
 
 namespace Sculptor\Agent\Contracts;
 
-use Psr\Log\LoggerInterface;
+use Sculptor\Agent\Logs\LogsContext;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -14,37 +14,37 @@ interface Logs
 {
     /**
      * @param array $context
-     * @return LoggerInterface
+     * @return LogsContext
      */
-    public function actions(array $context = []): LoggerInterface;
+    public function actions(array $context = []): LogsContext;
 
     /**
      * @param array $context
-     * @return LoggerInterface
+     * @return LogsContext
      */
-    public function security(array $context = []): LoggerInterface;
+    public function security(array $context = []): LogsContext;
 
     /**
      * @param array $context
-     * @return LoggerInterface
+     * @return LogsContext
      */
-    public function backup(array $context = []): LoggerInterface;
+    public function backup(array $context = []): LogsContext;
 
     /**
      * @param array $context
-     * @return LoggerInterface
+     * @return LogsContext
      */
-    public function batch(array $context = []): LoggerInterface;
+    public function batch(array $context = []): LogsContext;
 
     /**
      * @param array $context
-     * @return LoggerInterface
+     * @return LogsContext
      */
-    public function login(array $context = []): LoggerInterface;
+    public function login(array $context = []): LogsContext;
 
     /**
      * @param array $context
-     * @return LoggerInterface
+     * @return LogsContext
      */
-    public function job(array $context = []): LoggerInterface;
+    public function job(array $context = []): LogsContext;
 }

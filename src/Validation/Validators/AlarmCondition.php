@@ -13,6 +13,9 @@ use Sculptor\Agent\Contracts\ValidatorRule;
 
 class AlarmCondition implements ValidatorRule
 {
+    /**
+     * @return array[]
+     */
     public function rule(): array
     {
         return [

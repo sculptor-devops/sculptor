@@ -3,8 +3,8 @@
 namespace Sculptor\Agent\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Psr\Log\LoggerInterface;
-
+use Sculptor\Agent\Logs\LogsContext;
+use Sculptor\Agent\Logs\Logs as LogsClass;
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
@@ -12,17 +12,17 @@ use Psr\Log\LoggerInterface;
 */
 
 /**
- * @method static actions(array $context = []): LoggerInterface
- * @method static security(array $context = []): LoggerInterface
- * @method static backup(array $context = []): LoggerInterface
- * @method static batch(array $context = []): LoggerInterface
- * @method static login(array $context = []): LoggerInterface
- * @method static job(array $context = []): LoggerInterface
+ * @method static LogsContext actions(array $context = [])
+ * @method static LogsContext security(array $context = [])
+ * @method static LogsContext backup(array $context = [])
+ * @method static LogsContext batch(array $context = [])
+ * @method static LogsContext login(array $context = [])
+ * @method static LogsContext job(array $context = [])
  */
 class Logs extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Sculptor\Agent\Logs\Logs::class;
+        return LogsClass::class;
     }
 }

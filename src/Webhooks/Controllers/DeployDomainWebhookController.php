@@ -62,7 +62,7 @@ class DeployDomainWebhookController extends Controller
         if (!$provider->valid($request, $domain->branch)) {
             Logs::batch()->error("Webhook deploy {$domain->name} error, payload invalid for {$provider->name()}");
 
-            abort(400, $provider->error());
+            abort(400, $provider->error() ?? 'Undefined');
         }
 
         if (!$provider->branch($request, $domain->branch)) {
@@ -74,7 +74,7 @@ class DeployDomainWebhookController extends Controller
         Logs::batch()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} deploy append");
 
         if (!$this->actions->deployBatch($domain->name)) {
-            abort(500, $this->actions->error());
+            abort(500, $this->actions->error() ?? 'Undefined');
         }
 
         return DeployDomainWebhookController::DONE;

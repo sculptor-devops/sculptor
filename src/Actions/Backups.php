@@ -82,8 +82,7 @@ class Backups implements ActionInterface
                 break;
 
             case BackupType::DOMAIN:
-                $domain = $this->domains->byName($name);
-                ;
+                $domain = $this->domains->byName($name);;
 
                 $backup->domain()
                     ->associate($domain)
@@ -175,11 +174,11 @@ class Backups implements ActionInterface
 
     public function check(int $id): bool
     {
-        //
+        return false;
     }
 
     public function rotate(int $id): bool
     {
-        //
+        return false;
     }
 }

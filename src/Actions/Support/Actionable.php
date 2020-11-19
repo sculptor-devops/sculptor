@@ -13,7 +13,7 @@ use Sculptor\Agent\Repositories\Entities\Queue;
 trait Actionable
 {
     /**
-     * @var Action|null
+     * @var Action
      */
     private $action;
 

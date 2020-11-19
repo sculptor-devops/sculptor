@@ -21,11 +21,19 @@ class Github implements DeployProvider
      */
     private $error;
 
+    /**
+     * @return string
+     */
     public function name(): string
     {
         return VersionControlType::GITHUB;
     }
 
+    /**
+     * @param Request $request
+     * @param string $branch
+     * @return bool
+     */
     public function branch(Request $request, string $branch): bool
     {
         try {
@@ -49,11 +57,19 @@ class Github implements DeployProvider
         }
     }
 
+    /**
+     * @param Request $request
+     * @param string $branch
+     * @return bool
+     */
     public function valid(Request $request, string $branch): bool
     {
         return true;
     }
 
+    /**
+     * @return string|null
+     */
     public function error(): ?string
     {
         return $this->error;

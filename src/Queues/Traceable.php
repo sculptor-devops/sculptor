@@ -3,13 +3,13 @@
 namespace Sculptor\Agent\Queues;
 
 use Exception;
-use Illuminate\Support\Facades\DB;
+use Throwable;
 use ReflectionClass;
+use Illuminate\Support\Facades\DB;
+use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Enums\QueueStatusType;
 use Sculptor\Agent\Exceptions\QueueJobRefUndefinedException;
-use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Queue;
-use Throwable;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>

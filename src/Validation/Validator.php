@@ -14,6 +14,9 @@ use Illuminate\Support\Str;
 
 class Validator
 {
+    /**
+     * @var string
+     */
     public const NAMESPACE = 'Sculptor\\Agent\\Validation\\Validators\\';
 
     /**
@@ -21,18 +24,33 @@ class Validator
      */
     private $scope;
 
+    /**
+     * @var string
+     */
     private $error;
 
+    /**
+     * Validator constructor.
+     * @param string|null $scope
+     */
     public function __construct(string $scope = null)
     {
         $this->scope = $scope;
     }
 
+    /**
+     * @param string $scope
+     * @return Validator
+     */
     public static function make(string $scope): Validator
     {
         return new Validator($scope);
     }
 
+    /**
+     * @param string $name
+     * @return array
+     */
     public function rule(string $name): array
     {
         $rule = resolve(Validator::NAMESPACE . "{$this->scope}" . Str::ucfirst($name));
@@ -40,6 +58,11 @@ class Validator
         return $rule->rule();
     }
 
+    /**
+     * @param string $name
+     * @param string $value
+     * @return bool
+     */
     public function validate(string $name, string $value): bool
     {
         try {
@@ -59,6 +82,9 @@ class Validator
         return false;
     }
 
+    /**
+     * @return string
+     */
     public function error(): string
     {
         return $this->error;
