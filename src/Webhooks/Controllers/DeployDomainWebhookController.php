@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Webhooks\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Response;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Exceptions\DomainNotFound;
 use Sculptor\Agent\Repositories\DomainRepository;
@@ -45,7 +46,7 @@ class DeployDomainWebhookController extends Controller
      * @throws DomainNotFound
      * @throws Exception
      */
-    public function deploy(Request $request, string $hash, string $token)
+    public function deploy(Request $request, string $hash, string $token): string
     {
         $domain = $this->domains->byHash($hash);
 
@@ -77,6 +78,6 @@ class DeployDomainWebhookController extends Controller
             abort(500, $this->actions->error() ?? 'Undefined');
         }
 
-        return DeployDomainWebhookController::DONE;
+        return new Response(DeployDomainWebhookController::DONE, 200, ['Content-Type' => 'text/plain']);
     }
 }
