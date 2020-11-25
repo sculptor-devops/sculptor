@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Actions;
 
 use Illuminate\Support\Facades\Hash;
 use Sculptor\Agent\Actions\Support\Actionable;
+use Sculptor\Agent\Actions\Support\Repository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Repositories\UserRepository;
 
@@ -17,19 +18,16 @@ class Users implements ActionInterface
 {
     use Actionable;
 
-    /**
-     * @var UserRepository
-     */
-    private $users;
+    use Repository;
 
     public function __construct(UserRepository $users)
     {
-        $this->users = $users;
+        $this->repository = $users;
     }
 
     public function show(): array
     {
-        return $this->users
+        return $this->repository
             ->all()
             ->map(function ($user) {
                 return [
@@ -42,12 +40,12 @@ class Users implements ActionInterface
 
     public function create(string $name, string $email, string $password): bool
     {
-        $user = $this->users
+        $user = $this->repository
             ->findWhere(['email' => $email])
             ->first();
 
         if ($user == null) {
-            $this->users->create([
+            $this->repository->create([
                 'email' => $email,
                 'name' => $name,
                 'password' => Hash::make($password)
@@ -66,7 +64,7 @@ class Users implements ActionInterface
 
     public function delete(string $email): bool
     {
-        $user = $this->users
+        $user = $this->repository
             ->findWhere(['email' => $email])
             ->first();
 
@@ -81,7 +79,7 @@ class Users implements ActionInterface
 
     public function password(string $email, string $password): bool
     {
-        $user = $this->users
+        $user = $this->repository
             ->findWhere(['email' => $email])
             ->first();
 
@@ -96,7 +94,7 @@ class Users implements ActionInterface
 
     public function token(string $email): array
     {
-        $user = $this->users
+        $user = $this->repository
             ->findWhere(['email' => $email])
             ->first();
 
@@ -107,23 +105,23 @@ class Users implements ActionInterface
         return $user->tokens()
             ->get()
             ->map(function ($token) {
-                $name = $token->client()->first();
+            $name = $token->client()->first();
 
-                if ($name != null) {
-                    $name = $token->client()->first()->name;
-                }
-                return [
+            if ($name != null) {
+                $name = $token->client()->first()->name;
+            }
+            return [
                 'id' => $token->id,
                 'name' => $name ?? 'Unknown',
                 'revoked' => $token->revoked,
                 'created_at' => $token->created_at
-                ];
-            })->toArray();
+            ];
+        })->toArray();
     }
 
     public function revoke(string $email, string $token): bool
     {
-        $user = $this->users
+        $user = $this->repository
             ->findWhere(['email' => $email])
             ->first();
 

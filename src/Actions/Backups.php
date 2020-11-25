@@ -7,6 +7,7 @@ use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Backups\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
+use Sculptor\Agent\Actions\Support\Repository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
@@ -28,14 +29,12 @@ class Backups implements ActionInterface
 {
     use Actionable;
 
+    use Repository;
+
     /**
      * @var DomainRepository
      */
     private $domains;
-    /**
-     * @var BackupRepository
-     */
-    private $backups;
     /**
      * @var DatabaseRepository
      */
@@ -54,7 +53,7 @@ class Backups implements ActionInterface
     ) {
         $this->action = $action;
 
-        $this->backups = $backups;
+        $this->repository = $backups;
 
         $this->domains = $domains;
 
@@ -103,7 +102,7 @@ class Backups implements ActionInterface
     public function create(string $type, ?string $name = null): bool
     {
         try {
-            $backup = $this->backups->make($type);
+            $backup = $this->repository->make($type);
 
             Logs::backup()->info("Create backup {$type} database {$name}");
 
@@ -121,7 +120,7 @@ class Backups implements ActionInterface
     public function delete(int $id): bool
     {
         try {
-            $backup = $this->backups->byId($id);
+            $backup = $this->repository->byId($id);
 
             Logs::backup()->info("Delete backup");
 
@@ -137,7 +136,7 @@ class Backups implements ActionInterface
     public function run(int $id): bool
     {
         try {
-            $backup = $this->backups->byId($id);
+            $backup = $this->repository->byId($id);
 
             Logs::backup()->info("Appending backup {$backup->name()}");
 
@@ -153,7 +152,7 @@ class Backups implements ActionInterface
     public function setup(int $id, string $parameter, string $value): bool
     {
         try {
-            $backup = $this->backups->byId($id);
+            $backup = $this->repository->byId($id);
 
             $validator = Validator::make('Alarm');
 

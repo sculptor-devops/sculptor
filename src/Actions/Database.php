@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Actions;
 use Exception;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
+use Sculptor\Agent\Actions\Support\Repository;
 use Sculptor\Agent\Exceptions\DatabaseAlreadyExistsException;
 use Sculptor\Agent\Jobs\DatabaseCreate;
 use Sculptor\Agent\Jobs\DatabaseDelete;
@@ -26,10 +27,8 @@ class Database implements ActionInterface
 {
     use Actionable;
 
-    /**
-     * @var DatabaseRepository
-     */
-    private $database;
+    use Repository;
+
     /**
      * @var DatabaseUserRepository
      */
@@ -45,7 +44,7 @@ class Database implements ActionInterface
     {
         $this->action = $action;
 
-        $this->database = $database;
+        $this->repository = $database;
 
         $this->users = $users;
     }
@@ -59,14 +58,14 @@ class Database implements ActionInterface
         Logs::actions()->info("Create database {$name}");
 
         try {
-            if ($this->database->exists($name)) {
+            if ($this->repository->exists($name)) {
                 throw new DatabaseAlreadyExistsException($name);
             }
 
             $this->action
                 ->run(new DatabaseCreate($name));
 
-            $this->database
+            $this->repository
                 ->create(['name' => $name]);
 
             return true;
@@ -86,7 +85,7 @@ class Database implements ActionInterface
         Logs::actions()->info("Delete database {$name}");
 
         try {
-            $database = $this->database
+            $database = $this->repository
                 ->byName($name);
 
             if ($database->domains()->count() > 0) {
@@ -128,7 +127,7 @@ class Database implements ActionInterface
         Logs::actions()->info("Create user {$name}@{$host} on {$name}");
 
         try {
-            $database = $this->database
+            $database = $this->repository
                 ->byName($db);
 
             $this->action
@@ -163,7 +162,7 @@ class Database implements ActionInterface
         Logs::actions()->info("Change password to {$name}@{$host} on {$name}");
 
         try {
-            $database = $this->database
+            $database = $this->repository
                 ->byName($db);
 
             $user = $this->users
@@ -195,7 +194,7 @@ class Database implements ActionInterface
         Logs::actions()->info("Drop user {$name}@{$host} on {$name}");
 
         try {
-            $database = $this->database
+            $database = $this->repository
                 ->byName($db);
 
             $user = $this->users

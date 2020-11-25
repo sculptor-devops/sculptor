@@ -1,11 +1,13 @@
 <?php
 
+
 namespace Sculptor\Agent\Actions;
 
 use Exception;
 use Illuminate\Support\Str;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
+use Sculptor\Agent\Actions\Support\Repository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
 use Sculptor\Agent\Monitors\Alarms as UserAlarm;
 use Sculptor\Agent\Repositories\AlarmRepository;
@@ -21,22 +23,19 @@ class Alarms implements ActionInterface
 {
     use Actionable;
 
-    /**
-     * @var AlarmRepository
-     */
-    private $monitors;
+    use Repository;
 
     public function __construct(Action $action, AlarmRepository $monitors)
     {
         $this->action = $action;
 
-        $this->monitors = $monitors;
+        $this->repository = $monitors;
     }
 
     public function create(string $type): bool
     {
         try {
-            $this->monitors->create([
+            $this->repository->create([
                 'message' => Str::ucfirst("{$type} monitor"),
                 'type' => $type
             ]);
@@ -50,7 +49,7 @@ class Alarms implements ActionInterface
     public function delete(int $id): bool
     {
         try {
-            $monitor = $this->monitors->byId($id);
+            $monitor = $this->repository->byId($id);
 
             $monitor->delete();
         } catch (Exception $e) {
@@ -63,7 +62,7 @@ class Alarms implements ActionInterface
     public function setup(int $id, string $key, string $value): bool
     {
         try {
-            $monitor = $this->monitors->byId($id);
+            $monitor = $this->repository->byId($id);
 
             $validator = Validator::make('Alarm');
 
@@ -84,7 +83,7 @@ class Alarms implements ActionInterface
     public function rearm(int $id): bool
     {
         try {
-            $monitor = $this->monitors->byId($id);
+            $monitor = $this->repository->byId($id);
 
             $monitor->update([
                 'alarm' => false,
@@ -102,7 +101,7 @@ class Alarms implements ActionInterface
     public function run(int $id): bool
     {
         try {
-            $monitor = $this->monitors->byId($id);
+            $monitor = $this->repository->byId($id);
 
             $alarm = new UserAlarm($monitor);
 
@@ -114,10 +113,5 @@ class Alarms implements ActionInterface
         }
 
         return true;
-    }
-
-    public function show(): array
-    {
-        return $this->monitors->all()->toArray();
     }
 }

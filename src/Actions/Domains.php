@@ -7,6 +7,7 @@ use Sculptor\Agent\Actions\Domains\Parameters;
 use Sculptor\Agent\Actions\Domains\StatusMachine;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
+use Sculptor\Agent\Actions\Support\Repository;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\DaemonGroupType;
 use Sculptor\Agent\Enums\DaemonOperationsType;
@@ -35,10 +36,8 @@ class Domains implements ActionInterface
 {
     use Actionable;
 
-    /**
-     * @var DomainRepository
-     */
-    private $domains;
+    use Repository;
+
     /**
      * @var StatusMachine
      */
@@ -65,7 +64,7 @@ class Domains implements ActionInterface
 
         $this->machine = $machine;
 
-        $this->domains = $domains;
+        $this->repository = $domains;
 
         $this->parameters = $parameters;
     }
@@ -83,7 +82,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Create domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->factory($name, $type);
 
             $this->action
@@ -106,10 +105,10 @@ class Domains implements ActionInterface
         Logs::actions()->info("Delete domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
-            $domains = $this->domains
+            $domains = $this->repository
                 ->deployed();
 
             $this->action
@@ -137,7 +136,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Configure domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
             $this->action
@@ -167,7 +166,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Deploy domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
             $this->machine
@@ -194,7 +193,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Deploy domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
             $this->machine
@@ -222,7 +221,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Setup domain {$name}: {$parameter}={$value}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
             if (
@@ -253,10 +252,10 @@ class Domains implements ActionInterface
         Logs::actions()->info("Enable domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
-            $domains = $this->domains
+            $domains = $this->repository
                 ->deployed();
 
             $this->machine->can($domain->status, DomainStatusType::DEPLOYED);
@@ -286,10 +285,10 @@ class Domains implements ActionInterface
         Logs::actions()->info("Disable domain {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
-            $domains = $this->domains
+            $domains = $this->repository
                 ->deployed();
 
             $this->action
@@ -316,7 +315,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Domain templates {$name}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
             $this->action
@@ -339,7 +338,7 @@ class Domains implements ActionInterface
         Logs::actions()->info("Domain certbot {$name} hook {$hook}");
 
         try {
-            $domain = $this->domains
+            $domain = $this->repository
                 ->byName($name);
 
             $this->action

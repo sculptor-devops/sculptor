@@ -51,7 +51,7 @@ class AlarmShow extends CommandBase
     {
         $index = $this->argument('index');
 
-        $all = collect($monitors->show());
+        $all = $monitors->show();
 
         if ($index != null) {
             $monitor = $all->where('id', '=', $index)->first();
