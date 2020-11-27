@@ -28,6 +28,7 @@
         "ext-posix": "*",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
+        "graham-campbell/throttle": "^8.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/passport": "^10.0",
