@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Api\Controllers;
 
+use GrahamCampbell\Throttle\Facades\Throttle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -22,12 +23,15 @@ class AuthController extends Controller
 
     public function login(Request $request): JsonResponse
     {
+
         $login = $request->validate([
             'email' => 'email|required',
             'password' => 'required'
         ]);
 
         if (!Auth::attempt($login)) {
+            Throttle::hit($request, THROTTLE_COUNT, THROTTLE_TIME_SPAN);
+
             return response()->json(['message' => 'Invalid Credentials']);
         }
 

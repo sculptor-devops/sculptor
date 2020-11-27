@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Api\Controllers;
 
 use App\Http\Controllers\Controller;
 use Sculptor\Agent\Configuration;
+use Sculptor\Agent\Ip;
 use Sculptor\Foundation\Support\Version;
 
 /*
@@ -30,7 +31,7 @@ class InfoController extends Controller
         $this->version = $version;
     }
 
-    public function index()
+    public function index(Ip $ip)
     {
         return response()->json([
             'name' => 'Sculptor Devops',
@@ -43,6 +44,7 @@ class InfoController extends Controller
             'arch' => $this->version->arch(),
             'bits' => $this->version->bits(),
             'modules' => explode(',', env('SCULPTOR_INSTALLED_MODULES')),
+            'ip' => $ip->publicIp(),
             'ts' => time()
         ]);
     }
