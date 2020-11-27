@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Users;
+use Sculptor\Agent\ApiClient;
 use Sculptor\Agent\PasswordGenerator;
-use Sculptor\Agent\Repositories\UserRepository;
 use Sculptor\Agent\Support\CommandBase;
 
 /*

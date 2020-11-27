@@ -53,6 +53,8 @@ class Kernel extends ConsoleKernel
             $schedule->command('system:clear')->daily();
 
             // $schedule->command('queue:restart')->daily();
+
+            // $schedule->command('passport:purge')->weekly();
         } catch (Exception $e) {
             Logs::batch()->report($e);
         }
