@@ -2,14 +2,25 @@
 
 namespace Sculptor\Agent;
 
-
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
+/*
+ * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+*/
+
 class ApiClient
 {
+    /**
+     * @var string
+     */
     private $address;
 
+    /**
+     * @var string|null
+     */
     private $token;
 
     public function __construct(string $address)
@@ -17,23 +28,35 @@ class ApiClient
         $this->address = $address;
     }
 
+    /**
+     * @param string|null $url
+     * @return string
+     */
     private function url(string $url = null): string
     {
         return "{$this->address}/api/v1/{$url}";
     }
 
+    /**
+     * @return PendingRequest
+     */
     private function http(): PendingRequest
     {
         if ($this->token == null) {
             return Http::withoutVerifying()->acceptJson();
         }
 
-        return Http::withoutVerifying()->acceptJson()
+        return Http::withoutVerifying()
+            ->acceptJson()
             ->withHeaders([
                 'Authorization' => "Bearer {$this->token}"
             ]);
     }
 
+    /**
+     * @param string $token
+     * @return $this
+     */
     public function token(string $token): ApiClient
     {
         $this->token = $token;
@@ -41,6 +64,11 @@ class ApiClient
         return $this;
     }
 
+    /**
+     * @param string $username
+     * @param string $password
+     * @return bool
+     */
     public function login(string $username, string $password): bool
     {
         $response = $this->http()
@@ -58,6 +86,10 @@ class ApiClient
         return false;
     }
 
+    /**
+     * @param string $name
+     * @return array|null
+     */
     public function get(string $name): ?array
     {
         $response = $this->http()
@@ -70,6 +102,11 @@ class ApiClient
         return null;
     }
 
+    /**
+     * @param string $name
+     * @param array $data
+     * @return array|null
+     */
     public function post(string $name, array $data = []): ?array
     {
         $response = $this->http()
@@ -82,6 +119,9 @@ class ApiClient
         return null;
     }
 
+    /**
+     * @return bool
+     */
     public function logged(): bool
     {
         return $this->http()
