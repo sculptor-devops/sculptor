@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Users;
 use Sculptor\Agent\PasswordGenerator;
@@ -110,8 +111,15 @@ class SystemUser extends CommandBase
 
                 $tokens = $users->token($email);
 
-                $this->table([], collect($tokens)->map(function($token) {
+                $this->table([
+                    'Id',
+                    'Name',
+                    'Expired',
+                    'Created'
+                ], collect($tokens)->map(function ($token) {
                     $token['revoked'] = $this->noYes($token['revoked']);
+
+                    $token['id'] = Str::limit($token['id'], 50);
 
                     return $token;
                 })->toArray());
