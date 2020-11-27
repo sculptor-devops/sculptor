@@ -57,9 +57,9 @@ class Logs implements LogsInterface
 
     /**
      * @param string $tag
-     * @return LogsContext
+     * @return LogsInterface
      */
-    public function tag(string $tag): LogsContext
+    public function tag(string $tag): LogsInterface
     {
         $this->tag = $tag;
 
