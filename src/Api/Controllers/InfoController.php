@@ -3,6 +3,8 @@
 namespace Sculptor\Agent\Api\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Ip;
 use Sculptor\Foundation\Support\Version;
@@ -31,7 +33,7 @@ class InfoController extends Controller
         $this->version = $version;
     }
 
-    public function index(Ip $ip)
+    public function index(Ip $ip): JsonResponse
     {
         return response()->json([
             'name' => 'Sculptor Devops',
@@ -47,5 +49,10 @@ class InfoController extends Controller
             'ip' => $ip->publicIp(),
             'ts' => time()
         ]);
+    }
+
+    public function logged(): JsonResponse
+    {
+        return response()->json(['authenticated' => (Auth::user() != null)]);
     }
 }

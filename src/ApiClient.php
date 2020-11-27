@@ -17,7 +17,7 @@ class ApiClient
         $this->address = $address;
     }
 
-    private function url(string $url=null): string
+    private function url(string $url = null): string
     {
         return "{$this->address}/api/v1/{$url}";
     }
@@ -84,7 +84,8 @@ class ApiClient
 
     public function logged(): bool
     {
-        return $response = $this->http()
-                ->get($this->url())->status() == 200;
+        return $this->http()
+                ->get($this->url())
+                ->status() == 200;
     }
 }

@@ -39,9 +39,4 @@ class AuthController extends Controller
 
         return response()->json(['access_token' => $user->createToken('authToken')->accessToken]);
     }
-
-    public function logged(): JsonResponse
-    {
-        return response()->json(['authenticated' => Auth::user() != null ]);
-    }
 }
