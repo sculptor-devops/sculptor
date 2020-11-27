@@ -2,10 +2,11 @@
 
 namespace Sculptor\Agent\Webhooks\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Exception;
+use GrahamCampbell\Throttle\Facades\Throttle;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Exceptions\DomainNotFound;
 use Sculptor\Agent\Repositories\DomainRepository;
@@ -42,16 +43,24 @@ class DeployDomainWebhookController extends Controller
      * @param Request $request
      * @param string $hash
      * @param string $token
-     * @return string
+     * @return Response
      * @throws DomainNotFound
      * @throws Exception
      */
-    public function deploy(Request $request, string $hash, string $token): string
+    public function deploy(Request $request, string $hash, string $token): Response
     {
         $domain = $this->domains->byHash($hash);
 
+        $done = new Response(DeployDomainWebhookController::DONE, 200, ['Content-Type' => 'text/plain']);
+
+        if (!Throttle::check($request)) {
+            abort(429, 'TOO MANY ATTEMPTS');
+        }
+
         if ($domain->token != $token) {
             Logs::batch()->warning("Web hook invalid token");
+
+            Throttle::hit($request, THROTTLE_COUNT, THROTTLE_TIME_SPAN);
 
             abort(400, 'Invalid token');
         }
@@ -69,7 +78,7 @@ class DeployDomainWebhookController extends Controller
         if (!$provider->branch($request, $domain->branch)) {
             Logs::batch()->notice("Web hook {$domain->name} was not for {$domain->branch} branch");
 
-            return DeployDomainWebhookController::DONE;
+            return $done;
         }
 
         Logs::batch()->info("Webhook deploy {$domain->name} branch {$domain->branch} from {$provider->name()} deploy append");
@@ -78,6 +87,6 @@ class DeployDomainWebhookController extends Controller
             abort(500, $this->actions->error() ?? 'Undefined');
         }
 
-        return new Response(DeployDomainWebhookController::DONE, 200, ['Content-Type' => 'text/plain']);
+        return $done;
     }
 }
