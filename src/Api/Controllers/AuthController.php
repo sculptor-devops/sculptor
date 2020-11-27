@@ -2,10 +2,10 @@
 
 namespace Sculptor\Agent\Api\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Sculptor\Agent\Facades\Logs;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -15,12 +15,12 @@ use Sculptor\Agent\Facades\Logs;
 
 class AuthController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json([]);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $login = $request->validate([
             'email' => 'email|required',
@@ -28,11 +28,11 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($login)) {
-            return response(['message' => 'Invalid Credentials']);
+            return response()->json(['message' => 'Invalid Credentials']);
         }
 
         $user = Auth::user();
 
-        return response(['access_token' => $user->createToken('authToken')->accessToken]);
+        return response()->json(['access_token' => $user->createToken('authToken')->accessToken]);
     }
 }
