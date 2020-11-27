@@ -33,10 +33,6 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        Logs::login()->info("Api login {$user->email}");
-
-        $accessToken = $user->createToken('authToken')->accessToken;
-
-        return response(['access_token' => $accessToken]);
+        return response(['access_token' => $user->createToken('authToken')->accessToken]);
     }
 }

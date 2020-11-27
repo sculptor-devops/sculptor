@@ -11,7 +11,7 @@ class AuthLoginEventHandler
     {
         $user = Auth::user();
 
-        Logs::security()->info("User {$user->email}");
+        Logs::security()->info("User {$user->email} logged in");
     }
 
     public function attempt($credentials)
@@ -21,6 +21,6 @@ class AuthLoginEventHandler
 
     public function lockout($lockout)
     {
-        Logs::security()->warning("LOGINS USER LOCKOUT " . $lockout->request->input('email'));
+        Logs::security()->warning("User " . $lockout->request->input('email') . ' lockout');
     }
 }
