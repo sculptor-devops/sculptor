@@ -2,8 +2,9 @@
 
 namespace App\Rules;
 
+use Exception;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Str;
+use Lorisleiva\CronTranslator\CronTranslator;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -11,23 +12,8 @@ use Illuminate\Support\Str;
  *  file that was distributed with this source code.
 */
 
-class Resolvable implements Rule
+class Cron implements Rule
 {
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * Create a new rule instance.
-     *
-     * @param string $namespace
-     */
-    public function __construct(string $namespace)
-    {
-        $this->namespace = $namespace;
-    }
-
     /**
      * Determine if the validation rule passes.
      *
@@ -37,7 +23,12 @@ class Resolvable implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        return class_exists("{$this->namespace}\\" . Str::ucfirst($value));
+        try {
+            return !empty(CronTranslator::translate($value));
+        } catch (Exception $e) {
+
+            return false;
+        }
     }
 
     /**
@@ -47,6 +38,6 @@ class Resolvable implements Rule
      */
     public function message(): string
     {
-        return 'The class cannot be resolved.';
+        return 'Invalid CRON.';
     }
 }

@@ -10,16 +10,7 @@ use Sculptor\Agent\Contracts\ValidatorRule;
  *  file that was distributed with this source code.
 */
 
-class AlarmCron implements ValidatorRule
+class AlarmCron extends BackupCron
 {
-    public function rule(): array
-    {
-        return [
-            'cron' => [
-                'required',
-                'max:255',
-                'string'
-            ]
-        ];
-    }
+    //
 }
