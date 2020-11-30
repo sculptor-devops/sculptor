@@ -35,7 +35,7 @@ class Alarms
      */
     private $condition;
     /**
-     * @var string
+     * @var string|null
      */
     private $threshold;
 
@@ -54,9 +54,9 @@ class Alarms
      */
     private function normalize(?string $name): string
     {
-        return Str::of($name)->camel()
-            ->ucfirst()
-            ->__toString();
+        return Str::of($name)
+            ->camel()
+            ->ucfirst();
     }
 
     /**

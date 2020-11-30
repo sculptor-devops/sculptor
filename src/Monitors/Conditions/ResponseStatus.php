@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Monitors\Conditions;
 
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\Parametrizer;
@@ -15,22 +16,9 @@ use Sculptor\Agent\Monitors\System as Monitors;
  *  file that was distributed with this source code.
 */
 
-class System implements AlarmCondition
+class ResponseStatus implements AlarmCondition
 {
     use Condition;
-
-    /**
-     * @var Monitors
-     */
-    private $monitors;
-    /**
-     * System constructor.
-     * @param Monitors $monitors
-     */
-    public function __construct(Monitors $monitors)
-    {
-        $this->monitors = $monitors;
-    }
 
     /**
      * @param bool $alarmed
@@ -45,34 +33,49 @@ class System implements AlarmCondition
 
         $monitor = $parameters->first();
 
-        $limit = $parameters->last();
+        $code = $parameters->last();
 
-        $data = collect($this->monitors->last());
+        $response = Http::withoutVerifying()->get($monitor);
 
-        $values = $data->filter(function ($item, $key) use ($monitor) {
-            return $key == $monitor;
-        });
-
-        if ($values->count() != 1) {
-            return false;
-        }
-
-        $value = floatval($values->get($monitor));
+        $value = $response->successful() && ($response->status() == $code);
 
         $this->context = [
-            'limit' => $limit,
+            'code' => $code,
             'value' => $value,
             'alarmed' => $alarmed,
             'rearm' => $rearm,
             'monitor' => $monitor
         ];
 
-        $evaluation = $this->evaluate($alarmed, $rearm, $value, $limit);
+        $evaluation = $this->evaluate($alarmed, $rearm, $value, $code);
 
         if ($evaluation && $this->act) {
-            Logs::batch()->notice("System monitor limit on {$monitor} is {$value} > {$limit}");
+            Logs::batch()->notice("Response time {$monitor} is {$value} is not {$code}");
         }
 
         return $evaluation;
+    }
+    /**
+     * @param bool $alarmed
+     * @param string $rearm
+     * @param int $value
+     * @param int $code
+     * @return bool
+     */
+    private function evaluate(bool $alarmed, string $rearm, int $value, int $code): bool
+    {
+        switch ($rearm) {
+            case 'auto':
+                $this->act = ($value == $code);
+
+                break;
+
+            case 'manual':
+                $this->act = ($value == $code) && !$alarmed;
+
+                break;
+        }
+
+        return ($value == $code);
     }
 }

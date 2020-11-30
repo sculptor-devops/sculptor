@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Monitors\Conditions;
 
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\Parametrizer;
@@ -15,22 +16,9 @@ use Sculptor\Agent\Monitors\System as Monitors;
  *  file that was distributed with this source code.
 */
 
-class System implements AlarmCondition
+class ResponseTime implements AlarmCondition
 {
     use Condition;
-
-    /**
-     * @var Monitors
-     */
-    private $monitors;
-    /**
-     * System constructor.
-     * @param Monitors $monitors
-     */
-    public function __construct(Monitors $monitors)
-    {
-        $this->monitors = $monitors;
-    }
 
     /**
      * @param bool $alarmed
@@ -41,23 +29,17 @@ class System implements AlarmCondition
      */
     public function threshold(bool $alarmed, string $rearm, string $threshold): bool
     {
+        $now = now();
+
         $parameters = new Parametrizer($threshold);
 
         $monitor = $parameters->first();
 
         $limit = $parameters->last();
 
-        $data = collect($this->monitors->last());
+        $response = Http::withoutVerifying()->get($monitor);
 
-        $values = $data->filter(function ($item, $key) use ($monitor) {
-            return $key == $monitor;
-        });
-
-        if ($values->count() != 1) {
-            return false;
-        }
-
-        $value = floatval($values->get($monitor));
+        $value = now()->diffInMilliseconds($now);
 
         $this->context = [
             'limit' => $limit,
@@ -67,10 +49,10 @@ class System implements AlarmCondition
             'monitor' => $monitor
         ];
 
-        $evaluation = $this->evaluate($alarmed, $rearm, $value, $limit);
+        $evaluation = $this->evaluate($alarmed, $rearm, $value, $limit) && $response->successful();
 
         if ($evaluation && $this->act) {
-            Logs::batch()->notice("System monitor limit on {$monitor} is {$value} > {$limit}");
+            Logs::batch()->notice("Response time {$monitor} is {$value} > {$limit}");
         }
 
         return $evaluation;

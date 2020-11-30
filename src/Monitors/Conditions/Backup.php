@@ -7,19 +7,12 @@ use Sculptor\Agent\Backup\Factory;
 use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Monitors\Parametrizer;
+use Sculptor\Agent\Monitors\Support\Condition;
 use Sculptor\Agent\Repositories\BackupRepository;
 
 class Backup implements AlarmCondition
 {
-    /**
-     * @var array
-     */
-    private $context = [];
-
-    /**
-     * @var bool
-     */
-    private $act = false;
+    use Condition;
     /**
      * @var BackupRepository
      */
@@ -61,15 +54,13 @@ class Backup implements AlarmCondition
 
         $archives = collect($archive->list($backup->destination));
 
-        if (
-            $archives
+        if ($archives
             ->where('timestamp', '<', $limit)
             ->where('size', '>', 0)
-            ->filter(function ($item) use ($tag, $backup) {
+            ->filter(function ($item) use($tag, $backup) {
                 return $tag->match($backup->name(), $item['basename']);
             })
-            ->count()
-        ) {
+            ->count()) {
             $value = false;
         }
 
@@ -110,21 +101,5 @@ class Backup implements AlarmCondition
         }
 
         return $value;
-    }
-
-    /**
-     * @return bool
-     */
-    public function act(): bool
-    {
-        return $this->act;
-    }
-
-    /**
-     * @return array
-     */
-    public function context(): array
-    {
-        return $this->context;
     }
 }
