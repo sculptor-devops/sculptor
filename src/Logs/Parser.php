@@ -2,6 +2,9 @@
 
 namespace Sculptor\Agent\Logs;
 
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Rap2hpoutre\LaravelLogViewer\LaravelLogViewer;
 
@@ -13,6 +16,9 @@ use Rap2hpoutre\LaravelLogViewer\LaravelLogViewer;
 
 class Parser
 {
+    /**
+     *
+     */
     public const CONTEXT_PATTERN = '~\{(?:[^{}]|(?R))*\}~';
 
     /**
@@ -20,30 +26,70 @@ class Parser
      */
     private $parser;
 
+    /**
+     * Parser constructor.
+     */
     public function __construct()
     {
         $this->parser = new LaravelLogViewer;
     }
 
-    public function all(string $file): array
+    /**
+     * @param string $file
+     * @return array
+     * @throws Exception
+     */
+    private function rows(string $file): array
     {
         $this->parser->setFile($file);
 
-        $parsed =  $this->parser->all();
+        $parsed = $this->parser->all();
 
         foreach ($parsed as &$line) {
+            $payload = null;
+
             if (preg_match(Parser::CONTEXT_PATTERN, $line['text'], $match) > 0) {
+
                 $line['text'] = Str::of($line['text'])->replace($match[0], '')->trim() . '';
 
-                $line['payload'] = $match;
+                $payload = $match;
             }
+
+            $line['payload'] = $payload;
         }
 
         return $parsed;
     }
-    
-    public function files(): array
+
+    /**
+     * @return Collection
+     * @throws Exception
+     */
+    public function files(): Collection
     {
-        return $this->parser->getFolderFiles();
+        return collect($this->parser->getFolderFiles());
+    }
+
+    /**
+     * @param string|null $file
+     * @return Collection
+     * @throws Exception
+     */
+    public function file(string $file = null): Collection
+    {
+        if ($file == null) {
+            $file = $this->files()->first();
+        }
+
+        return collect($this->rows($file))
+            ->map(function ($row) {
+                return [
+                    'level' => $row['level'],
+                    'date' => Carbon::parse($row['date']),
+                    'text' => $row['text'],
+                    'stack' => $row['stack'],
+                    'context' => $row['payload']
+                ];
+            });
     }
 }
