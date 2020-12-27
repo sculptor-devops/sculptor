@@ -40,6 +40,10 @@ class ResolvableCondition implements Rule
     {
         $name = Str::before(Str::ucfirst($value), Parametrizer::SEPARATOR);
 
+        $name = Str::of($name)
+            ->camel()
+            ->ucfirst();
+
         return class_exists("{$this->namespace}\\{$name}");
     }
 
