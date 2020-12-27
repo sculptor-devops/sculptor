@@ -45,13 +45,13 @@ class BackupRepository extends BaseRepository implements BackupRepositoryInterfa
      */
     public function byId(int $id): Backup
     {
-        $backup = $this->find($id);
+        $backup = $this->findByField(['id' => $id]);
 
-        if ($backup == null) {
+        if ($backup->count() != 1) {
             throw new Exception("Backup {$id} not found");
         }
 
-        return $backup;
+        return $backup->first();
     }
 
     /**

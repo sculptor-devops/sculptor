@@ -29,6 +29,7 @@ class Alarm extends Model implements Transformable
      * @var array
      */
     protected $fillable = [
+        'name',
         'type',
         'message',
         'to',

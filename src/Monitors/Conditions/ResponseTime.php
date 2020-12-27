@@ -33,11 +33,11 @@ class ResponseTime implements AlarmCondition
 
         $parameters = new Parametrizer($threshold);
 
-        $monitor = $parameters->first();
+        $url = $parameters->first();
 
         $limit = $parameters->last();
 
-        $response = Http::withoutVerifying()->get($monitor);
+        $response = Http::withoutVerifying()->get($url);
 
         $value = now()->diffInMilliseconds($now);
 
@@ -46,13 +46,13 @@ class ResponseTime implements AlarmCondition
             'value' => $value,
             'alarmed' => $alarmed,
             'rearm' => $rearm,
-            'monitor' => $monitor
+            'url' => $url
         ];
 
         $evaluation = $this->evaluate($alarmed, $rearm, $value, $limit) && $response->successful();
 
         if ($evaluation && $this->act) {
-            Logs::batch()->notice("Response time {$monitor} is {$value} > {$limit}");
+            Logs::batch()->notice("Response time {$url} is {$value} > {$limit}");
         }
 
         return $evaluation;

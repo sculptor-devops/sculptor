@@ -31,11 +31,11 @@ class ResponseStatus implements AlarmCondition
     {
         $parameters = new Parametrizer($threshold);
 
-        $monitor = $parameters->first();
+        $url = $parameters->first();
 
         $code = $parameters->last();
 
-        $response = Http::withoutVerifying()->get($monitor);
+        $response = Http::withoutVerifying()->get($url);
 
         $value = $response->successful() && ($response->status() == $code);
 
@@ -44,13 +44,13 @@ class ResponseStatus implements AlarmCondition
             'value' => $value,
             'alarmed' => $alarmed,
             'rearm' => $rearm,
-            'monitor' => $monitor
+            'url' => $url
         ];
 
         $evaluation = $this->evaluate($alarmed, $rearm, $value, $code);
 
         if ($evaluation && $this->act) {
-            Logs::batch()->notice("Response time {$monitor} is {$value} is not {$code}");
+            Logs::batch()->notice("Response time {$url} is {$value} is not {$code}");
         }
 
         return $evaluation;

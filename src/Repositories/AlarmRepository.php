@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Repositories;
 
+use Exception;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
@@ -29,12 +30,17 @@ class AlarmRepository extends BaseRepository implements AlarmRepositoryInterface
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    /**
+     * @param int $id
+     * @return Alarm
+     * @throws Exception
+     */
     public function byId(int $id): Alarm
     {
-        $domains = $this->find($id);
+        $domains = $this->findByField(['id' => $id]);
 
-        if ($domains->count() == 0) {
-            throw new \Exception("Cannot find monitor {$id}");
+        if ($domains->count() != 1) {
+            throw new Exception("Cannot find monitor {$id}");
         }
 
         return $domains->first();

@@ -53,7 +53,7 @@ class Alarms implements ActionInterface
 
             $monitor->delete();
         } catch (Exception $e) {
-            return  $this->action->report($e->getMessage());
+            return $this->action->report($e->getMessage());
         }
 
         return true;
