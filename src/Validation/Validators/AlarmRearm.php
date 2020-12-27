@@ -3,7 +3,6 @@
 namespace Sculptor\Agent\Validation\Validators;
 
 use Sculptor\Agent\Contracts\ValidatorRule;
-use Sculptor\Agent\Enums\DomainType as Enum;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
