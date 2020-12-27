@@ -15,7 +15,7 @@ class AlarmName implements ValidatorRule
     public function rule(): array
     {
         return [
-            'branch' => [
+            'name' => [
                 'required',
                 'max:255',
                 'alpha_dash'
