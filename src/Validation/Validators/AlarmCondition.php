@@ -2,7 +2,7 @@
 
 namespace Sculptor\Agent\Validation\Validators;
 
-use App\Rules\Resolvable;
+use App\Rules\ResolvableCondition;
 use Sculptor\Agent\Contracts\ValidatorRule;
 
 /*
@@ -22,7 +22,7 @@ class AlarmCondition implements ValidatorRule
             'condition' => [
                 'required',
                 'max:255',
-                new Resolvable('\\Sculptor\\Agent\\Monitors\\Conditions')
+                new ResolvableCondition('\\Sculptor\\Agent\\Monitors\\Conditions')
             ]
         ];
     }

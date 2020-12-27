@@ -34,7 +34,7 @@ class Alarm extends Model implements Transformable
         'message',
         'to',
         'monitor',
-        'constraint',
+        'condition',
         'cron',
         'error',
         'alarm',
