@@ -15,7 +15,7 @@ class AlarmRearm implements ValidatorRule
     public function rule(): array
     {
         return [
-            'type' => [
+            'rearm' => [
                 'required',
                 'max:255',
                 'in:' . implode(',', ['auto', 'manual'])
