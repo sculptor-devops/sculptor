@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="cd28e28d-c146-4a39-a438-01be866d4c51" name="livewire.cappellozza.com">
+        <fileTransfer rootFolder="/var/www/html/current" accessType="SFTP" host="livewire.cappellozza.com" port="22" sshConfigId="b6006ef2-229e-4eaf-8524-102d22198d74" sshConfig="root@livewire.cappellozza.com:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

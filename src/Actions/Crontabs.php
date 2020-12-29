@@ -44,7 +44,7 @@ class Crontabs implements ActionInterface
                 ->deployed();
 
             $this->action
-                ->run(new DomainCrontab($domains->toArray()));
+                ->run(new DomainCrontab());
         } catch (Exception $e) {
             return $this->action
                 ->report("Update crontabs: {$e->getMessage()}");

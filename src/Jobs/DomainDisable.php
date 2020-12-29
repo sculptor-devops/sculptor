@@ -56,6 +56,8 @@ class DomainDisable implements ShouldQueue, ITraceable
         try {
             $web->disable($this->domain);
 
+            DomainCrontab::dispatch();
+
             $this->ok();
         } catch (Exception | Error $e) {
             $this->report($e);

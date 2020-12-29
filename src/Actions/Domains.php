@@ -16,7 +16,6 @@ use Sculptor\Agent\Jobs\DaemonService;
 use Sculptor\Agent\Jobs\DomainCertbot;
 use Sculptor\Agent\Jobs\DomainConfigure;
 use Sculptor\Agent\Jobs\DomainCreate;
-use Sculptor\Agent\Jobs\DomainCrontab;
 use Sculptor\Agent\Jobs\DomainDelete;
 use Sculptor\Agent\Jobs\DomainDeploy;
 use Sculptor\Agent\Jobs\DomainDisable;
@@ -57,7 +56,8 @@ class Domains implements ActionInterface
         StatusMachine $machine,
         DomainRepository $domains,
         Parameters $parameters
-    ) {
+    )
+    {
         $this->configuration = $configuration;
 
         $this->action = $action;
@@ -77,7 +77,8 @@ class Domains implements ActionInterface
     public function create(
         string $name,
         string $type = 'laravel'
-    ): bool {
+    ): bool
+    {
 
         Logs::actions()->info("Create domain {$name}");
 
@@ -108,14 +109,8 @@ class Domains implements ActionInterface
             $domain = $this->repository
                 ->byName($name);
 
-            $domains = $this->repository
-                ->deployed();
-
             $this->action
                 ->run(new DomainDelete($domain));
-
-            $this->action
-                ->run(new DomainCrontab($domains->toArray()));
 
             $domain->delete();
         } catch (Exception $e) {
@@ -225,7 +220,7 @@ class Domains implements ActionInterface
                 ->byName($name);
 
             if (
-                $this->machine
+            $this->machine
                 ->can($domain->status, DomainStatusType::SETUP)
             ) {
                 $this->parameters
@@ -262,9 +257,6 @@ class Domains implements ActionInterface
 
             $this->action
                 ->run(new DomainEnable($domain));
-
-            $this->action
-                ->run(new DomainCrontab($domains->toArray()));
         } catch (Exception $e) {
             return $this->action
                 ->report("Enable domain {$name}: {$e->getMessage()}");
@@ -288,14 +280,8 @@ class Domains implements ActionInterface
             $domain = $this->repository
                 ->byName($name);
 
-            $domains = $this->repository
-                ->deployed();
-
             $this->action
                 ->run(new DomainDisable($domain));
-
-            $this->action
-                ->run(new DomainCrontab($domains->toArray()));
         } catch (Exception $e) {
             return $this->action
                 ->report("Disable domain {$name}: {$e->getMessage()}");

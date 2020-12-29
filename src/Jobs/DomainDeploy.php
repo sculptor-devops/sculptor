@@ -80,6 +80,8 @@ class DomainDeploy implements ShouldQueue, ITraceable
 
             Logs::job()->info("Domain deploy {$this->domain->name} command {$this->command} done in {$stopwatch->stop()}");
 
+            DomainCrontab::dispatch();
+
             $this->ok();
         } catch (Exception | Error $e) {
             $this->report($e);

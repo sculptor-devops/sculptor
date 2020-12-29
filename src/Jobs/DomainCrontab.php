@@ -31,19 +31,11 @@ class DomainCrontab implements ShouldQueue, ITraceable
     use Traceable;
 
     /**
-     * @var array
-     */
-    private $domains;
-
-    /**
      * Create a new job instance.
      *
-     * @param array $domains
      */
-    public function __construct(
-        array $domains
-    ) {
-        $this->domains = $domains;
+    public function __construct() {
+        //
     }
 
     /**
@@ -85,9 +77,9 @@ class DomainCrontab implements ShouldQueue, ITraceable
     {
         $tabs = [];
 
-        foreach ($this->domains as $domain) {
-            $domain = $domains->byName($domain['name']);
+        $deployed = $domains->deployed();
 
+        foreach ($deployed as $domain) {
             $cron = File::get("{$domain->root()}/cron.conf");
 
             if (!array_key_exists($domain->user, $tabs)) {
