@@ -79,7 +79,6 @@ class Domains implements ActionInterface
         string $type = 'laravel'
     ): bool
     {
-
         Logs::actions()->info("Create domain {$name}");
 
         try {
