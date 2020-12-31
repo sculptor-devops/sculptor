@@ -1,6 +1,6 @@
 APP_NAME=Laravel
 APP_ENV=production
-APP_KEY=
+APP_KEY={KEY}
 APP_DEBUG=false
 APP_URL={URL}
 

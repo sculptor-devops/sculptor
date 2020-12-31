@@ -3,12 +3,15 @@
 namespace Sculptor\Agent\Jobs\Domains;
 
 use Exception;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Contracts\DomainAction;
 use Sculptor\Agent\Jobs\Domains\Support\Compiler;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Support\Replacer;
+use Sculptor\Foundation\Services\EnvParser;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -52,8 +55,7 @@ class Env implements DomainAction
                 ->replace($database->value(), $domain)
                 ->value();
 
-            if (
-                !$this->compiler
+            if (!$this->compiler
                 ->save("{$domain->root()}/{$destination}", $compiled)
             ) {
                 throw new Exception("Unable to save env {$destination}/{$filename}");
@@ -63,6 +65,21 @@ class Env implements DomainAction
         return true;
     }
 
+    /**
+     * @param Domain $domain
+     * @return bool
+     * @throws Exception
+     */
+    public function delete(Domain $domain): bool
+    {
+        throw new Exception("Delete not implemented");
+    }
+
+    /**
+     * @param string $template
+     * @param Domain $domain
+     * @return Replacer
+     */
     private function database(string $template, Domain $domain): Replacer
     {
         $database = 'default';
@@ -100,6 +117,7 @@ class Env implements DomainAction
         }
 
         return Replacer::make($template)
+            ->replace('{KEY}', $this->currentKey($domain))
             ->replace('{DATABASE_DRIVER}', $driver)
             ->replace('{DATABASE_HOST}', $host)
             ->replace('{DATABASE_PORT}', $port)
@@ -110,11 +128,45 @@ class Env implements DomainAction
 
     /**
      * @param Domain $domain
-     * @return bool
-     * @throws Exception
+     * @return string
      */
-    public function delete(Domain $domain): bool
+    private function newKey(Domain $domain)
     {
-        throw new Exception("Delete not implemented");
+        $config = "{$domain->current()}/config/app.php";
+
+        $cipher = config('app.cipher');
+
+        if (File::exists($config)) {
+            $app = include($config);
+
+            $cipher = $app['cipher'];
+        }
+
+        return 'base64:' . base64_encode(Encrypter::generateKey($cipher));
+    }
+
+    /**
+     * @param Domain $domain
+     * @return string
+     */
+    private function currentKey(Domain $domain): string
+    {
+        $newKey = $this->newKey($domain);
+
+        $filename = "{$domain->current()}/.env";
+
+        if (!File::exists($filename)) {
+            return $newKey;
+        }
+
+        $parser = new EnvParser($filename);
+
+        $key = $parser->get("APP_KEY", false);
+
+        if ($key == null) {
+            return $newKey;
+        }
+
+        return $key;
     }
 }

@@ -4,7 +4,6 @@ namespace Sculptor\Agent\Repositories\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Crypt;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Sculptor\Agent\Contracts\BlueprintRecord;
