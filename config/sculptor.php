@@ -10,6 +10,8 @@ return [
     'database' => [
         'default' => env('SERVER_DATABASE_DRIVER', 'mysql'),
 
+        'restart_delay' => env('SERVER_DATABASE_RESTART_DELAY', 5),
+
         'drivers' => [
             'mysql' => [
                 'driver' => env('MYSQL_DATABASE_DRIVER', 'mysql'),

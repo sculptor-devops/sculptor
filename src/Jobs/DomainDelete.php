@@ -73,7 +73,7 @@ class DomainDelete implements ShouldQueue, ITraceable
                 $stage->delete($this->domain);
             }
 
-            DomainCrontab::dispatch();
+            DomainCron::dispatch();
 
             $this->ok();
         } catch (Exception | Error $e) {

@@ -22,7 +22,7 @@ use Sculptor\Agent\Repositories\DomainRepository;
  *  file that was distributed with this source code.
 */
 
-class DomainCrontab implements ShouldQueue, ITraceable
+class DomainCron implements ShouldQueue, ITraceable
 {
     use Dispatchable;
     use InteractsWithQueue;

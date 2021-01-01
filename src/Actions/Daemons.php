@@ -125,11 +125,11 @@ class Daemons implements ActionInterface
     private function run(string $daemon, string $operation): void
     {
         // WORK AROUND MYSQL
-        if ($daemon == 'mysql') {
+        if ($daemon == config('sculptor.database.default')) {
             $this->action
                 ->runAndExit(new DaemonService($daemon, $operation));
 
-            sleep(5);
+            sleep(config('sculptor.database.restart_delay', 5));
 
             return;
         }

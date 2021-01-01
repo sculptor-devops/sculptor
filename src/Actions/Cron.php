@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Actions\Support\Action;
 use Sculptor\Agent\Actions\Support\Actionable;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
-use Sculptor\Agent\Jobs\DomainCrontab;
+use Sculptor\Agent\Jobs\DomainCron;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\DomainRepository;
 
@@ -17,7 +17,7 @@ use Sculptor\Agent\Repositories\DomainRepository;
  *  file that was distributed with this source code.
 */
 
-class Crontabs implements ActionInterface
+class Cron implements ActionInterface
 {
     use Actionable;
 
@@ -29,7 +29,8 @@ class Crontabs implements ActionInterface
     public function __construct(
         Action $action,
         DomainRepository $domains
-    ) {
+    )
+    {
         $this->action = $action;
 
         $this->domains = $domains;
@@ -37,17 +38,14 @@ class Crontabs implements ActionInterface
 
     public function update(): bool
     {
-        Logs::actions()->info("Update crontabs");
+        Logs::actions()->info("Update cron");
 
         try {
-            $domains = $this->domains
-                ->deployed();
-
             $this->action
-                ->run(new DomainCrontab());
+                ->run(new DomainCron());
         } catch (Exception $e) {
             return $this->action
-                ->report("Update crontabs: {$e->getMessage()}");
+                ->report("Update cron: {$e->getMessage()}");
         }
 
         return true;

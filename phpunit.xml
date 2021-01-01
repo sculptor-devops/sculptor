@@ -23,5 +23,6 @@
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
+    <server name="SERVER_DATABASE_RESTART_DELAY" value="0"/>
   </php>
 </phpunit>

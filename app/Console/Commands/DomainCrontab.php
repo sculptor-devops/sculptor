@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Sculptor\Agent\Actions\Crontabs;
+use Sculptor\Agent\Actions\Cron;
 use Sculptor\Agent\Support\CommandBase;
 
 /*
@@ -40,15 +40,15 @@ class DomainCrontab extends CommandBase
     /**
      * Execute the console command.
      *
-     * @param Crontabs $crontabs
+     * @param Cron $cron
      * @return int
      */
-    public function handle(Crontabs $crontabs): int
+    public function handle(Cron $cron): int
     {
         $this->startTask("Update domains crontab");
 
-        if (!$crontabs->update()) {
-            return $this->errorTask("{$crontabs->error()}");
+        if (!$cron->update()) {
+            return $this->errorTask("{$cron->error()}");
         }
 
         return $this->completeTask();
