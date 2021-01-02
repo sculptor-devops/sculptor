@@ -78,6 +78,8 @@ class Deployer implements DomainAction
     private function prepare(Domain $domain): void
     {
         if (!File::exists($domain->current())) {
+            Logs::actions()->info("Deploy prepare/release/symlink {$domain->name}");
+
             $this->deploy('deploy:prepare', $domain);
 
             $this->deploy('deploy:release', $domain);
@@ -120,17 +122,24 @@ class Deployer implements DomainAction
     /**
      * @param string $command
      * @param Domain $domain
+     * @param bool $worker
      * @return bool
      * @throws Exception
      */
-    private function deploy(string $command, Domain $domain): bool
+    private function deploy(string $command, Domain $domain, bool $worker = false): bool
     {
         Logs::actions()->info("Deploy run {$command} on {$domain->name}");
+
+        $user = $domain->user;
+
+        if ($worker) {
+            $user = whoami();
+        }
 
         $this->system
             ->runAs(
                 $domain->root(),
-                $domain->user,
+                $user,
                 [
                     'dep',
                     $command

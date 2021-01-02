@@ -66,11 +66,12 @@ class DomainCreate implements ShouldQueue, ITraceable
                 [
                     Structure::class,
                     Env::class,
-                    Deployer::class,
                     Worker::class,
                     Crontab::class,
                     Certificates::class,
                     WebServer::class,
+                    Permissions::class,
+                    Deployer::class,
                     Permissions::class
                 ] as $step
             ) {
