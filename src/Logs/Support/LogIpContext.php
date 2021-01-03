@@ -1,8 +1,6 @@
 <?php
 
-namespace Sculptor\Agent\Logs;
-
-use Sculptor\Agent\Logs\Support\LogContext;
+namespace Sculptor\Agent\Logs\Support;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>

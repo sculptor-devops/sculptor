@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Logs;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Contracts\LogContext;
 use Sculptor\Agent\Enums\LogContextLevel;
 use Sculptor\Agent\Repositories\EventRepository;
@@ -26,11 +27,22 @@ class LogsContext implements LogContext
      */
     private $repository;
 
+    /**
+     * @param array $context
+     * @return array
+     */
     private function merge(array $context = []): array
     {
         return array_merge($context, $this->context);
     }
 
+    /**
+     * @param string $message
+     * @param string $level
+     * @param array $context
+     * @param string|null $payload
+     * @throws ValidatorException
+     */
     private function event(string $message, string $level, array $context, string $payload = null): void
     {
         $this->repository->create([
@@ -53,6 +65,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function emergency(string $message, array $context = array()): void
     {

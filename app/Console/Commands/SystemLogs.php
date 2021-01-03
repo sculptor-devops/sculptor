@@ -5,8 +5,8 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
-use Sculptor\Agent\Logs\LogIpContext;
-use Sculptor\Agent\Logs\LogTagContext;
+use Sculptor\Agent\Logs\Support\LogIpContext;
+use Sculptor\Agent\Logs\Support\LogTagContext;
 use Sculptor\Agent\Logs\Parser;
 use Sculptor\Agent\Support\CommandBase;
 

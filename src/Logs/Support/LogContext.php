@@ -36,7 +36,15 @@ class LogContext
     public function toArray(): array
     {
         return $this->context->map(function ($item) {
-            return $item[$this->name];
+            if($item == null) {
+                return null;
+            }
+
+            if (array_key_exists($this->name, $item)) {
+                return $item[$this->name];
+            }
+
+            return null;
         })->toArray();
     }
 
