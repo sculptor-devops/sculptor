@@ -71,8 +71,7 @@ class DomainCreate implements ShouldQueue, ITraceable
                     Certificates::class,
                     WebServer::class,
                     Permissions::class,
-                    Deployer::class,
-                    Permissions::class
+                    Deployer::class
                 ] as $step
             ) {
                 $stage = resolve($step);

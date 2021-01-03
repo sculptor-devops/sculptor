@@ -50,6 +50,8 @@ class Deployer implements DomainAction
 
         Logs::actions()->debug("Deploy setup for {$domain->name}");
 
+        $deployer = "{$domain->root()}/deploy.php";
+
         $template = $this->compiler
             ->load($domain->configs(), 'deployer.php', $domain->type);
 
@@ -59,12 +61,8 @@ class Deployer implements DomainAction
             ->replace('{BRANCH}', $domain->branch ?? 'master')
             ->value();
 
-        if (
-            !$this->compiler
-            ->save("{$domain->root()}/deploy.php", $compiled)
-        ) {
-            throw new Exception("Cannot write deploy configuration");
-        }
+        $this->system
+            ->saveAs($deployer, $compiled, $domain->user);
 
         $this->prepare($domain);
 
@@ -77,15 +75,15 @@ class Deployer implements DomainAction
      */
     private function prepare(Domain $domain): void
     {
-        if (!File::exists($domain->current())) {
-            Logs::actions()->info("Deploy prepare/release/symlink {$domain->name}");
-
-            $this->deploy('deploy:prepare', $domain);
-
-            $this->deploy('deploy:release', $domain);
-
-            $this->deploy('deploy:symlink', $domain);
+        if (File::exists($domain->current())) {
+            return;
         }
+
+        $this->deploy('deploy:prepare', $domain);
+
+        $this->deploy('deploy:release', $domain);
+
+        $this->deploy('deploy:symlink', $domain);
     }
 
     /**

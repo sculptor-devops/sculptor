@@ -45,7 +45,8 @@ class System
         array $command,
         int $timeout = null,
         callable $realtime = null
-    ): void {
+    ): void
+    {
         $command = array_merge(['sudo', '-u', $identity], $command);
 
         $this->run($from, $command, $timeout, $realtime);
@@ -77,6 +78,10 @@ class System
         }
     }
 
+    /**
+     * @param string $filename
+     * @throws Exception
+     */
     public function deleteIfExists(string $filename): void
     {
         if (!File::exists($filename)) {
@@ -88,10 +93,40 @@ class System
         }
     }
 
+    /**
+     * @param string $filename
+     * @throws Exception
+     */
     public function errorIfNotExists(string $filename): void
     {
         if (!File::exists($filename)) {
             throw new Exception("Error file {$filename} does not exists");
         }
+    }
+
+    /**
+     * @param string $filename
+     * @param string $content
+     * @param string $identity
+     * @throws Exception
+     */
+    public function saveAs(string $filename, string $content, string $identity): void
+    {
+        if (!File::put($filename, $content)) {
+            throw new Exception("Error writing file {$filename}");
+
+        }
+
+        $this->chown($filename, $identity);
+    }
+
+    /**
+     * @param string $filename
+     * @param string $identity
+     * @throws Exception
+     */
+    public function chown(string $filename, string $identity): void
+    {
+        $this->run(File::dirname($filename), ['chown', "{$identity}:{$identity}", $filename]);
     }
 }
