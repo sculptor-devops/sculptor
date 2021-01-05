@@ -93,7 +93,7 @@ class Compiler
                 return [ 'crt' => "{$certs}.crt", 'key' => "{$certs}.key"];
 
             case CertificatesTypes::LETS_ENCRYPT:
-                return [];
+                return [ 'crt' => "{$certs}.fullchain.pem", 'key' => "{$certs}.privkey.pem"];
         }
 
         throw new Exception("Invalid certificate type {$domain->type}");

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Sculptor\Agent\Logs\Support\LogIpContext;
 use Sculptor\Agent\Logs\Support\LogTagContext;
@@ -54,10 +55,13 @@ class SystemLogs extends CommandBase
         $operation = $this->argument('operation');
 
         if ($operation == 'show') {
-            $this->table(['Available files'], $logs
+            $this->table(['Available files', 'Size'], $logs
                 ->files()
                 ->map(function ($file) {
-                    return [$file];
+                    return [
+                        $file,
+                        byteToHumanReadable(File::size($file))
+                    ];
                 })->toArray());
 
             return 0;
@@ -72,13 +76,13 @@ class SystemLogs extends CommandBase
                 return [
                     'level' => $row['level'],
                     'ip' => new LogIpContext($row['context']),
-                    'tag' =>  new LogTagContext($row['context']),
+                    'tag' => new LogTagContext($row['context']),
                     'date' => Carbon::parse($row['date']),
                     'text' => Str::limit($row['text'], 50),
                     'stack' => $this->noYes($row['stack'] == null)
                 ];
             })
-            ->toArray());
+                ->toArray());
 
         $this->warn("{$rows->count()} lines");
 

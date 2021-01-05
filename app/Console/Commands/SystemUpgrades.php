@@ -58,6 +58,8 @@ class SystemUpgrades extends CommandBase
 
             case 'check':
                 if (count($logs->events()) == 0) {
+                    Logs::security()->notice('No unattended system upgrades found');
+
                     $this->warn("No logs to parse");
 
                     return 0;

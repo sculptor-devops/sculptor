@@ -40,7 +40,7 @@ class Kernel extends ConsoleKernel
 
         $this->backups($schedule);
 
-        $this->monitors($schedule);
+        $this->alarms($schedule);
     }
 
     private function system(Schedule $schedule): void
@@ -48,9 +48,9 @@ class Kernel extends ConsoleKernel
         try {
             $schedule->command('system:monitors', ['write'])->everyMinute();
 
-            $schedule->command('system:upgrades', ['check'])->cron('59 23 * * *');
+            $schedule->command('system:clear')->dailyAt('00:00');
 
-            $schedule->command('system:clear')->daily();
+            $schedule->command('system:upgrades', ['check'])->dailyAt('23:59');
 
             // $schedule->command('queue:restart')->daily();
 
@@ -73,13 +73,13 @@ class Kernel extends ConsoleKernel
         }
     }
 
-    private function monitors(Schedule $schedule): void
+    private function alarms(Schedule $schedule): void
     {
         try {
             $monitors = resolve(AlarmRepository::class);
 
             foreach ($monitors->all() as $monitor) {
-                $schedule->command('monitors:run', [$monitor->id])->cron($monitor->cron);
+                $schedule->command('alarm:run', [$monitor->id])->cron($monitor->cron);
             }
         } catch (Exception $e) {
             Logs::batch()->report($e);

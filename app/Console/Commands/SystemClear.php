@@ -69,6 +69,8 @@ class SystemClear extends CommandBase
 
             $message = "Cleaned {$deleted} from " . Str::afterLast($class, "\\") ;
 
+            Logs::batch()->notice($message);
+
             $this->warn($message);
 
             Logs::batch()->notice($message);

@@ -69,11 +69,11 @@ class SystemSchedules extends CommandBase
             ];
         });
 
-        $schedules = $alarmSchedules->merge($backupSchedules)->toArray();
+        $schedules = $alarmSchedules->merge($backupSchedules);
 
-        $this->table(['Id', 'Type', 'Name', 'Schedule'], $schedules);
+        $this->table(['Id', 'Type', 'Name', 'Schedule'], $schedules->toArray());
 
-        $this->info(count($schedules) . " schedules total");
+        $this->info($schedules->count() . " schedules total");
 
         return 0;
     }
