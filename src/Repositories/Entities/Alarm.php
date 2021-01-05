@@ -5,6 +5,8 @@ namespace Sculptor\Agent\Repositories\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Sculptor\Agent\Contracts\BlueprintRecord;
+use Sculptor\Agent\Support\BlueprintSerializer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -13,6 +15,7 @@ use Prettus\Repository\Traits\TransformableTrait;
 */
 
 /**
+ * @property int id
  * @property string type
  * @property string condition
  * @property bool alarm
@@ -21,9 +24,11 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string rearm
  * @property string error
  */
-class Alarm extends Model implements Transformable
+class Alarm extends Model implements Transformable, BlueprintRecord
 {
     use TransformableTrait;
+
+    use BlueprintSerializer;
 
     /**
      * @var array
@@ -50,4 +55,9 @@ class Alarm extends Model implements Transformable
         'alarm_at',
         'alarm_until'
     ];
+
+    public function serialize(): array
+    {
+        return $this->serializeFiler(['alarm_id', 'alarm', 'alarm_at', 'alarm_until', 'error']);
+    }
 }

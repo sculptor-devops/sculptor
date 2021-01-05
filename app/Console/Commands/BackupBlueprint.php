@@ -27,63 +27,104 @@ class BackupBlueprint extends CommandBase
      * @var string
      */
     protected $description = 'Create system blueprint';
+    /**
+     * @var Blueprint
+     */
+    private $blueprint;
 
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param Blueprint $blueprint
      */
-    public function __construct()
+    public function __construct(Blueprint $blueprint)
     {
         parent::__construct();
+
+        $this->blueprint = $blueprint;
     }
 
     /**
      * Execute the console command.
      *
-     * @param Blueprint $blueprint
      * @return int
-     * @throws Exception
      */
-    public function handle(Blueprint $blueprint): int
+    public function handle(): int
     {
         $operation = $this->argument('operation');
 
-        $file = $this->argument('file');
-
-        $this->startTask("Blueprint {$operation}: {$file}");
+        $this->startTask("Blueprint {$operation}");
 
         switch ($operation) {
             case 'create':
-                if (!$blueprint->create($file)) {
-                    $this->errorTask($blueprint->error());
-                }
-
-                return $this->completeTask();
+                return $this->create();
 
             case 'load':
-                if (!$blueprint->load($file)) {
-                    $this->errorTask($blueprint->error());
-                }
+                return $this->load();
 
-                $this->completeTask();
-
-                $commands = $blueprint->commands();
-
-                $this->table([
-                    'Id',
-                    'Name',
-                    'Parameters',
-                    'Result'
-                ], $commands);
-
-                $this->info(count($commands) . ' commands');
-
-                return 0;
+            case 'dry':
+                return $this->dry();
         }
 
-        $this->errorTask("Unknown operation {$operation}");
+        $this->errorTask("Unknown operation {$operation} (create/load/dry)");
 
         return 1;
+    }
+
+    public function create(): int
+    {
+        $file = $this->argument('file');
+
+        if (!$this->blueprint->create($file)) {
+            return $this->errorTask($this->blueprint->error());
+        }
+
+        $this->completeTask();
+    }
+
+    public function load(): int
+    {
+        $file = $this->argument('file');
+
+        if (!$this->blueprint->load($file)) {
+            $this->errorTask($this->blueprint->error());
+        }
+
+        $this->completeTask();
+
+        $this->commands();
+
+        return 0;
+    }
+
+    public function dry(): int
+    {
+        $file = $this->argument('file');
+
+        $this->blueprint->dry();
+
+        if (!$this->blueprint->load($file)) {
+            return $this->errorTask($this->blueprint->error());
+        }
+
+        $this->completeTask();
+
+        $this->commands();
+
+        return 0;
+    }
+
+    public function commands(): void
+    {
+        $commands = $this->blueprint->commands();
+
+        $this->table([
+            'Id',
+            'Name',
+            'Parameters',
+            'Result'
+        ], $commands);
+
+        $this->info(count($commands) . ' commands');
     }
 }

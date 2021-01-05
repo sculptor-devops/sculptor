@@ -45,4 +45,19 @@ class AlarmRepository extends BaseRepository implements AlarmRepositoryInterface
 
         return $domains->first();
     }
+
+    /**
+     * @return Alarm
+     * @throws Exception
+     */
+    public function last(): Alarm
+    {
+        $all = $this->all();
+
+        if ($all->count() == 0) {
+            throw new Exception("Cannot find any alarms");
+        }
+
+        return $all->last();
+    }
 }

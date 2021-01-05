@@ -6,10 +6,12 @@ use Exception;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Enums\BackupType;
+use Sculptor\Agent\Repositories\AlarmRepository;
 use Sculptor\Agent\Repositories\BackupRepository;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\DomainRepository;
+use Sculptor\Agent\Repositories\UserRepository;
 use Symfony\Component\Yaml\Yaml;
 
 /*
@@ -57,7 +59,9 @@ class Blueprint
         DatabaseRepository::class => 'Databases',
         DatabaseUserRepository::class => 'DatabaseUsers',
         DomainRepository::class => 'Domains',
-        BackupRepository::class => 'Backups'
+        BackupRepository::class => 'Backups',
+        AlarmRepository::class => 'Alarms',
+        UserRepository::class => 'Users',
     ];
 
     /**
@@ -73,20 +77,35 @@ class Blueprint
      * @var BackupRepository
      */
     private $backups;
+    /**
+     * @var AlarmRepository
+     */
+    private $alarms;
+
+    /**
+     * @var bool
+     */
+    private $dry = false;
 
     /**
      * Blueprint constructor.
      * @param Configuration $configuration
      * @param DomainRepository $domains
      * @param BackupRepository $backups
+     * @param AlarmRepository $alarms
      */
-    public function __construct(Configuration $configuration, DomainRepository $domains, BackupRepository $backups)
+    public function __construct(Configuration $configuration,
+                                DomainRepository $domains,
+                                BackupRepository $backups,
+                                AlarmRepository $alarms)
     {
         $this->configuration = $configuration;
 
         $this->domains = $domains;
 
         $this->backups = $backups;
+
+        $this->alarms = $alarms;
     }
 
     /**
@@ -139,13 +158,19 @@ class Blueprint
 
             $this->headers();
 
+            $this->configurations();
+
             $this->databases();
 
             $this->databaseUsers();
 
+            $this->domains();
+
             $this->backups();
 
-            $this->configurations();
+            $this->alarms();
+
+            $this->users();
         } catch (Exception $e) {
             report($e);
 
@@ -165,6 +190,9 @@ class Blueprint
         return $this->commands;
     }
 
+    /**
+     * @return string|null
+     */
     public function error(): ?string
     {
         return $this->error;
@@ -204,6 +232,10 @@ class Blueprint
      */
     private function databases(): void
     {
+        if (!$this->content['Databases']) {
+            return;
+        }
+
         foreach ($this->content['Databases'] as $database) {
             $this->artisan('database:create', ['name' => $database['name']]);
         }
@@ -214,8 +246,47 @@ class Blueprint
      */
     private function databaseUsers(): void
     {
+        if (!$this->content['DatabaseUsers']) {
+            return;
+        }
+
         foreach ($this->content['DatabaseUsers'] as $user) {
             $this->artisan('database:user', [$user['database'], $user['name'], $user['host']]);
+        }
+    }
+
+    /**
+     *
+     */
+    private function users(): void
+    {
+        if (!$this->content['Users']) {
+            return;
+        }
+
+        foreach ($this->content['Users'] as $user) {
+            $this->artisan('system:user', ['create', $user['name'], $user['email']]);
+        }
+    }
+
+    /**
+     *
+     * @throws Exception
+     */
+    private function alarms(): void
+    {
+        if (!$this->content['Alarms']) {
+            return;
+        }
+
+        foreach ($this->content['Alarms'] as $alarm) {
+            $this->artisan('alarm:create', [$alarm['type']]);
+
+            $item = $this->alarms->last();
+
+            foreach (['message', 'to', 'name', 'monitor', 'condition', 'rearm'] as $key) {
+                $this->artisan('alarm:setup', [$item->id, $key, $alarm[$key]]);
+            }
         }
     }
 
@@ -224,6 +295,10 @@ class Blueprint
      */
     private function domains(): void
     {
+        if (!$this->content['Domains']) {
+            return;
+        }
+
         foreach ($this->content['Domains'] as $domain) {
             $this->artisan('domain:create', [$domain['name'], $domain['type']]);
 
@@ -264,6 +339,10 @@ class Blueprint
      */
     private function backups(): void
     {
+        if (!$this->content['Backups']) {
+            return;
+        }
+
         foreach ($this->content['Backups'] as $backup) {
             switch ($backup['type']) {
                 case BackupType::BLUEPRINT:
@@ -297,6 +376,10 @@ class Blueprint
      */
     private function configurations(): void
     {
+        if (!$this->content['Configurations']) {
+            return;
+        }
+
         foreach ($this->content['Configurations'] as $name => $value) {
             $this->artisan('system:configuration', [$name, $value]);
         }
@@ -309,16 +392,35 @@ class Blueprint
      */
     private function file(string $file, string $payload): bool
     {
-        $result = true;
-        // $result = File::put( $file, $payload);
+        if ($this->dry) {
+            $this->pushCommand(
+                'File',
+                [$file],
+                'dry run'
+            );
+
+            return true;
+        }
+
+        try {
+            $result = File::put($file, $payload);
+
+            if (!$result) {
+                throw new Exception("Error writing {$file}");
+            }
+        } catch (Exception $e) {
+            report($e);
+
+            $result = $e->getMessage();
+        }
 
         $this->pushCommand(
             'File',
             [$file],
-            $result ? 'Ok' : 'Error'
+            $result
         );
 
-        return true;
+        return $result;
     }
 
     /**
@@ -344,6 +446,12 @@ class Blueprint
     {
         $result = 'Ok';
 
+        if ($this->dry) {
+            $this->pushCommand($name, $parameters, 'dry run');
+
+            return;
+        }
+
         try {
             $code = Artisan::call($name, $parameters);
 
@@ -357,5 +465,10 @@ class Blueprint
         }
 
         $this->pushCommand($name, $parameters, $result);
+    }
+
+    public function dry(): void
+    {
+        $this->dry = true;
     }
 }
