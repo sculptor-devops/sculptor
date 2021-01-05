@@ -433,7 +433,7 @@ class Blueprint
         $this->commands[] = [
             'id' => count($this->commands) + 1,
             'name' => $name,
-            'parameters' => implode(' ', $parameters),
+            'parameters' => '"'  . implode('" "',  $parameters) . '"',
             'result' => $result ?? 'Ok'
         ];
     }

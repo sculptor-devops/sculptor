@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Exception;
+use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Blueprint;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -64,6 +65,9 @@ class BackupBlueprint extends CommandBase
 
             case 'dry':
                 return $this->dry();
+
+            case 'bash':
+                return $this->bash();
         }
 
         $this->errorTask("Unknown operation {$operation} (create/load/dry)");
@@ -80,6 +84,20 @@ class BackupBlueprint extends CommandBase
         }
 
         $this->completeTask();
+    }
+
+    public function commands(): void
+    {
+        $commands = $this->blueprint->commands();
+
+        $this->table([
+            'Id',
+            'Name',
+            'Parameters',
+            'Result'
+        ], $commands);
+
+        $this->info(count($commands) . ' commands');
     }
 
     public function load(): int
@@ -114,17 +132,30 @@ class BackupBlueprint extends CommandBase
         return 0;
     }
 
-    public function commands(): void
+    public function bash(): int
     {
-        $commands = $this->blueprint->commands();
+        $file = $this->argument('file');
 
-        $this->table([
-            'Id',
-            'Name',
-            'Parameters',
-            'Result'
-        ], $commands);
+        $bash = "{$file}.sh";
 
-        $this->info(count($commands) . ' commands');
+        $this->blueprint->dry();
+
+        if (!$this->blueprint->load($file)) {
+            return $this->errorTask($this->blueprint->error());
+        }
+
+        $this->completeTask();
+
+        File::put($bash, "#!/bin/bash\n# Created from {$file}.\n");
+
+        foreach ($this->blueprint->commands() as $command) {
+            $line = "sudo sculptor {$command['name']} {$command['parameters']}";
+
+            File::append($bash, "# {$command['id']}\n{$line}\n");
+        }
+
+        $this->warn("Bash written to {$bash}");
+
+        return 0;
     }
 }
