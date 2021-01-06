@@ -5,7 +5,7 @@ namespace Sculptor\Agent\Actions\Domains;
 use Exception;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Exceptions\DatabaseUserNotFoundException;
-use Sculptor\Agent\Exceptions\ParameterInvalidException;
+use Sculptor\Agent\Exceptions\ParameterInvalidValueException;
 use Sculptor\Agent\PasswordGenerator;
 use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
@@ -76,7 +76,7 @@ class Parameters
         $validator = Validator::make('Domain');
 
         if (!in_array($name, Parameters::ALLOWED)) {
-            throw new ParameterInvalidException($name);
+            throw new ParameterInvalidValueException($name);
         }
 
         if ($name == 'database') {
@@ -98,7 +98,7 @@ class Parameters
         }
 
         if (!$validator->validate($name, $value)) {
-            throw new ParameterInvalidException($name);
+            throw new ParameterInvalidValueException("{$name} - {$validator->error()}");
         }
 
         $domain->update(["{$name}" => $this->normalize($value)]);

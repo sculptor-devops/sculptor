@@ -72,7 +72,11 @@ class SculptorServiceProvider extends ServiceProvider
         'schema:dump',
         'session:table',
         'storage:link',
-        'stub:publish'
+        'stub:publish',
+        'cache:table',
+        'queue:batches-table',
+        'queue:failed-table',
+        'queue:table'
     ];
 
     /**

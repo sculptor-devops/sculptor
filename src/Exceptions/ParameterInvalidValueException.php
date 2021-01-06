@@ -11,10 +11,10 @@ use Throwable;
  *  file that was distributed with this source code.
 */
 
-class ParameterInvalidException extends Exception
+class ParameterInvalidValueException extends Exception
 {
     public function __construct($name = "", $code = 0, Throwable $previous = null)
     {
-        parent::__construct("Invalid parameter {$name}", $code, $previous);
+        parent::__construct("Invalid parameter value {$name}", $code, $previous);
     }
 }

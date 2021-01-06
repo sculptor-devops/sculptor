@@ -227,7 +227,7 @@ class Domains implements ActionInterface
             }
         } catch (Exception $e) {
             return $this->action
-                ->report("Enable domain {$name}: {$e->getMessage()}");
+                ->report("Setup domain {$name}: {$e->getMessage()}");
         }
 
         $this->machine

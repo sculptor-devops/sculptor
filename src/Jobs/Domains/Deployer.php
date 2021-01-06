@@ -126,6 +126,11 @@ class Deployer implements DomainAction
      */
     private function deploy(string $command, Domain $domain, bool $worker = false): bool
     {
+        if ($domain->vcs == null) {
+            Logs::actions()->info("Deploy {$domain->name} skipped, no vcs defined");
+            return;
+        }
+
         Logs::actions()->info("Deploy run {$command} on {$domain->name}");
 
         $user = $domain->user;
