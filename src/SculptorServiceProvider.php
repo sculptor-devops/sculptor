@@ -3,6 +3,8 @@
 namespace Sculptor\Agent;
 
 use Exception;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Sculptor\Agent\Backup\Archives\Dropbox;
@@ -28,6 +30,51 @@ use Sculptor\Agent\Facades\Logs as LogsFacade;
 
 class SculptorServiceProvider extends ServiceProvider
 {
+    private $hidden = [
+        'vendor:publish',
+        'inspire',
+        'serve',
+        'tinker',
+        'db:seed',
+        'db:wipe',
+        'make:bindings',
+        'make:cast',
+        'make:channel',
+        'make:command',
+        'make:component',
+        'make:controller',
+        'make:criteria',
+        'make:entity',
+        'make:event',
+        'make:exception',
+        'make:factory',
+        'make:job',
+        'make:listener',
+        'make:mail',
+        'make:middleware',
+        'make:migration',
+        'make:model',
+        'make:notification',
+        'make:observer',
+        'make:policy',
+        'make:presenter',
+        'make:provider',
+        'make:repository',
+        'make:request',
+        'make:resource',
+        'make:rest-controller',
+        'make:rule',
+        'make:seeder',
+        'make:test',
+        'make:transformer',
+        'make:validator',
+        'notifications:table',
+        'schema:dump',
+        'session:table',
+        'storage:link',
+        'stub:publish'
+    ];
+
     /**
      * Register services.
      *
@@ -52,7 +99,7 @@ class SculptorServiceProvider extends ServiceProvider
 
             switch ($driver) {
                 case BackupArchiveType::LOCAL:
-                    return  resolve(Local::class);
+                    return resolve(Local::class);
 
                 case BackupArchiveType::S3:
                     return resolve(S3::class);
@@ -73,6 +120,8 @@ class SculptorServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->hideCommands();
+
         $this->connection();
     }
 
@@ -100,5 +149,18 @@ class SculptorServiceProvider extends ServiceProvider
         $database['password'] = $this->password();
 
         ConfigurationFacade::database($database);
+    }
+
+    private function hideCommands(): void
+    {
+        if (!App::environment('production')) {
+            return;
+        }
+
+        foreach (Artisan::all() as $key => $command) {
+            if (in_array($key, $this->hidden)) {
+                $command->setHidden(true);
+            }
+        }
     }
 }

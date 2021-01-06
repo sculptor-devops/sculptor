@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Logs;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Rap2hpoutre\LaravelLogViewer\LaravelLogViewer;
 
@@ -67,7 +68,14 @@ class Parser
      */
     public function files(): Collection
     {
-        return collect($this->parser->getFolderFiles());
+        $files = collect($this->parser->getFolderFiles());
+
+        return $files->map(function ($file) {
+            return [
+                'name' => File::basename($file),
+                'size' => byteToHumanReadable(File::size($file))
+            ];
+        });
     }
 
     /**
@@ -80,6 +88,8 @@ class Parser
         if ($file == null) {
             $file = $this->files()->first();
         }
+
+        $file = $this->parser->pathToLogFile($file);
 
         return collect($this->rows($file))
             ->map(function ($row) {
