@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Exception;
 use Sculptor\Agent\Facades\Logs;
+use Sculptor\Agent\Jobs\SystemUpgradeCheck;
 use Sculptor\Agent\Logs\Upgrades;
 use Sculptor\Agent\Support\CommandBase;
 
@@ -57,23 +58,9 @@ class SystemUpgrades extends CommandBase
                 return 0;
 
             case 'check':
-                if (count($logs->events()) == 0) {
-                    Logs::security()->notice('No unattended system upgrades found');
+                SystemUpgradeCheck::dispatch();
 
-                    $this->warn("No logs to parse");
-
-                    return 0;
-                }
-
-                $event = $logs->last();
-
-                if ($event->recent()) {
-                    $packages = implode(', ', $event->packages());
-
-                    $this->info("System upgraded recently to {$packages}");
-
-                    Logs::security()->alert("System unattended upgrades {$packages}");
-                }
+                $this->warn('Upgrade check dispatched, check logs for further information');
 
                 return 0;
         }

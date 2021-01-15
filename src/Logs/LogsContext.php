@@ -79,6 +79,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function alert(string $message, array $context = array()): void
     {
@@ -92,6 +93,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function critical(string $message, array $context = array()): void
     {
@@ -105,6 +107,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function error(string $message, array $context = array()): void
     {
@@ -118,6 +121,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function warning(string $message, array $context = array()): void
     {
@@ -131,6 +135,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function notice(string $message, array $context = array()): void
     {
@@ -144,6 +149,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function info(string $message, array $context = array()): void
     {
@@ -157,6 +163,7 @@ class LogsContext implements LogContext
     /**
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function debug(string $message, array $context = array()): void
     {
@@ -173,6 +180,7 @@ class LogsContext implements LogContext
      * @param mixed $level
      * @param string $message
      * @param array $context
+     * @throws ValidatorException
      */
     public function log(int $level, string $message, array $context = array()): void
     {
@@ -185,6 +193,7 @@ class LogsContext implements LogContext
 
     /**
      * @param Throwable $e
+     * @throws ValidatorException
      */
     public function report(Throwable $e): void
     {

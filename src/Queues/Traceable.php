@@ -122,4 +122,17 @@ trait Traceable
 
         $this->ref->update(['status' => $status, 'error' => $error]);
     }
+
+    /**
+     * @param string $value
+     * @throws QueueJobRefUndefinedException
+     */
+    public function payload(string $value): void
+    {
+        if ($this->ref === null) {
+            throw new QueueJobRefUndefinedException();
+        }
+
+        $this->ref->update(['payload' => $value]);
+    }
 }

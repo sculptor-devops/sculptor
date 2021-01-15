@@ -41,4 +41,9 @@ interface ITraceable
      * @throws Exception
      */
     public function report(Throwable $error): void;
+
+    /**
+     * @param string $value
+     */
+    public function payload(string $value): void;
 }
