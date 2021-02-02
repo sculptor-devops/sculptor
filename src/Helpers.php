@@ -30,3 +30,19 @@ if (!function_exists('byteToHumanReadable')) {
         return round($size, $precision) . $units[$i];
     }
 }
+
+if (!function_exists('composerVersion')) {
+    function composerVersion(): ?string
+    {
+        $content = file_get_contents(__DIR__ . '/../composer.json');
+
+        $payload = json_decode($content, true);
+
+        if ($payload['version']) {
+            return $payload['version'];
+        }
+
+        return null;
+    }
+}
+

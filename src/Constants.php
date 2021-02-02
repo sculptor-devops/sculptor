@@ -6,9 +6,6 @@
  *  file that was distributed with this source code.
 */
 
-define('COMMAND_INTERFACE', 1);
-define('BLUEPRINT_VERSION', 1);
-define('API_VERSION', 1);
 define('THROTTLE_COUNT', 20);
 define('THROTTLE_TIME_SPAN', 360);
 define('SITES_HOME', '/home');
