@@ -22,14 +22,14 @@ class SystemInfo extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'system:info';
+    protected $signature = 'system:info {--version-only}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'System informations';
+    protected $description = 'System information';
 
     /**
      * Create a new command instance.
@@ -50,9 +50,13 @@ class SystemInfo extends CommandBase
      */
     public function handle(Configuration $configurations, Version $version): int
     {
-        $updates = $this->updates();
-
         $current = composerVersion();
+
+        if ($this->option('version-only')) {
+            $this->warn($current);
+
+            return 0;
+        }
 
         $this->table([
             'Name',
@@ -69,6 +73,8 @@ class SystemInfo extends CommandBase
             ]);
 
         $this->info("Modules: " . Str::upper(env('SCULPTOR_INSTALLED_MODULES')));
+
+        $updates = $this->updates();
 
         if (version_compare($updates, $current) > 0) {
             $this->warn("New update available {$updates}");
