@@ -136,6 +136,7 @@ class Certificates implements DomainAction
 
             '--deploy-hook',
             "/usr/bin/sculptor domain:certbot {$domain->name} deploy",
+
             '--pre-hook',
             "/usr/bin/sculptor domain:certbot {$domain->name} pre",
 
@@ -180,6 +181,14 @@ class Certificates implements DomainAction
 
             $to = "{$domain->root()}/certs/{$domain->name}.{$cert}";
 
+            if (!File::exists($from)) {
+                throw new Exception("Cannot find source file {$from}");
+            }
+
+            if (!File::exists($to)) {
+                throw new Exception("Cannot find destination file {$to}");
+            }
+
             if (!File::copy($from, $to)) {
                 throw new Exception("Cannot copy certbot certificates from {$from} to {$to}");
             }
@@ -198,7 +207,7 @@ class Certificates implements DomainAction
 
         $path = "{$domain->root()}/certs/{$domain->name}";
 
-        foreach (["{$path}/.cert.pem" => "{$path}/.crt", "{$path}/.privkey.pem" => "{$path}.key"] as $from => $to) {
+        foreach (["{$path}.cert.pem" => "{$path}.crt", "{$path}.privkey.pem" => "{$path}.key"] as $from => $to) {
             if (!File::copy($from, $to)) {
                 throw new Exception("Cannot copy certificate from {$from} to {$to}");
             }

@@ -70,7 +70,7 @@ class SystemInfo extends CommandBase
 
         $this->info("Modules: " . Str::upper(env('SCULPTOR_INSTALLED_MODULES')));
 
-        if ($updates != $current) {
+        if (version_compare($updates, $current) > 0) {
             $this->warn("New update available {$updates}");
         }
 
