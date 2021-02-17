@@ -58,7 +58,7 @@ class SystemUpgrades extends CommandBase
                 return 0;
 
             case 'check':
-                SystemUpgradeCheck::dispatch();
+                dispatch((new SystemUpgradeCheck)->onQueue('system'));
 
                 $this->warn('Upgrade check dispatched, check logs for further information');
 
