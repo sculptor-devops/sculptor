@@ -136,7 +136,7 @@ class Upgrades
                 continue;
             }
 
-            if ($this->parseEnd($line)) {
+            if ($this->parseEnd($line, $date)) {
                 continue;
             }
 
@@ -187,17 +187,23 @@ class Upgrades
      * @return bool
      * @throws Exception
      */
-    private function parseEnd(string $line): bool
+    private function parseEnd(string $line, Carbon $date): bool
     {
+        $current = $date;
+
         if (Str::startsWith($line, $this->endTag) && $this->opened) {
-            $this->opened = false;
-
-            $this->endDate = new Carbon(Str::after($line, ':'));
-
-            return true;
+            $current = new Carbon(Str::after($line, ':'));
         }
 
-        return false;
+        if ($current->isSameDay($date)) {
+            return false;
+        }
+
+        $this->opened = false;
+
+        $this->endDate = new Carbon(Str::after($line, ':'));
+
+        return true;
     }
 
     /**
