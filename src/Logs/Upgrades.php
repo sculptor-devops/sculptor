@@ -91,9 +91,27 @@ class Upgrades
     {
         $result = [];
 
+        $last = null;
+
         foreach ($this->lines() as $line) {
+            $date = null;
+
             if (Str::startsWith($line, $this->startTag)) {
-                $result[] = new Carbon(Str::after($line, ':'));
+                $date= new Carbon(Str::after($line, ':'));
+            }
+
+            if($date == null) {
+                continue;
+            }
+
+            if ($last == null) {
+                $last = $date;
+            }
+
+            if (!$last->isSameDay($date)) {
+                $result[] = $date;
+
+                $last = $date;
             }
         }
 
