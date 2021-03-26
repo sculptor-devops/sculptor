@@ -135,4 +135,11 @@ trait Traceable
 
         $this->ref->update(['payload' => $value]);
     }
+    
+    public function enqueue(ITraceable $job): void
+    {
+        $job->ref($this->ref);
+
+        dispatch($job);
+    }
 }
