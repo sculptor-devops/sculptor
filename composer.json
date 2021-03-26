@@ -27,6 +27,7 @@
         "php": "^7.3",
         "ext-json": "*",
         "ext-posix": "*",
+        "enlightn/security-checker": "^1.7",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
         "graham-campbell/throttle": "^8.1",

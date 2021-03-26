@@ -24,6 +24,7 @@ use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Jobs\DomainTemplates;
 use Sculptor\Agent\Repositories\DomainRepository;
 use Sculptor\Agent\Contracts\Action as ActionInterface;
+use Enlightn\SecurityChecker\SecurityChecker;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -334,5 +335,30 @@ class Domains implements ActionInterface
         }
 
         return true;
+    }
+
+    /**
+     * @param string $name
+     * @return array|null
+     * @throws GuzzleException
+     * @throws ValidatorException
+     */
+    public function security(string $name): array
+    {
+        Logs::actions()->info("Domain security {$name}");
+
+        $checker = new SecurityChecker;
+
+        try {
+            $domain = $this->repository
+                ->byName($name);
+
+            return $checker->check("{$domain->current()}/composer.lock");
+        } catch (Exception $e) {
+            $this->action
+                ->report("Domain security {$name}: {$e->getMessage()}");
+        }
+
+        return [];
     }
 }
