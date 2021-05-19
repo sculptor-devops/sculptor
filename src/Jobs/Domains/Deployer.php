@@ -128,7 +128,7 @@ class Deployer implements DomainAction
     {
         if ($domain->vcs == null) {
             Logs::actions()->info("Deploy {$domain->name} skipped, no vcs defined");
-            return;
+            return true;
         }
 
         Logs::actions()->info("Deploy run {$command} on {$domain->name}");
