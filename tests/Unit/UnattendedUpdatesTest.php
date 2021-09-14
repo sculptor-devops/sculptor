@@ -29,7 +29,7 @@ class UnattendedUpdatesTest extends TestCase
 
         $events = $upgrades->events();
 
-        $this->assertCount(15, $events);
+        $this->assertCount(5, $events);
 
         $this->assertEquals([
             Carbon::parse('2020-05-19 06:57:45'),
@@ -72,6 +72,6 @@ class UnattendedUpdatesTest extends TestCase
 
         $this->assertEquals(Carbon::parse(1589871511), $parsed->end());
 
-        $this->assertCount(91, $parsed);
+        $this->assertCount(15, $parsed);
     }
 }

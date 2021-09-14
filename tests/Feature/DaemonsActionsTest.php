@@ -5,9 +5,13 @@ namespace Tests\Feature;
 use Sculptor\Agent\Actions\Daemons as Actions;
 use Tests\Stubs\DaemonsStub;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
 
 class DaemonsActionsTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /**
      * @var Actions|null
      */
