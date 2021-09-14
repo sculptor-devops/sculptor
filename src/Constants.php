@@ -13,7 +13,7 @@ define('SITES_USER', 'www');
 define('SITES_PUBLIC', 'public');
 define('SITES_DEPLOY', 'deploy');
 define('SITES_INSTALL', 'deploy:install');
-define('PHP_VERSION', '8.0');
+define('PHP_AGENT_VERSION', '8.0');
 
 define('BACKUP_CRON', '0 0 * * *');
 define('BACKUP_ROTATE', 7);
