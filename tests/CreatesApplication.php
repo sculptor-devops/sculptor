@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Artisan;
 use Illuminate\Contracts\Console\Kernel;
 
 trait CreatesApplication
@@ -17,9 +16,6 @@ trait CreatesApplication
         $app = require __DIR__.'/../bootstrap/app.php';
 
         $app->make(Kernel::class)->bootstrap();
-
-        Artisan::call('migrate');
-        Artisan::call('db:seed');
 
         return $app;
     }

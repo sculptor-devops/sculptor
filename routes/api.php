@@ -21,6 +21,3 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('/v1/info', '\Sculptor\Agent\Api\Controllers\InfoController@index')->name('v1.api.info');
     Route::get('/v1', '\Sculptor\Agent\Api\Controllers\InfoController@logged')->name('v1.api.logged');
 });
-
-
-

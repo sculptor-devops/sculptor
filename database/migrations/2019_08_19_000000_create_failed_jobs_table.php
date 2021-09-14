@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateFailedJobsTable extends Migration
 {
     /**
-     * System the migrations.
+     * Run the migrations.
      *
      * @return void
      */
@@ -15,6 +15,7 @@ class CreateFailedJobsTable extends Migration
     {
         Schema::create('failed_jobs', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->text('connection');
             $table->text('queue');
             $table->longText('payload');

@@ -2,18 +2,10 @@
 
 namespace App\Console;
 
-use App\Console\Commands\DaemonsManage;
-use App\Console\Commands\DatabaseUserPassword;
-use App\Console\Commands\DatabaseCreate;
-use App\Console\Commands\DatabaseUserCreate;
-use App\Console\Commands\DatabaseDelete;
-use App\Console\Commands\DatabaseUserDelete;
-use App\Console\Commands\SystemTasks;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\BackupRepository;
 use Sculptor\Agent\Repositories\AlarmRepository;
@@ -26,12 +18,13 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        //
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param Schedule $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -84,7 +77,7 @@ class Kernel extends ConsoleKernel
         } catch (Exception $e) {
             Logs::batch()->report($e);
         }
-    }
+    }    
 
     /**
      * Register the commands for the application.
@@ -93,7 +86,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
     }

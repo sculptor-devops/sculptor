@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateUsersTable extends Migration
 {
     /**
-     * System the migrations.
+     * Run the migrations.
      *
      * @return void
      */
