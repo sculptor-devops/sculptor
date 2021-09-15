@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Actions\Domains;
 
 use Exception;
+use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Exceptions\DatabaseNotFoundException;
 use Sculptor\Agent\Exceptions\DatabaseUserNotFoundException;
 use Sculptor\Agent\Exceptions\ParameterInvalidValueException;
@@ -37,7 +38,8 @@ class Parameters
         'email',
         'token',
         'provider',
-        'branch'
+        'branch',
+        'engine'
     ];
     /**
      * @var DatabaseRepository
@@ -95,6 +97,10 @@ class Parameters
             $domain->update(['token', $this->password->token()]);
 
             return true;
+        }
+
+        if ($name == 'engine' && !File::exists(ENGINE_PATH . $value)) {
+            throw new Exception("Engine version {value} not installed");
         }
 
         if (!$validator->validate($name, $value)) {

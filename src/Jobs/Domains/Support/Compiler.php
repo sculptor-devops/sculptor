@@ -34,6 +34,8 @@ class Compiler
      */
     public function replace(string $template, Domain $domain): Replacer
     {
+        $engine = $domain->engine ?? ENGINE_VERSION;
+
         return Replacer::make($template)
             ->replace('{DOMAINS}', $domain->serverNames())
             ->replace('{URL}', "https://{$domain->name}")
@@ -43,6 +45,7 @@ class Compiler
             ->replace('{CURRENT}', $domain->current())
             ->replace('{HOME}', $domain->home)
             ->replace('{USER}', $domain->user)
+            ->replace('{PHP}', ENGINE_PATH . $engine)
             ->replace('{PHP_VERSION}', $this->configuration->php($domain->engine));
     }
 

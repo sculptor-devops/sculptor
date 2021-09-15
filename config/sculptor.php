@@ -25,7 +25,7 @@ return [
     ],
 
     'php' => [
-        'version' => env('PHP_VERSION', PHP_VERSION)
+        'version' => env('PHP_VERSION', ENGINE_VERSION)
     ],
 
     'security' => [
@@ -42,7 +42,7 @@ return [
         ],
         DaemonGroupType::WEB => [
             'nginx',
-            'php' . env('PHP_VERSION', PHP_VERSION) . '-fpm'
+            'php' . env('PHP_VERSION', ENGINE_VERSION) . '-fpm'
         ],
         DaemonGroupType::QUEUE => [
             'redis',
