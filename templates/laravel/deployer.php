@@ -82,11 +82,11 @@ task('deploy:install', [
 ]);
 
 task('deploy:key', function () {
-    run("php {PATH}/current/artisan key:generate");
+    run("{PHP} {PATH}/current/artisan key:generate");
 });
 
 task('deploy:migrate', function () {
-    run("php {PATH}/current/artisan migrate --force");
+    run("{PHP} {PATH}/current/artisan migrate --force");
 });
 
 task('deploy:owner', function () {

@@ -1,6 +1,6 @@
 [program:{NAME}]
 process_name=%(program_name)s_%(process_num)02d
-command=/usr/bin/php {CURRENT}/artisan queue:work --daemon
+command={PHP} {CURRENT}/artisan queue:work --daemon
 autostart=true
 autorestart=true
 user={USER}

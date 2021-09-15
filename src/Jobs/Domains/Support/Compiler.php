@@ -52,7 +52,7 @@ class Compiler
             ->replace('{HOME}', $domain->home)
             ->replace('{USER}', $domain->user)
             ->replace('{PHP}', $this->php->path($domain->engine ?? ENGINE_VERSION))
-            ->replace('{PHP_VERSION}', $this->php->agent());
+            ->replace('{PHP_VERSION}', $domain->engine);
     }
 
     /**
