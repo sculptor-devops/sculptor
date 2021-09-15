@@ -8,6 +8,7 @@ use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Enums\CertificatesTypes;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Foundation\Support\Replacer;
+use Sculptor\Agent\Support\PhpVersions;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -22,9 +23,16 @@ class Compiler
      */
     private $configuration;
 
-    public function __construct(Configuration $configuration)
+    /**
+     * @var PhpVersions
+     */
+    private $php;
+
+    public function __construct(Configuration $configuration, PhpVersions $php)
     {
         $this->configuration = $configuration;
+
+        $this->php = $php;
     }
 
     /**
@@ -34,8 +42,6 @@ class Compiler
      */
     public function replace(string $template, Domain $domain): Replacer
     {
-        $engine = $domain->engine ?? ENGINE_VERSION;
-
         return Replacer::make($template)
             ->replace('{DOMAINS}', $domain->serverNames())
             ->replace('{URL}', "https://{$domain->name}")
@@ -45,8 +51,8 @@ class Compiler
             ->replace('{CURRENT}', $domain->current())
             ->replace('{HOME}', $domain->home)
             ->replace('{USER}', $domain->user)
-            ->replace('{PHP}', ENGINE_PATH . $engine)
-            ->replace('{PHP_VERSION}', $this->configuration->php($domain->engine));
+            ->replace('{PHP}', $this->php->path($domain->engine ?? ENGINE_VERSION))
+            ->replace('{PHP_VERSION}', $this->php->agent());
     }
 
     /**

@@ -12,7 +12,7 @@ use Sculptor\Agent\Repositories\DatabaseRepository;
 use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Agent\Validation\Validator;
-
+use Sculptor\Agent\Support\PhpVersions;
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
@@ -53,17 +53,24 @@ class Parameters
      * @var PasswordGenerator
      */
     private $password;
+    /**
+     * @var PhpVersions
+     */
+    private $php;
 
     public function __construct(
         DatabaseRepository $databases,
         DatabaseUserRepository $users,
-        PasswordGenerator $password
+        PasswordGenerator $password,
+        PhpVersions $php
     ) {
         $this->databases = $databases;
 
         $this->users = $users;
 
         $this->password = $password;
+
+        $this->php = $php;
     }
 
     /**
@@ -99,8 +106,8 @@ class Parameters
             return true;
         }
 
-        if ($name == 'engine' && !File::exists(ENGINE_PATH . $value)) {
-            throw new Exception("Engine version {value} not installed");
+        if ($name == 'engine' && !$this->php->installed($value)) {
+            throw new Exception("Engine version {$value} not installed");
         }
 
         if (!$validator->validate($name, $value)) {
