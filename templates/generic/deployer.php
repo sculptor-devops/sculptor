@@ -25,6 +25,10 @@ set('env', [
     #'GIT_SSH_COMMAND' => 'ssh -F {PATH}/ssh_config'
 ]);
 
+set('bin/php', function () {
+    return '{PHP}';
+});
+
 // Hosts
 localhost()
     ->set('deploy_path', '{PATH}')
