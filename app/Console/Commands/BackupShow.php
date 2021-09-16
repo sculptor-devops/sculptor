@@ -54,15 +54,15 @@ class BackupShow extends CommandBase
     {
         $all = $backups->all();
 
-        $this->padded('Current system time is', now());
+        $this->padded('Current system time', now());
 
-        $this->padded('Temp directory is', $configuration->get('sculptor.backup.temp'));
+        $this->padded('Temp directory', $configuration->get('sculptor.backup.temp'));
 
-        $this->padded('Default compression driver is ', 'Zip');
+        $this->padded('Compression driver ', 'Zip');
 
-        $this->padded('Default archive driver is ', $configuration->get('sculptor.backup.drivers.default'));
+        $this->padded('Archive driver ', $configuration->get('sculptor.backup.drivers.default'));
 
-        $this->padded('Default rotation policy is ', $configuration->get('sculptor.backup.rotation'));
+        $this->padded('Rotation policy ', $configuration->get('sculptor.backup.rotation'));
 
         $this->padded('Total backups batch', $all->count());
 
