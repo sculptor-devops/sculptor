@@ -2,7 +2,7 @@
     "name": "sculptor-devops/sculptor",
     "type": "project",
     "description": "Sculptor Devops Agent",
-    "version": "0.8.7",
+    "version": "0.8.9",
     "keywords": [
         "framework",
         "laravel",

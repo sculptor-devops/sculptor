@@ -105,13 +105,6 @@ class Configuration
 
         $configuration = $this->findPointedKey($name);
 
-
-        if ($name == 'sculptor.services') {
-            dd($configuration);
-        }
-
-
-
         if ($configuration != null) {
             return $configuration;
         }
