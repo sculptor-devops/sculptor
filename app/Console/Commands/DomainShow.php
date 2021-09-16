@@ -99,6 +99,7 @@ class DomainShow extends CommandBase
             ['name' => 'certificate email', 'value' => $item->email ?? 'none'],
             ['name' => 'www', 'value' => $this->yesNo($item->www)],
             ['name' => 'http user', 'value' => $item->user],
+            ['name' => 'php engine', 'value' => $item->engine],            
             ['name' => 'root', 'value' => $item->root()],
             ['name' => 'current', 'value' => $item->current()],
             ['name' => 'public', 'value' => $item->home()],

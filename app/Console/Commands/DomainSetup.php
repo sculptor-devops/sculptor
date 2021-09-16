@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Exception;
 use Sculptor\Agent\Actions\Domains;
 use Sculptor\Agent\Support\CommandBase;
+use Sculptor\Agent\Actions\Domains\Parameters;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -19,7 +20,7 @@ class DomainSetup extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'domain:setup {name} {parameter} {value}';
+    protected $signature = 'domain:setup {name?} {parameter?} {value?}';
 
     /**
      * The console command description.
@@ -52,6 +53,14 @@ class DomainSetup extends CommandBase
 
         $value = $this->argument('value');
 
+        if ($name == null || $parameter == null) {
+            $this->warn('Syntax: <<DOMAIN NAME>> <<PARAMETER>> <<VALUE>>');
+
+            $this->warn('PARAMETER: ' . collect(Parameters::ALLOWED)->sort()->join(','));
+
+            return 1;
+        }
+
         $this->startTask("Domain setup {$name} {$parameter}={$value}");
 
         if (!$domains->setup($name, $parameter, $value)) {
@@ -61,8 +70,6 @@ class DomainSetup extends CommandBase
         $this->completeTask();
 
         $this->warn("Now you need to run domain:configure {$name} to apply modifications");
-
-        $this->warn("Valid parameters: " . collect(Domains\Parameters::ALLOWED)->join(','));
 
         return 0;
     }
