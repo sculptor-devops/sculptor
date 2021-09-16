@@ -21,6 +21,8 @@ use Sculptor\Foundation\Database\MySql;
 use Sculptor\Foundation\Runner\Runner as RunnerImplementation;
 use Sculptor\Agent\Facades\Configuration as ConfigurationFacade;
 use Sculptor\Agent\Facades\Logs as LogsFacade;
+use Sculptor\Agent\Support\PhpVersions;
+use Sculptor\Agent\Enums\DaemonGroupType;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -124,6 +126,8 @@ class SculptorServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->versions();
+
         $this->hideCommands();
 
         $this->connection();
@@ -166,5 +170,24 @@ class SculptorServiceProvider extends ServiceProvider
                 $command->setHidden(true);
             }
         }
+    }
+
+    private function versions(): void
+    {
+        $key = 'sculptor.services.' . DaemonGroupType::WEB;
+
+        $versions = resolve(PhpVersions::class);
+
+        $services = config($key);
+
+        foreach ($versions->available() as $version) {
+            $name = "php{$version}-fpm";
+
+            if (!in_array($name, $services)) {
+                $services[] = $name;
+            }
+        }
+
+        config([ $key => $services ]);
     }
 }

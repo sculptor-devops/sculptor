@@ -96,6 +96,7 @@ class Configuration
     {
         $value = Cache::get($this->key($name), null);
 
+
         if ($value != null) {
             return $value;
         }
@@ -103,6 +104,13 @@ class Configuration
         $standard = config($name);
 
         $configuration = $this->findPointedKey($name);
+
+
+        if ($name == 'sculptor.services') {
+            dd($configuration);
+        }
+
+
 
         if ($configuration != null) {
             return $configuration;
@@ -152,6 +160,11 @@ class Configuration
     public function getBool(string $name): int
     {
         return $this->get($name) == '1' || $this->get($name) == 'true';
+    }
+
+    public function getArray(string $name): array
+    {
+        return $this->get($name) ?? [];
     }
 
     /**
