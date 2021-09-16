@@ -57,7 +57,7 @@ class Operations
      */
     public function run(string $service, string $operation): bool
     {
-        Logs::job()->debug("Daemon {$operation} {$service}");
+        Logs::job()->info("Daemon {$operation} {$service}");
 
         switch ($operation) {
             case DaemonOperationsType::START:

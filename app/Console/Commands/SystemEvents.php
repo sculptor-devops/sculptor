@@ -75,7 +75,6 @@ class SystemEvents extends CommandBase
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->skip($page * $limit)
-            ->get(['created_at', 'tag', 'level', 'message'])
             ->map(function ($item) {
                 return [
                     'created_at' => $item->created_at->format('Y-m-d H:i'),
