@@ -68,7 +68,15 @@ class DomainSecurity extends CommandBase
             ];
         }));
 
-        $this->table(['Package', 'Time', 'Description'], $tabled);
+
+        if ($tabled->count()) {
+            $this->table(['Package', 'Time', 'Description'], $tabled);
+
+            return 0;    
+        }
+
+
+        $this->info('No issue found');
 
         return 0;
     }
