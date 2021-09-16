@@ -1,6 +1,18 @@
 <?php
 namespace Deployer;
 
+/* Available contextual variables
+{DOMAINS} Server names as specified in web server configuration file
+{URL} The domain url
+{NAME} The domain name
+{PATH} Domain root path
+{PUBLIC} Domain public path visible from the web
+{CURRENT} The path of the current code version
+{HOME} The domain home path
+{USER} The impersonated user
+{PHP} The absolute path of the php interpreter
+{PHP_VERSION} The version of the php */
+
 require 'recipe/common.php';
 
 set('application', '{NAME}');

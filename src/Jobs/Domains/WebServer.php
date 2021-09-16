@@ -62,11 +62,10 @@ class WebServer implements DomainAction
             ] as $filename => $destination
         ) {
             $content = $this->compiler
-                ->load($domain->configs(), 'nginx.conf', $domain->type);
+                ->load($domain->configs(), $filename, $domain->type);
 
             $compiled = $this->compiler
                 ->replace($content, $domain)
-                ->replace('{DOMAINS}', $domain->serverNames())
                 ->replace('{CERTIFICATE}', $certificates['crt'])
                 ->replace('{CERTIFICATE_KEY}', $certificates['key'])
                 ->replace('{RETAIN}', "366")
