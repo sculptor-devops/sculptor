@@ -106,4 +106,11 @@ class CommandBase extends Command
     {
         $this->info(Str::padRight($key, $pad) . ": <fg=white>{$value}</>");
     }
+
+    public function askYesNo(string $question): bool
+    {
+        $result = $this->ask('Continue? (yes/no)');
+
+        return Str::lower($result) == 'y' || Str::lower($result) == 'yes';
+    }
 }

@@ -11,4 +11,3 @@
 # PHP_VERSION The version of the php
 
 # * * * * * {PHP} {CURRENT}/artisan schedule:run >> /dev/null 2>&1
-

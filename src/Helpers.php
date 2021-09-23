@@ -16,6 +16,16 @@ if (!function_exists('whoami')) {
     }
 }
 
+if (!function_exists('userhome')) {
+
+    function userhome(): string
+    {
+        $processUser = posix_getpwuid(posix_geteuid());
+
+        return $processUser['home'];
+    }
+}
+
 if (!function_exists('byteToHumanReadable')) {
     function byteToHumanReadable(int $size, int $precision = 2): string
     {
