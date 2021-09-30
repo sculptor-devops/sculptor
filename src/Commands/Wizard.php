@@ -5,7 +5,7 @@ namespace Sculptor\Agent\Commands;
 use Closure;
 use Exception;
 use Illuminate\Support\Facades\Artisan;
-
+use Illuminate\Support\Facades\Validator;
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
@@ -21,7 +21,7 @@ trait Wizard {
         return "[{$this->index}/{$this->steps}]";
     }
 
-    private function finalize($menu, bool $skippable = false)
+    private function finalize($title, $menu, bool $skippable = false)
     {
         $result = $menu->setForegroundColour('white')
             ->setBackgroundColour('magenta')
@@ -32,7 +32,7 @@ trait Wizard {
             ->open();
 
         if ($result == null && !$skippable) {
-            throw new Exception('Command cancelled');
+            throw new Exception('Command cancelled at step: ' . $title);
         }
 
         $this->index++;
@@ -51,23 +51,35 @@ trait Wizard {
                 continue;
             }
 
-            $menu->addOption($data, __($data));
+            if (count($options) == count($options, COUNT_RECURSIVE)) 
+            {
+                $menu->addOption($data, __($data));
+
+                continue;
+            }            
+
+            $menu->addOption($option, __($data));
         }
 
-        return $this->finalize($menu);
+        return $this->finalize($title, $menu);
     }
 
-    private function input(string $title, string $question, string $default, bool $skip = false)
+    private function input(string $title, string $question, string $default, bool $skip = false, string $validation = null)
     {
         $menu = $this->menu("$title {$this->step()}")
             ->addQuestion($question, $default);
 
         if ($skip) {
             $menu->addOption('', 'Skip');
-
         }
 
-        return $this->finalize($menu, $skip);
+        $result = $this->finalize($title, $menu, $skip);
+
+        if ($validation) {
+            $this->validate($result, $validation);
+        }
+
+        return $result;
     }
 
     private function command(string $mesage, string $command, array $params): bool
@@ -83,5 +95,14 @@ trait Wizard {
         }
 
         return true;
+    }
+
+    private function validate(string $data, string $rule): void
+    {        
+        $validator = Validator::make(['data' => $data], [ 'data' => $rule, ]);
+
+        if ($validator->fails()) {
+            throw new Exception('Invalid data');
+        }
     }
 }

@@ -45,6 +45,11 @@ class Vcs implements Rule
         return false;
     }
 
+    public function validate($attribute, $value, $parameters, $validator)
+    {
+        return $this->passes($attribute, $value);
+    }    
+
     /**
      * Get the validation error message.
      *

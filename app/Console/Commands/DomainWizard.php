@@ -23,7 +23,7 @@ class DomainWizard extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'domain:wizard {domain?}';
+    protected $signature = 'domain:wizard';
 
     /**
      * The console command description.
@@ -50,20 +50,30 @@ class DomainWizard extends CommandBase
      */
     public function handle(PhpVersions $versions, Templates $templates): int
     {
-        $domain = $this->argument('domain');
+        $this->steps = 6;
 
         try {
             $type = $this->choose("Domain type", $templates->domains(), function ($item) {
                 return __($item->name());
             });
 
+            $certificate = $this->choose("Certificate", [
+                'self' => 'Self signed',
+                'custom' => 'Custom certificate',
+                'lets' => 'Let\'s Encrypt'
+            ]);
+            
+            if ($certificate == 'lets') {
+                $email = $this->input("Certificate owner", 'Insert email...', '', false, 'required|email');
+            }
+
             $php = $this->choose("PHP version", $versions->available());
 
-            $name = $this->input("Domain name", 'Insert name...', $domain ?? 'example.org');
+            $name = $this->input("Domain name", 'Insert name...', '', false, 'required|fqdn');
 
-            $repository = $this->input("Repository", 'Insert url...', 'https://<<token>>@ghtub.com/username/repository.git');
+            $repository = $this->input("Repository", 'Insert url...', 'https://<<token>>@ghtub.com/username/repository.git', false, 'required|vcs');
 
-            $database = $this->input("Database", 'Name...', 'database_name', true);
+            $database = $this->input("Database", 'Name...', 'database_name', true, 'requred|alpha_num');
 
             $user = "{$database}_user";
 
@@ -72,12 +82,14 @@ class DomainWizard extends CommandBase
                 ['name' => 'PHP', 'value' => $php],
                 ['name' => 'Domain', 'value' => $name],
                 ['name' => 'Repository', 'value' => $repository],
+                ['name' => 'Certificate', 'value' => $certificate],
+                ['name' => 'Certificate email', 'value' => $email ?? '<NONE>'],
                 ['name' => 'Database', 'value' => !$database ? '<NONE>' : $database],
                 ['name' => 'Database user', 'value' => !$database ? '<NONE>' : $user],
             ]);
 
             if (!$this->askYesNo('Continue? (yes/no)')) {
-                throw new Exception('Command cancelled');
+                throw new Exception('Command stopped');
             }
 
             foreach ([

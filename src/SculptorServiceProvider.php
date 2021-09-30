@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
 use Sculptor\Agent\Backup\Archives\Dropbox;
 use Sculptor\Agent\Backup\Archives\Local;
 use Sculptor\Agent\Backup\Archives\S3;
@@ -131,6 +132,10 @@ class SculptorServiceProvider extends ServiceProvider
         $this->hideCommands();
 
         $this->connection();
+
+        Validator::extend('fqdn', 'App\Rules\Fqdn');
+
+        Validator::extend('vcs', 'App\Rules\Vcs');
     }
 
     private function password(): ?string
