@@ -1,4 +1,7 @@
 {
     "validation.fqdn": "Invalid domain name (FQDN)",
-    "validation.vcs": "Invalid repository url"
+    "validation.vcs": "Invalid repository url",
+    "validation.resolvable_condition": "Invalid condition",
+    "validation.resolvable": "Invalid action",
+    "validation.cron": "Invalid cron schedule"
 }

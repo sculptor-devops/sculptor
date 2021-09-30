@@ -145,6 +145,8 @@ class SculptorServiceProvider extends ServiceProvider
         Validator::extend('resolvable_condition', 'App\Rules\ResolvableCondition');
 
         Validator::extend('resolvable', 'App\Rules\Resolvable');
+
+        Validator::extend('cron', 'App\Rules\Cron');
     }
 
     private function password(): ?string
