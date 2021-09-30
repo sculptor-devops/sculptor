@@ -8,12 +8,14 @@ use Sculptor\Agent\Support\CommandBase;
 use Sculptor\Agent\Support\PhpVersions;
 use Sculptor\Agent\Support\Templates;
 use Sculptor\Agent\Commands\Wizard;
+use Sculptor\Agent\Enums\CertificatesTypes;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
  *  file that was distributed with this source code.
 */
+
 class DomainWizard extends CommandBase
 {
     use Wizard;
@@ -58,12 +60,12 @@ class DomainWizard extends CommandBase
             });
 
             $certificate = $this->choose("Certificate", [
-                'self' => 'Self signed',
-                'custom' => 'Custom certificate',
-                'lets' => 'Let\'s Encrypt'
+                CertificatesTypes::SELF_SIGNED => 'Self signed',
+                CertificatesTypes::CUSTOM => 'Custom certificate',
+                CertificatesTypes::LETS_ENCRYPT => 'Let\'s Encrypt'
             ]);
 
-            if ($certificate == 'lets') {
+            if ($certificate == CertificatesTypes::LETS_ENCRYPT) {
                 $email = $this->input("Certificate owner", 'Insert email...', '', false, 'required|email');
             }
 
@@ -123,7 +125,7 @@ class DomainWizard extends CommandBase
             return 1;
         }
 
-        $this->warn("Now you need to run domain:deploy {$name} to apply modifications");
+        $this->warn("Now you can domain:deploy {$name} to apply modifications, or continue to customize configuations");
 
         return 0;
     }

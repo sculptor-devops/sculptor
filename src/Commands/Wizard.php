@@ -44,6 +44,8 @@ trait Wizard {
     {
         $menu = $this->menu("$title {$this->step()}");
 
+        $associative = array_keys($options) !== range(0, count($options) - 1);
+
         foreach ($options as $option => $data) {
             if ($property) {
                 $menu->addOption($option, $property($data));                
@@ -51,7 +53,7 @@ trait Wizard {
                 continue;
             }
 
-            if (count($options) == count($options, COUNT_RECURSIVE)) 
+            if (!$associative)
             {
                 $menu->addOption($data, __($data));
 
@@ -102,7 +104,7 @@ trait Wizard {
         $validator = Validator::make(['data' => $data], [ 'data' => $rule, ]);
 
         if ($validator->fails()) {
-            throw new Exception('Invalid data');
+            throw new Exception($validator->errors()->first());
         }
     }
 }

@@ -1,0 +1,4 @@
+{
+    "validation.fqdn": "Invalid domain name (FQDN)",
+    "validation.vcs": "Invalid repository url"
+}
