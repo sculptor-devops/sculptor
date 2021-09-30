@@ -47,6 +47,11 @@ class ResolvableCondition implements Rule
         return class_exists("{$this->namespace}\\{$name}");
     }
 
+    public function validate($attribute, $value, $parameters, $validator)
+    {
+        return $this->passes($attribute, $value);
+    }
+
     /**
      * Get the validation error message.
      *

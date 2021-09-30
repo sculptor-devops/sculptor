@@ -40,6 +40,11 @@ class Resolvable implements Rule
         return class_exists("{$this->namespace}\\" . Str::ucfirst($value));
     }
 
+    public function validate($attribute, $value, $parameters, $validator)
+    {
+        return $this->passes($attribute, $value);
+    }    
+
     /**
      * Get the validation error message.
      *

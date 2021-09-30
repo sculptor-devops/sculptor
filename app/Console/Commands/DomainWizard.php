@@ -73,9 +73,9 @@ class DomainWizard extends CommandBase
 
             $name = $this->input("Domain name", 'Insert name...', '', false, 'required|fqdn');
 
-            $repository = $this->input("Repository", 'Insert url...', 'https://<<token>>@ghtub.com/username/repository.git', false, 'required|vcs');
+            $database = $this->input("Database", 'Name...', 'database_name', true, 'required|alpha_num');
 
-            $database = $this->input("Database", 'Name...', 'database_name', true, 'requred|alpha_num');
+            $repository = $this->input("Repository", 'Insert url...', 'https://<<token>>@ghtub.com/username/repository.git', false, 'required|vcs');
 
             $user = "{$database}_user";
 

@@ -133,9 +133,18 @@ class SculptorServiceProvider extends ServiceProvider
 
         $this->connection();
 
+        $this->validation();
+    }
+
+    private function validation(): void
+    {
         Validator::extend('fqdn', 'App\Rules\Fqdn');
 
         Validator::extend('vcs', 'App\Rules\Vcs');
+
+        Validator::extend('resolvable_condition', 'App\Rules\ResolvableCondition');
+
+        Validator::extend('resolvable', 'App\Rules\Resolvable');
     }
 
     private function password(): ?string
