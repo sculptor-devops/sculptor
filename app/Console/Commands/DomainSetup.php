@@ -56,7 +56,7 @@ class DomainSetup extends CommandBase
         if ($name == null || $parameter == null) {
             $this->warn('Syntax: <<DOMAIN NAME>> <<PARAMETER>> <<VALUE>>');
 
-            $this->warn('PARAMETER: ' . collect(Parameters::ALLOWED)->sort()->join(','));
+            $this->warn('PARAMETER: ' . Parameters::toString());
 
             return 1;
         }

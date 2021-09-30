@@ -8,12 +8,12 @@ use Sculptor\Agent\Support\CommandBase;
 use Sculptor\Agent\Support\PhpVersions;
 use Sculptor\Agent\Support\Templates;
 use Sculptor\Agent\Commands\Wizard;
+
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
  *  file that was distributed with this source code.
 */
-
 class DomainWizard extends CommandBase
 {
     use Wizard;
@@ -62,7 +62,7 @@ class DomainWizard extends CommandBase
                 'custom' => 'Custom certificate',
                 'lets' => 'Let\'s Encrypt'
             ]);
-            
+
             if ($certificate == 'lets') {
                 $email = $this->input("Certificate owner", 'Insert email...', '', false, 'required|email');
             }
@@ -97,15 +97,17 @@ class DomainWizard extends CommandBase
                 'database' => ['command' => 'database:create', 'parameters' => ['name' => $database]],
                 'database user' => ['command' => 'database:user', 'parameters' => ['name' => $user, 'database' => $database]],
 
-                'php' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'engine' ,'value' => $php]],
-                'repository' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'vcs' ,'value' => $repository]],
-                'database assign' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'database' ,'value' => $database]],
-                'database user assign' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'user' ,'value' => $user]],                
+                'php' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'engine', 'value' => $php]],
+                'Certificate' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'certificate', 'value' => $certificate]],
+                'Certificate user' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'email', 'value' => $email]],
+                'repository' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'vcs', 'value' => $repository]],
+                'database assign' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'database', 'value' => $database]],
+                'database user assign' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'user', 'value' => $user]],
 
                 'configuration' => ['command' => 'domain:configure', 'parameters' => ['name' => $name]]
             ] as $name => $data) {
 
-                if (!$data['parameters']['name']) {
+                if (!$data['parameters']['value']) {
                     $this->warn("Step {$name} skipped...");
 
                     continue;

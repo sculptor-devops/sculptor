@@ -161,4 +161,9 @@ class Parameters
             ->associate($user)
             ->save();
     }
+
+    public static function toString(): string
+    {
+        return collect(Parameters::ALLOWED)->sort()->join(', ');
+    }
 }
