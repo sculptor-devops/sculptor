@@ -3,12 +3,11 @@
 namespace App\Console\Commands;
 
 use Exception;
-use Illuminate\Support\Str;
-use Mockery\CountValidator\Exact;
-use Sculptor\Agent\Actions\Domains;
+use Illuminate\Support\Facades\Artisan;
 use Sculptor\Agent\Support\CommandBase;
 use Sculptor\Agent\Support\PhpVersions;
 use Sculptor\Agent\Support\Templates;
+use Sculptor\Agent\Commands\Wizard;
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
@@ -17,10 +16,7 @@ use Sculptor\Agent\Support\Templates;
 
 class DomainWizard extends CommandBase
 {
-    private const WIDTH = 80;
-
-    private int $index = 1;
-    private int $steps = 5;
+    use Wizard;
 
     /**
      * The name and signature of the console command.
@@ -57,101 +53,64 @@ class DomainWizard extends CommandBase
         $domain = $this->argument('domain');
 
         try {
-            $type = $this->types("Domain type {$this->step()}", $templates->domains());
+            $type = $this->choose("Domain type", $templates->domains(), function ($item) {
+                return __($item->name());
+            });
 
-            $php = $this->choose("PHP version {$this->step()}", $versions->available());
+            $php = $this->choose("PHP version", $versions->available());
 
-            $name = $this->input("Domain name {$this->step()}", 'Insert name...', $domain ?? 'example.org');
+            $name = $this->input("Domain name", 'Insert name...', $domain ?? 'example.org');
 
-            $repository = $this->input("Repository {$this->step()}", 'Insert url...', 'https://<<token>>@ghtub.com/username/repository.git');
+            $repository = $this->input("Repository", 'Insert url...', 'https://<<token>>@ghtub.com/username/repository.git');
 
-            $database = $this->database();
+            $database = $this->input("Database", 'Name...', 'database_name', true);
+
+            $user = "{$database}_user";
 
             $this->table(['Name', 'Value'], [
                 ['name' => 'Template', 'value' => $type],
                 ['name' => 'PHP', 'value' => $php],
                 ['name' => 'Domain', 'value' => $name],
                 ['name' => 'Repository', 'value' => $repository],
-                ['name' => 'Database', 'value' => $database],
-                ['name' => 'Database user', 'value' => "{$database}_user"],
+                ['name' => 'Database', 'value' => !$database ? '<NONE>' : $database],
+                ['name' => 'Database user', 'value' => !$database ? '<NONE>' : $user],
             ]);
 
             if (!$this->askYesNo('Continue? (yes/no)')) {
                 throw new Exception('Command cancelled');
             }
 
-            // $this->runCommand()
+            foreach ([
+                'domain' => ['command' => 'domain:create', 'parameters' => ['name' => $name, 'type' => $type]],
+                'database' => ['command' => 'database:create', 'parameters' => ['name' => $database]],
+                'database user' => ['command' => 'database:user', 'parameters' => ['name' => $user, 'database' => $database]],
+
+                'php' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'engine' ,'value' => $php]],
+                'repository' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'vcs' ,'value' => $repository]],
+                'database assign' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'database' ,'value' => $database]],
+                'database user assign' => ['command' => 'domain:setup', 'parameters' => ['name' => $name, 'parameter' => 'user' ,'value' => $user]],                
+
+                'configuration' => ['command' => 'domain:configure', 'parameters' => ['name' => $name]]
+            ] as $name => $data) {
+
+                if (!$data['parameters']['name']) {
+                    $this->warn("Step {$name} skipped...");
+
+                    continue;
+                }
+
+                if (!$this->command($name, $data['command'], $data['parameters'])) {
+                    throw new Exception(Artisan::output());
+                }
+            }
         } catch (Exception $e) {
             $this->error($e->getMessage());
 
             return 1;
         }
 
-        $this->warn("Now you need to run domain:setup {$name} to make modifications");
+        $this->warn("Now you need to run domain:deploy {$name} to apply modifications");
 
         return 0;
-    }
-
-    private function step(): string
-    {
-        return "[{$this->index}/{$this->steps}]";
-    }
-
-    private function database()
-    {
-        $menu = $this->menu('Database [5/5]')
-            ->addQuestion('Insert name', 'database_name')
-            ->addOption('no_database', 'None');
-
-        return $this->finalize($menu);
-    }
-
-    private function types(string $title, array $options)
-    {
-        $menu = $this->menu($title);
-
-        foreach ($options as $folder => $data) {
-            $menu->addOption($folder, __($data->name()));
-        }
-
-        return $this->finalize($menu);
-    }
-
-    private function finalize($menu)
-    {
-        $result = $menu->setForegroundColour('white')
-            ->setBackgroundColour('magenta')
-            ->setWidth(80)
-            ->addLineBreak('', 1)
-            ->addLineBreak('-', 1)
-            ->setExitButtonText("Cancel")
-            ->open();
-
-        if ($result == null) {
-            throw new Exception('Command cancelled');
-        }
-
-        $this->index++;
-
-        return $result;
-    }
-
-    private function choose(string $title, array $options)
-    {
-        $menu = $this->menu($title);
-
-        foreach ($options as $option) {
-            $menu->addOption($option, __($option));
-        }
-
-        return $this->finalize($menu);
-    }
-
-    private function input(string $title, string $question, string $default)
-    {
-        $menu = $this->menu($title)
-            ->addQuestion($question, $default);
-
-        return $this->finalize($menu);
     }
 }
