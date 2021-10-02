@@ -51,7 +51,8 @@ class StatusMachine extends StateMachine
 
         DomainStatusType::DEPLOYING => [
             DomainStatusType::DEPLOYED,
-            DomainStatusType::ERROR
+            DomainStatusType::ERROR,
+            DomainStatusType::DEPLOYING
         ],
 
         DomainStatusType::ERROR => [ /* ALL */ ]

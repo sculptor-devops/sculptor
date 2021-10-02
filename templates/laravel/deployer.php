@@ -14,6 +14,7 @@ PHP The absolute path of the php interpreter
 PHP_VERSION The version of the php */
 
 require 'recipe/common.php';
+require 'contrib/npm.php';
 
 set('application', '{NAME}');
 
@@ -71,6 +72,8 @@ task('deploy', [
     'deploy:clear_paths',
     'deploy:symlink',
     'deploy:unlock',
+    'deploy:npm_packages',
+    'deploy:npm_prod',    
     'deploy:owner',
     'deploy:migrate',
     'cleanup',
@@ -93,6 +96,8 @@ task('deploy:install', [
     'deploy:key',
     'deploy:migrate',
     'deploy:owner',
+    'deploy:npm_packages',
+    'deploy:npm_prod',
     'cleanup',
     'success'
 ]);
@@ -103,6 +108,14 @@ task('deploy:key', function () {
 
 task('deploy:migrate', function () {
     run("{PHP} {PATH}/current/artisan migrate --force");
+});
+
+task('deploy:npm_packages', function () {
+    run("cd {{release_path}} && npm install");
+});
+
+task('deploy:npm_prod', function () {
+    run("cd {{release_path}} && npm run prod");
 });
 
 task('deploy:owner', function () {

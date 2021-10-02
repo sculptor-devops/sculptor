@@ -13,7 +13,7 @@ use Throwable;
 */
 
 interface ITraceable
-{
+{   
     /**
      * @return Queue
      * @var Queue

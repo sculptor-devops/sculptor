@@ -20,6 +20,11 @@ use Sculptor\Agent\Repositories\Entities\Queue;
 trait Traceable
 {
     /**
+     * @var int
+     */
+    public $timeout = 0;
+
+    /**
      * @var Queue
      */
     protected $ref;

@@ -54,8 +54,7 @@ class SystemTasks extends CommandBase
         $tasks = $queue
             ->orderBy('created_at', 'desc')
             ->limit((int)$limit)
-            ->skip(((int)$page - 1) * $limit)
-            ->get(['created_at', 'uuid', 'status', 'type', 'error'])
+            ->skip(((int)$page - 1) * $limit)              
             ->map(function ($item) {
                 return [
                     'created_at' => $item->created_at,
