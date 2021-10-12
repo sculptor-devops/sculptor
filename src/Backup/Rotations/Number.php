@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Backup\Rotations;
 
 use Sculptor\Agent\Backup\Contracts\Rotation;
+use Sculptor\Agent\Backup\Contracts\Archive;
 
 /**
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -12,6 +13,17 @@ use Sculptor\Agent\Backup\Contracts\Rotation;
 
 class Number implements Rotation
 {
+    /**
+     * @var Archive
+     */
+    private $archive;
+
+    public function __construct(
+        Archive $archive
+    ) {
+        $this->archive = $archive;
+    }
+
     public function name(): string
     {
         return 'number';
@@ -28,7 +40,13 @@ class Number implements Rotation
 
         $pivot = $catalogs->take($number)->last();
 
-        return $catalogs->where('timestamp', '>', $pivot['timestamp'])
-            ->toArray();
+        $purgiable = $catalogs->where('timestamp', '>', $pivot['timestamp'])
+                ->toArray();
+
+        foreach($purgiable as $file) {
+            $this->archive->delete($file);
+        }
+
+        return $purgiable;
     }
 }

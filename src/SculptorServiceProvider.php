@@ -14,7 +14,9 @@ use Sculptor\Agent\Backup\Archives\S3;
 use Sculptor\Agent\Backup\Compression\Zip;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
+use Sculptor\Agent\Backup\Contracts\Rotation;
 use Sculptor\Agent\Enums\BackupArchiveType;
+use Sculptor\Agent\Enums\BackupRotationType;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Foundation\Contracts\Database;
 use Sculptor\Foundation\Contracts\Runner;
@@ -24,6 +26,8 @@ use Sculptor\Agent\Facades\Configuration as ConfigurationFacade;
 use Sculptor\Agent\Facades\Logs as LogsFacade;
 use Sculptor\Agent\Support\PhpVersions;
 use Sculptor\Agent\Enums\DaemonGroupType;
+use Sculptor\Agent\Backup\Rotations\Days;
+use Sculptor\Agent\Backup\Rotations\Number;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -100,6 +104,21 @@ class SculptorServiceProvider extends ServiceProvider
         });
 
         app()->bind(Compressor::class, Zip::class);
+
+        app()->bind(Rotation::class, function() {
+            $type = ConfigurationFacade::get('sculptor.backup.rotation');
+            
+            switch ($type) {
+                case BackupRotationType::NUMBER:
+                    return resolve(Number::class);
+
+                case BackupRotationType::DAYS:
+                    return resolve(Days::class);
+
+                default:
+                    throw new Exception("Invalid {$type} rotation type");
+            }
+        });        
 
         app()->bind(Archive::class, function () {
             $driver = ConfigurationFacade::get('sculptor.backup.drivers.default');

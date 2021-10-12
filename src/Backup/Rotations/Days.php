@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Backup\Rotations;
 
 use Sculptor\Agent\Backup\Contracts\Rotation;
+use Sculptor\Agent\Backup\Contracts\Archive;
 
 /**
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -12,6 +13,17 @@ use Sculptor\Agent\Backup\Contracts\Rotation;
 
 class Days implements Rotation
 {
+    /**
+     * @var Archive
+     */
+    private $archive;
+
+    public function __construct(
+        Archive $archive
+    ) {
+        $this->archive = $archive;
+    }
+
     public function name(): string
     {
         return 'days';
@@ -21,9 +33,15 @@ class Days implements Rotation
     {
         $timestamp = now()->subDays($number);
 
-        return collect($catalogs)
+        $purgiable = collect($catalogs)
             ->sortByDesc('timestamp')
             ->where('timestamp', '>', $timestamp->timestamp)
             ->toArray();
+
+        foreach($purgiable as $file) {
+            $this->archive->delete($file);
+        }
+
+        return $purgiable;
     }
 }

@@ -2,12 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Str;
-use Lorisleiva\CronTranslator\CronParsingException;
 use Lorisleiva\CronTranslator\CronTranslator;
 use Sculptor\Agent\Actions\Alarms;
 use Sculptor\Agent\Actions\Backups;
-use Sculptor\Agent\Backup\Backup;
 use Sculptor\Agent\Support\CommandBase;
 
 /*

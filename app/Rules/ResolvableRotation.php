@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Str;
-use Sculptor\Agent\Monitors\Parametrizer;
+use Sculptor\Agent\Support\Parametrizer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>

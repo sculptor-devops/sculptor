@@ -11,6 +11,7 @@ use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 use Sculptor\Agent\Backup\Tag;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
+use Sculptor\Agent\Backup\Contracts\Rotation;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -40,14 +41,20 @@ class Domain implements BackupInterface
      * @var int
      */
     private $size;
+    /**
+     * @var Rotation
+     */
+    private $rotation;
 
-    public function __construct(Configuration $configuration, Archive $archive, Compressor $compressor, Tag $tag)
+    public function __construct(Configuration $configuration, Archive $archive, Compressor $compressor, Tag $tag, Rotation $rotation)
     {
         $this->tmp = $configuration->get('sculptor.backup.temp');
 
         $this->archive = $archive;
 
         $this->compressor = $compressor;
+
+        $this->rotation = $rotation;
 
         $this->tag = $tag->extensions('domain', $this->compressor->extension(), $this->compressor->extension());
     }

@@ -18,7 +18,7 @@ define('ENGINE_VERSION', '8.0');
 define('ENGINE_PATH', '/usr/bin/php');
 
 define('BACKUP_CRON', '0 0 * * *');
-define('BACKUP_ROTATE', 'Days::7');
+define('BACKUP_ROTATE', 7);
 
 define('SCULPTOR_HOME', '/home/sculptor');
 define('DB_SERVER_PASSWORD', '/home/sculptor/.db_password');

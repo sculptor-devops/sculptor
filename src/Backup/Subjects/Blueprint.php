@@ -11,6 +11,7 @@ use Sculptor\Agent\Backup\Tag;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 use Sculptor\Agent\Blueprint as BlueprintService;
+use Sculptor\Agent\Backup\Contracts\Rotation;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -48,13 +49,18 @@ class Blueprint implements BackupInterface
      * @var int
      */
     private $size;
+    /**
+     * @var Rotation
+     */
+    private $rotation;
 
     public function __construct(
         Configuration $configuration,
         BlueprintService $blueprint,
         Archive $archive,
         Compressor $compressor,
-        Tag $tag
+        Tag $tag,
+        Rotation $rotation
     ) {
         $this->configuration = $configuration;
 
@@ -65,6 +71,8 @@ class Blueprint implements BackupInterface
         $this->archive = $archive;
 
         $this->compressor = $compressor;
+
+        $this->rotation = $rotation;
 
         $this->tag = $tag->extensions('blueprint', 'yml', $this->compressor->extension());
     }

@@ -18,8 +18,9 @@ class BackupRotate implements ValidatorRule
         return [
             'rotate' => [
                 'required',
-                'max:255',
-                new ResolvableRotation('\\Sculptor\\Agent\\Backup\\Rotations')
+                'integer',
+                'min:1',
+                'max:365'
             ]
         ];
     }

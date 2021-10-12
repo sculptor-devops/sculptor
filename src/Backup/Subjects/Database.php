@@ -15,6 +15,7 @@ use Sculptor\Agent\Repositories\Entities\Backup as Item;
 use Sculptor\Agent\Repositories\Entities\Database as DatabaseItem;
 use Spatie\DbDumper\Exceptions\CannotStartDump;
 use Spatie\DbDumper\Exceptions\DumpFailed;
+use Sculptor\Agent\Backup\Contracts\Rotation;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -48,8 +49,12 @@ class Database implements BackupInterface
      * @var Configuration
      */
     private $configuration;
+    /**
+     * @var Rotation
+     */
+    private $rotation;
 
-    public function __construct(Configuration $configuration, Archive $archive, Compressor $compressor, Tag $tag)
+    public function __construct(Configuration $configuration, Archive $archive, Compressor $compressor, Tag $tag, Rotation $rotation)
     {
         $this->configuration = $configuration;
 
@@ -58,6 +63,8 @@ class Database implements BackupInterface
         $this->archive = $archive;
 
         $this->compressor = $compressor;
+
+        $this->rotation = $rotation;
 
         $this->tag = $tag->extensions('database', 'sql', $this->compressor->extension());
     }
