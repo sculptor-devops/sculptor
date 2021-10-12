@@ -57,8 +57,7 @@ class Domains implements ActionInterface
         StatusMachine $machine,
         DomainRepository $domains,
         Parameters $parameters
-    )
-    {
+    ) {
         $this->configuration = $configuration;
 
         $this->action = $action;
@@ -78,8 +77,7 @@ class Domains implements ActionInterface
     public function create(
         string $name,
         string $type = 'laravel'
-    ): bool
-    {
+    ): bool {
         Logs::actions()->info("Create domain {$name}");
 
         try {
@@ -220,7 +218,7 @@ class Domains implements ActionInterface
                 ->byName($name);
 
             if (
-            $this->machine
+                $this->machine
                 ->can($domain->status, DomainStatusType::SETUP)
             ) {
                 $this->parameters
@@ -360,5 +358,24 @@ class Domains implements ActionInterface
         }
 
         return [];
+    }
+
+    public function status(string $name, string $status): void
+    {
+        Logs::actions()->info("Domain {$name} status {$status}");
+
+        try {
+            $domain = $this->repository
+                ->byName($name);
+
+            if (!DomainStatusType::has($status)) {
+                throw new Exception("Invalid status {$status}");
+            }
+
+            $domain->update(['status' => $status]);
+        } catch (Exception $e) {
+            $this->action
+                ->report("Domain {$name}: {$e->getMessage()}");
+        }
     }
 }

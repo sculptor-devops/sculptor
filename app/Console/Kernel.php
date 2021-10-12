@@ -41,9 +41,9 @@ class Kernel extends ConsoleKernel
         try {
             $schedule->command('system:monitors', ['write'])->everyMinute();
 
-            $schedule->command('system:clear')->dailyAt('00:00');
-
             $schedule->command('system:upgrades', ['check'])->dailyAt('23:59');
+
+            $schedule->command('system:clear')->dailyAt('00:00');
 
             // $schedule->command('queue:restart')->daily();
 

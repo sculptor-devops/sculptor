@@ -26,7 +26,7 @@ class CreateBackupsTable extends Migration
             $table->string('error')->nullable();
             $table->bigInteger('size')->nullable();
             $table->dateTime('run')->nullable();
-            $table->unsignedInteger('rotate')->default(BACKUP_ROTATE);
+            $table->string('rotate')->default(BACKUP_ROTATE);
             $table->unsignedInteger('database_id')->nullable();
             $table->unsignedInteger('domain_id')->nullable();
             $table->timestamps();

@@ -51,28 +51,22 @@ class SystemTasks extends CommandBase
 
         $page = $this->argument('page');
 
-        $tasks = $queue
-            ->orderBy('created_at', 'desc')
-            ->limit((int)$limit)
-            ->skip(((int)$page - 1) * $limit)              
-            ->map(function ($item) {
-                return [
-                    'created_at' => $item->created_at,
-                    'uuid' => Str::limit($item->uuid, 15),
-                    'status' => $this->status($item->status),
-                    'type' => Str::afterLast($item->type, '\\'),
-                    'error' => '<error>' . Str::limit($item->error, 60) . '</error>' ?? '-'
-                ];
-            })
-            ->toArray();
-
         $this->table([
             'created_at' => 'Start',
             'uuid' => 'ID',
             'status' => 'Status',
             'type' => 'Type',
             'error' => 'Error'
-        ], $tasks);
+        ], collect($queue->tasks($limit, $page))
+            ->map(function ($item) {
+                return [
+                    'created_at' => $item['created_at'],
+                    'uuid' => Str::limit($item['uuid'], 15),
+                    'status' => $this->status($item['status']),
+                    'type' => Str::afterLast($item['type'], '\\'),
+                    'error' => '<error>' . Str::limit($item['error'], 60) . '</error>' ?? '-'
+                ];
+            }));
 
         $this->info("Limited to {$limit} page {$page}");
 

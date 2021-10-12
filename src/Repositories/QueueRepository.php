@@ -51,7 +51,7 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
      */
     public function insert(string $type = 'unknown'): Queue
     {
-        return $this->create([ 'uuid' => Str::uuid(), 'type' => $type, 'status' => QueueStatusType::WAITING ]);
+        return $this->create(['uuid' => Str::uuid(), 'type' => $type, 'status' => QueueStatusType::WAITING]);
     }
 
     public function clean(): int
@@ -59,5 +59,13 @@ class QueueRepository extends BaseRepository implements QueueRepositoryInterface
         $older = Carbon::now()->subDays(30);
 
         return Queue::where('created_at', '<=', $older)->delete();
+    }
+
+    public function tasks(int $limit, int $page): array
+    {
+        return $this->orderBy('created_at', 'desc')
+            ->limit((int)$limit)
+            ->skip(((int)$page - 1) * $limit)
+            ->toArray();
     }
 }

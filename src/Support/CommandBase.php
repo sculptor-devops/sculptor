@@ -113,4 +113,15 @@ class CommandBase extends Command
 
         return Str::lower($result) == 'y' || Str::lower($result) == 'yes';
     }
+
+    public function hasArguments(): bool
+    {
+        foreach (collect($this->arguments())->forget('command') as $argument) {
+            if ($argument != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Validation\Validators;
 
 use Sculptor\Agent\Contracts\ValidatorRule;
+use App\Rules\ResolvableRotation;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -17,8 +18,8 @@ class BackupRotate implements ValidatorRule
         return [
             'rotate' => [
                 'required',
-                'max:16',
-                'numeric'
+                'max:255',
+                new ResolvableRotation('\\Sculptor\\Agent\\Backup\\Rotations')
             ]
         ];
     }

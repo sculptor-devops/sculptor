@@ -5,7 +5,7 @@ namespace Sculptor\Agent\Monitors\Conditions;
 use Exception;
 use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
-use Sculptor\Agent\Monitors\Parametrizer;
+use Sculptor\Agent\Support\Parametrizer;
 use Sculptor\Agent\Monitors\Support\Condition;
 use Sculptor\Agent\Monitors\System as Monitors;
 

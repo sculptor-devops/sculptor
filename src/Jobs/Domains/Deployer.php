@@ -147,7 +147,7 @@ class Deployer implements DomainAction
                     'dep',
                     $command,
                     '--log',
-                    "{$domain->root()}/deploy.log"
+                    $domain->logs('deploy.log')
                 ],
                 null,
                 function ($type, $buffer) {

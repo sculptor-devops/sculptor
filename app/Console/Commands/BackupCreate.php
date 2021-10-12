@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Prettus\Validator\Exceptions\ValidatorException;
 use Sculptor\Agent\Actions\Backups;
 use Sculptor\Agent\Support\CommandBase;
+use Sculptor\Agent\Enums\BackupType;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -19,7 +20,7 @@ class BackupCreate extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'backup:create {type} {name?}';
+    protected $signature = 'backup:create {type?} {name?}';
 
     /**
      * The console command description.
@@ -50,6 +51,14 @@ class BackupCreate extends CommandBase
         $type = $this->argument('type');
 
         $name = $this->argument('name');
+
+        if ($type == null && $name == null) {
+            $this->warn('Syntax: <<TYPE>> <<NAME>>');
+            $this->warn('Allowed types: ' . collect(BackupType::toArray())->join(', '));
+            $this->warn('Name: the database or domain, none for blueprint');
+
+            return 1;
+        }
 
         $this->startTask("Creating backup batch {$type} for " . ($name ?? 'none') );
 

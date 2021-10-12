@@ -19,7 +19,7 @@ class BackupSetup extends CommandBase
      *
      * @var string
      */
-    protected $signature = 'backup:setup {id} {parameter} {value}';
+    protected $signature = 'backup:setup {id?} {parameter?} {value?}';
 
     /**
      * The console command description.
@@ -50,6 +50,12 @@ class BackupSetup extends CommandBase
         $parameter = $this->argument('parameter');
 
         $value = $this->argument('value');
+
+        if (!$this->hasArguments()) {
+            $this->warn('Syntax: backup:setup <<ID>> <<PARAMETER>> <<VALUE>>');
+            
+            return 1;
+        }
 
         $this->startTask("backup setup {$id} {$parameter}={$value}");
 

@@ -4,6 +4,7 @@ namespace Sculptor\Agent\Backup\Subjects;
 
 use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
@@ -114,9 +115,13 @@ class Domain implements BackupInterface
      */
     public function archives(Item $backup): array
     {
-        return $this->archive
+        return collect($this->archive
             ->create($backup->destination)
-            ->list('/');
+            ->list('/'))
+            ->filter(function ($value, $key) use ($backup) {
+                return Str::startsWith($value['filename'], "{$backup->type}-{$backup->name()}");
+            })
+            ->toArray();
     }
 
     /**

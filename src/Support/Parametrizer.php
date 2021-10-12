@@ -1,6 +1,8 @@
 <?php
 
-namespace Sculptor\Agent\Monitors;
+namespace Sculptor\Agent\Support;
+
+use Sculptor\Agent\Exceptions\InvalidNumberOfParameters;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -34,8 +36,8 @@ class Parametrizer
 
         $this->expected = $expected;
 
-        if (!count($this->tokens()) == $this->expected) {
-            throw new Exception("Invalid number of parameters {$this->expected()} expected");
+        if (count($this->tokens()) != $this->expected) {
+            throw new InvalidNumberOfParameters($this->expected());
         }
     }
 

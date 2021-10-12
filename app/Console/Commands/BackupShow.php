@@ -87,6 +87,7 @@ class BackupShow extends CommandBase
                 'type' => $item->type,
                 'name' => $item->name(),
                 'cron' => CronTranslator::translate($item->cron),
+                'rotate' => $item->rotate,                
                 'destination' => $item->destination ?? 'Not defined',
                 'status' => $item->status,
                 'size' => byteToHumanReadable($item->size ?? 0),
@@ -95,6 +96,6 @@ class BackupShow extends CommandBase
             ];
         }
 
-        $this->table(['Index', 'Type', 'Resource', 'Cron', 'Destination', 'Status', 'Size', 'Run', 'Error'], $tabled);
+        $this->table(['Index', 'Type', 'Resource', 'Cron', 'Rotation', 'Destination', 'Status', 'Size', 'Run', 'Error'], $tabled);
     }
 }

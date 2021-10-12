@@ -144,6 +144,8 @@ class SculptorServiceProvider extends ServiceProvider
 
         Validator::extend('resolvable_condition', 'App\Rules\ResolvableCondition');
 
+        Validator::extend('resolvable_rotation', 'App\Rules\ResolvableRotation');
+
         Validator::extend('resolvable', 'App\Rules\Resolvable');
 
         Validator::extend('cron', 'App\Rules\Cron');

@@ -62,7 +62,7 @@ class BackupRepository extends BaseRepository implements BackupRepositoryInterfa
      */
     public function make(string $type): Backup
     {
-        if (!in_array($type, [BackupType::BLUEPRINT, BackupType::DATABASE, BackupType::DOMAIN])) {
+        if (!BackupType::has($type)) {
             throw new Exception("Unknown backup type {$type}");
         }
 

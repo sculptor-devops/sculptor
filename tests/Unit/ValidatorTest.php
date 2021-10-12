@@ -21,8 +21,6 @@ class ValidatorTest extends TestCase
     function setUp(): void
     {
         parent::setUp();
-
-        $this->validator = Validator::make('Domain');
     }
 
     /**
@@ -31,20 +29,16 @@ class ValidatorTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testOK(): void
+    public function testFqdnValidator(): void
     {
-        foreach ([
-                     'alias' => [
-                         'example.com',
-                         'example.com example.org example.net',
-                         'example.com subdomain.example.org www.example.net',
-                     ],
-                     'certificate' => CertificatesTypes::toArray()
-                 ] as $name => $tests) {
+        $validator = Validator::make('Domain');
 
-            foreach ($tests as $test) {
-                $this->assertTrue(!$this->validator->validate($name, $test), "Validation on {$name} must be true when {$test}");
-            }
+        foreach ([
+            'example.com',
+            'example.com example.org example.net',
+            'example.com subdomain.example.org www.example.net',
+        ] as $test) {
+                $this->assertTrue(!$validator->validate('data', $test), "Validation on must be true when value is [{$test}]");
         }
     }
 }

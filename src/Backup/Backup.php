@@ -11,6 +11,7 @@ use Sculptor\Agent\Enums\BackupType;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Backup as Item;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
+use Sculptor\Agent\Support\Parametrizer;
 
 /**
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -104,6 +105,16 @@ class Backup implements BackupInterface
      */
     public function rotate(Item $backup): bool
     {
+        $parameters = new Parametrizer($backup->rotate, 2);
+
+        $policy = $parameters->first();
+
+        $number = $parameters->last();
+
+        $rotation = resolve("'Sculptor\\Agent\\Backup\Rotations\{$policy}");
+
+        $rotated = $rotation->rotate($this->archives($backup), $number);        
+
         throw new Exception("Not implemented");
     }
 

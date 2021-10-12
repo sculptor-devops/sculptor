@@ -75,6 +75,8 @@ class BackupRun implements ShouldQueue, ITraceable
                 $this->backup->update(['size' => $batch->size() ]);
 
                 $batch->clean($this->backup);
+
+                // $batch->rotate($this->backup);
             }
 
             $this->backup->change(BackupStatusType::OK);

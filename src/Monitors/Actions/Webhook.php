@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use Sculptor\Agent\Contracts\AlarmAction;
 use Sculptor\Agent\Monitors\Context;
-use Sculptor\Agent\Monitors\Parametrizer;
+use Sculptor\Agent\Support\Parametrizer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>

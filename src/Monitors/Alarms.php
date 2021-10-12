@@ -8,6 +8,7 @@ use Sculptor\Agent\Contracts\AlarmAction;
 use Sculptor\Agent\Contracts\AlarmCondition;
 use Sculptor\Agent\Facades\Logs;
 use Sculptor\Agent\Repositories\Entities\Alarm;
+use Sculptor\Agent\Support\Parametrizer;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>

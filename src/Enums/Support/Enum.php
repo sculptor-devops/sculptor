@@ -26,4 +26,9 @@ class Enum
             ->flatten()
             ->toArray();
     }
+
+    public static function has(string $name): bool
+    {
+        return in_array($name, static::toArray());
+    }
 }

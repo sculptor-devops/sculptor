@@ -154,7 +154,7 @@ class Backups implements ActionInterface
         try {
             $backup = $this->repository->byId($id);
 
-            $validator = Validator::make('Alarm');
+            $validator = Validator::make('Backup');
 
             Logs::backup()->info("Setup backup {$backup->name()} {$parameter}={$value}");
 

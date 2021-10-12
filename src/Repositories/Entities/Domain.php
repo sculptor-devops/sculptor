@@ -75,24 +75,38 @@ class Domain extends Model implements Transformable, EncryptInterface, Blueprint
         'email'
     ];
 
-    public function root(): string
+    private function pathCompose(string $path, string $filename): string
     {
-        return SITES_HOME . "/{$this->user}/sites/{$this->name}";
+        if ($filename) {
+            return "{$path}/{$filename}";
+        }
+
+        return $path;
     }
 
-    public function home(): string
+    public function root(string $filename = null): string
     {
-        return "{$this->current()}/{$this->home}";
+        return $this->pathCompose(SITES_HOME . "/{$this->user}/sites/{$this->name}", $filename);
     }
 
-    public function current(): string
+    public function home(string $filename = null): string
     {
-        return "{$this->root()}/current";
+        return $this->pathCompose("{$this->current()}/{$this->home}", $filename);
     }
 
-    public function configs(): string
+    public function current(string $filename = null): string
     {
-        return "{$this->root()}/configs";
+        return $this->pathCompose("{$this->root()}/current", $filename);
+    }
+
+    public function configs(string $filename = null): string
+    {
+        return $this->pathCompose("{$this->root()}/configs", $filename);
+    }
+
+    public function logs(string $filename = null): string
+    {
+        return $this->pathCompose("{$this->root()}/logs", $filename);
     }
 
     public function externalId(): string
