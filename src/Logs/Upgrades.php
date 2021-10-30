@@ -97,10 +97,10 @@ class Upgrades
             $date = null;
 
             if (Str::startsWith($line, $this->startTag)) {
-                $date= new Carbon(Str::after($line, ':'));
+                $date = new Carbon(Str::after($line, ':'));
             }
 
-            if($date == null) {
+            if ($date == null) {
                 continue;
             }
 

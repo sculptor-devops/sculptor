@@ -105,18 +105,18 @@ class Users implements ActionInterface
         return $user->tokens()
             ->get()
             ->map(function ($token) {
-            $name = $token->client()->first();
+                $name = $token->client()->first();
 
-            if ($name != null) {
-                $name = $token->client()->first()->name;
-            }
-            return [
+                if ($name != null) {
+                    $name = $token->client()->first()->name;
+                }
+                return [
                 'id' => $token->id,
                 'name' => $name ?? 'Unknown',
                 'revoked' => $token->revoked,
                 'created_at' => $token->created_at
-            ];
-        })->toArray();
+                ];
+            })->toArray();
     }
 
     public function revoke(string $email, string $token): bool

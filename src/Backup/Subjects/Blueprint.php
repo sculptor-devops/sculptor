@@ -121,16 +121,24 @@ class Blueprint implements BackupInterface
         return true;
     }
 
-    public function rotate(Item $backup): bool
+    public function rotate(Item $backup, bool $dry = false): array
     {
-        return true;
+        $archives = $this->archives($backup);
+
+        $purged = $this->rotation->rotate($archives, $backup->rotate, $backup->destination, $dry);
+
+        return $purged;
     }
 
     public function archives(Item $backup): array
     {
-        return $this->archive
+        $all = $this->archive
             ->create($backup->destination)
             ->list('/');
+
+        return collect($all)
+            ->filter(fn($item) => $this->tag->match('blueprint', $item['basename']))
+            ->toArray();
     }
 
     /**

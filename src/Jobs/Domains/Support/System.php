@@ -45,8 +45,7 @@ class System
         array $command,
         int $timeout = null,
         callable $realtime = null
-    ): void
-    {
+    ): void {
         $command = array_merge(['sudo', '-u', $identity], $command);
 
         $this->run($from, $command, $timeout, $realtime);
@@ -114,7 +113,6 @@ class System
     {
         if (!File::put($filename, $content)) {
             throw new Exception("Error writing file {$filename}");
-
         }
 
         $this->chown($filename, $identity);

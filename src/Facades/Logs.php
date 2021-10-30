@@ -5,6 +5,7 @@ namespace Sculptor\Agent\Facades;
 use Illuminate\Support\Facades\Facade;
 use Sculptor\Agent\Logs\LogsContext;
 use Sculptor\Agent\Logs\Logs as LogsClass;
+
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE

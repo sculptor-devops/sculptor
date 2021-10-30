@@ -32,7 +32,7 @@ class Parser
      */
     public function __construct()
     {
-        $this->parser = new LaravelLogViewer;
+        $this->parser = new LaravelLogViewer();
     }
 
     /**
@@ -50,7 +50,6 @@ class Parser
             $payload = null;
 
             if (preg_match(Parser::CONTEXT_PATTERN, $line['text'], $match) > 0) {
-
                 $line['text'] = Str::of($line['text'])->replace($match[0], '')->trim() . '';
 
                 $payload = $match;

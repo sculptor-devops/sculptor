@@ -55,4 +55,3 @@ if (!function_exists('composerVersion')) {
         return null;
     }
 }
-

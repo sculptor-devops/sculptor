@@ -3,11 +3,7 @@
 namespace Sculptor\Agent\Backup;
 
 use Carbon\Carbon;
-use Illuminate\Config\Repository;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
-use Sculptor\Agent\Backup\Contracts\Archive;
-use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Configuration;
 
 /*
@@ -46,6 +42,13 @@ class Tag
         $this->tag = Carbon::now()->format("Ymd-His");
     }
 
+    public function tag(string $tag): Tag
+    {
+        $this->tag = $tag;
+
+        return $this;
+    }
+
     private function prefix(string $name): string
     {
         return "{$this->type}-{$name}-";
@@ -79,6 +82,7 @@ class Tag
 
     public function match(string $name, string $compare): bool
     {
-        return Str::startsWith($compare, $this->prefix($name));
+        return Str::startsWith($compare, $this->prefix($name)) &&
+               Str::endsWith($compare, $this->compressor);
     }
 }

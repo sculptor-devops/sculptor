@@ -76,7 +76,9 @@ class BackupRun implements ShouldQueue, ITraceable
 
                 $batch->clean($this->backup);
 
-                // $batch->rotate($this->backup);
+                $purged = count($batch->rotate($this->backup));
+
+                Logs::backup()->info("Purged {$purged} from {$this->backup->name()}");
             }
 
             $this->backup->change(BackupStatusType::OK);

@@ -345,7 +345,7 @@ class Domains implements ActionInterface
     {
         Logs::actions()->info("Domain security {$name}");
 
-        $checker = new SecurityChecker;
+        $checker = new SecurityChecker();
 
         try {
             $domain = $this->repository

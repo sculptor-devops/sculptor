@@ -34,7 +34,8 @@ class DomainCron implements ShouldQueue, ITraceable
      * Create a new job instance.
      *
      */
-    public function __construct() {
+    public function __construct()
+    {
         //
     }
 

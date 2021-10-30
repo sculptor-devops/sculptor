@@ -17,7 +17,7 @@ interface Backup
 
     public function clean(Item $backup): bool;
 
-    public function rotate(Item $backup): bool;
+    public function rotate(Item $backup, bool $dry = false): array;
 
     public function archives(Item $backup): array;
 

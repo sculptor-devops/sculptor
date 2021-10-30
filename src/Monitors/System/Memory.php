@@ -26,18 +26,14 @@ class Memory
     {
         $result = $this->runner->runOrFail(['free']);
 
-        $free = trim($result);
-        $free_arr = explode("\n", $free);
-
-        $mem = explode(" ", $free_arr[1]);
+        $free = explode("\n", trim($result));
+        $mem = explode(" ", $free[1]);
         $mem = array_filter($mem);
         $mem = array_merge($mem);
-        $percent = ceil($mem[2] / $mem[1] * 100);
 
         return [
             "{$this->name()}.total" => ceil($mem[1] * 1024),
-            "{$this->name()}.used" => ceil($mem[2] * 1024),
-            // "{$this->name()}.percent" => $percent
+            "{$this->name()}.used" => ceil($mem[2] * 1024)
         ];
     }
 

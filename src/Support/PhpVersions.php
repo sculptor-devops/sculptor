@@ -31,7 +31,7 @@ class PhpVersions
     {
         return ENGINE_PATH . $version;
     }
-    
+
     public function all(): array
     {
         return $this->versions;
@@ -41,7 +41,7 @@ class PhpVersions
     {
         $versions = [];
 
-        foreach($this->versions as $version) {
+        foreach ($this->versions as $version) {
             if ($this->installed($version)) {
                 $versions[] = $version;
             }

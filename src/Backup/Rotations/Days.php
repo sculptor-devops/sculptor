@@ -29,19 +29,23 @@ class Days implements Rotation
         return 'days';
     }
 
-    public function rotate(array $catalogs, int $number): array
+    public function rotate(array $catalogs, int $number, string $destination, bool $dry = false): array
     {
         $timestamp = now()->subDays($number);
 
-        $purgiable = collect($catalogs)
+        $this->archive->create($destination);
+
+        $purgeable = collect($catalogs)
             ->sortByDesc('timestamp')
-            ->where('timestamp', '>', $timestamp->timestamp)
+            ->where('timestamp', '<', $timestamp->timestamp)
             ->toArray();
 
-        foreach($purgiable as $file) {
-            $this->archive->delete($file);
+        if (!$dry) {
+            foreach ($purgeable as $file) {
+                $this->archive->delete($file['basename']);
+            }               
         }
 
-        return $purgiable;
+        return $purgeable;
     }
 }

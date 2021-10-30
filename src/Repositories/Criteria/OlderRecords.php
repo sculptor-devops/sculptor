@@ -23,7 +23,7 @@ class OlderRecords implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $model = $model->where('created_at', '<',  Carbon::now()->subDays(60));
+        $model = $model->where('created_at', '<', Carbon::now()->subDays(60));
 
         return $model;
     }

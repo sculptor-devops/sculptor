@@ -2,11 +2,7 @@
 
 namespace Sculptor\Agent\Backup;
 
-use Exception;
-use Sculptor\Agent\Backup\Subjects\Blueprint;
-use Sculptor\Agent\Backup\Subjects\Database;
-use Sculptor\Agent\Backup\Subjects\Domain;
-use Sculptor\Agent\Enums\BackupType;
+use InvalidArgumentException;
 use Sculptor\Agent\Repositories\Entities\Backup;
 use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 
@@ -18,25 +14,13 @@ use Sculptor\Agent\Backup\Contracts\Backup as BackupInterface;
 class Factory
 {
     /**
-     * @var Database
+     * @var array
      */
-    private $database;
-    /**
-     * @var Domain
-     */
-    private $domain;
-    /**
-     * @var Blueprint
-     */
-    private $blueprint;
+    private $lookup;
 
-    public function __construct(Database $database, Domain $domain, Blueprint $blueprint)
+    public function __construct(array $lookup)
     {
-        $this->database = $database;
-
-        $this->domain = $domain;
-
-        $this->blueprint = $blueprint;
+        $this->lookup = $lookup;
     }
 
     /**
@@ -46,17 +30,10 @@ class Factory
      */
     public function make(Backup $backup): BackupInterface
     {
-        switch ($backup->type) {
-            case BackupType::DATABASE:
-                return $this->database;
-
-            case BackupType::DOMAIN:
-                return $this->domain;
-
-            case BackupType::BLUEPRINT:
-                return $this->blueprint;
+        if (array_key_exists($backup->type, $this->lookup)) {
+            return $this->lookup[$backup->type];
         }
 
-        throw new Exception("Invalid backup type {$backup->type}");
+        throw new InvalidArgumentException("Invalid backup type {$backup->type}");
     }
 }

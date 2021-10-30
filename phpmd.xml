@@ -7,7 +7,21 @@
         <!-- Rule to exclude -->
         <exclude name="StaticAccess"/>
     </rule>
-    <rule ref="rulesets/codesize.xml"/>
+
     <rule ref="rulesets/controversial.xml"/>
-    <rule ref="rulesets/unusedcode.xml"/>
+
+    <!-- <rule ref="rulesets/unusedcode.xml">
+    </rule> -->
+
+    <rule ref="rulesets/codesize.xml">
+        <!-- <exclude name="CyclomaticComplexity"/>
+        <exclude name="ExcessiveMethodLength"/>
+        <exclude name="NPathComplexity"/>
+        <exclude name="ExcessiveClassComplexity"/>
+        <exclude name="ExcessivePublicCount"/>-->
+        
+        <exclude name="TooManyMethods"/>        
+        <exclude name="TooManyPublicMethods"/>
+        <exclude name="TooManyFields"/>
+    </rule>
 </ruleset>

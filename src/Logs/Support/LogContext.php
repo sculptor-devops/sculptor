@@ -36,7 +36,7 @@ class LogContext
     public function toArray(): array
     {
         return $this->context->map(function ($item) {
-            if($item == null) {
+            if ($item == null) {
                 return null;
             }
 

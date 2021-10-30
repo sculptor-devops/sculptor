@@ -6,12 +6,14 @@ use Closure;
 use Exception;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
+
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE
  *  file that was distributed with this source code.
 */
-trait Wizard {
+trait Wizard
+{
     private int $width = 80;
     private int $index = 1;
     private int $steps = 5;
@@ -48,17 +50,16 @@ trait Wizard {
 
         foreach ($options as $option => $data) {
             if ($property) {
-                $menu->addOption($option, $property($data));                
+                $menu->addOption($option, $property($data));
 
                 continue;
             }
 
-            if (!$associative)
-            {
+            if (!$associative) {
                 $menu->addOption($data, __($data));
 
                 continue;
-            }            
+            }
 
             $menu->addOption($option, __($data));
         }
@@ -87,7 +88,7 @@ trait Wizard {
     private function command(string $mesage, string $command, array $params): bool
     {
         $this->info("Step {$mesage}...");
-            
+
         if (Artisan::call($command, $params)) {
             $this->error("Step {$mesage} error");
 
@@ -100,7 +101,7 @@ trait Wizard {
     }
 
     private function validate(string $data, string $rule): void
-    {        
+    {
         $validator = Validator::make(['data' => $data], [ 'data' => $rule, ]);
 
         if ($validator->fails()) {

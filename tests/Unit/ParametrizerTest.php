@@ -7,7 +7,7 @@ use Tests\TestCase;
 use Sculptor\Agent\Support\Parametrizer;
 use Sculptor\Agent\Exceptions\InvalidNumberOfParameters;
 
-class parametrizerTest extends TestCase
+class ParametrizerTest extends TestCase
 {
     public function test_expected()
     {

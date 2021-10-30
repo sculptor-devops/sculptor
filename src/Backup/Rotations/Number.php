@@ -29,10 +29,12 @@ class Number implements Rotation
         return 'number';
     }
 
-    public function rotate(array $catalogs, int $number): array
+    public function rotate(array $catalogs, int $number, string $destination, bool $dry = false): array
     {
         $catalogs = collect($catalogs)
             ->sortByDesc('timestamp');
+
+        $this->archive->create($destination);
 
         if ($catalogs->count() < $number) {
             return [];
@@ -40,13 +42,15 @@ class Number implements Rotation
 
         $pivot = $catalogs->take($number)->last();
 
-        $purgiable = $catalogs->where('timestamp', '>', $pivot['timestamp'])
+        $purgeable = $catalogs->where('timestamp', '<', $pivot['timestamp'])
                 ->toArray();
 
-        foreach($purgiable as $file) {
-            $this->archive->delete($file);
+        if (!$dry) {
+            foreach ($purgeable as $file) {
+                $this->archive->delete($file['basename']);
+            }
         }
 
-        return $purgiable;
+        return $purgeable;
     }
 }

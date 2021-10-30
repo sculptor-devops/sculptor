@@ -3,6 +3,7 @@
 namespace Sculptor\Agent\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Sculptor\Agent\Configuration as Concrete;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -11,13 +12,14 @@ use Illuminate\Support\Facades\Facade;
 */
 
 /**
- * @method static get(string $string)
+ * @method static get(string $string): string
+ * @method static getArray(string $string): array 
  * @method static database(array $array)
  */
 class Configuration extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Sculptor\Agent\Configuration::class;
+        return Concrete::class;
     }
 }

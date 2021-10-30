@@ -13,6 +13,7 @@ use Sculptor\Agent\Repositories\DatabaseUserRepository;
 use Sculptor\Agent\Repositories\Entities\Domain;
 use Sculptor\Agent\Validation\Validator;
 use Sculptor\Agent\Support\PhpVersions;
+
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
  *  For the full copyright and license information, please view the LICENSE

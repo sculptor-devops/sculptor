@@ -94,11 +94,12 @@ class Blueprint
      * @param BackupRepository $backups
      * @param AlarmRepository $alarms
      */
-    public function __construct(Configuration $configuration,
-                                DomainRepository $domains,
-                                BackupRepository $backups,
-                                AlarmRepository $alarms)
-    {
+    public function __construct(
+        Configuration $configuration,
+        DomainRepository $domains,
+        BackupRepository $backups,
+        AlarmRepository $alarms
+    ) {
         $this->configuration = $configuration;
 
         $this->domains = $domains;
@@ -433,7 +434,7 @@ class Blueprint
         $this->commands[] = [
             'id' => count($this->commands) + 1,
             'name' => $name,
-            'parameters' => '"'  . implode('" "',  $parameters) . '"',
+            'parameters' => '"'  . implode('" "', $parameters) . '"',
             'result' => $result ?? 'Ok'
         ];
     }

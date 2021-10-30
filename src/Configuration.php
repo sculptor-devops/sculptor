@@ -96,7 +96,6 @@ class Configuration
     {
         $value = Cache::get($this->key($name), null);
 
-
         if ($value != null) {
             return $value;
         }
@@ -157,7 +156,19 @@ class Configuration
 
     public function getArray(string $name): array
     {
-        return $this->get($name) ?? [];
+        $value = Cache::get($this->key($name), null);
+
+        if ($value != null) {
+            return $value;
+        }
+
+        $configuration = $this->findPointedKey($name);
+
+        if ($configuration != null) {
+            return $configuration;
+        }
+
+        return config($name);
     }
 
     /**
@@ -298,5 +309,20 @@ class Configuration
         }
 
         return $values[$key];
+    }
+
+    public function password(): ?string
+    {
+        try {
+            $password = File::get(DB_SERVER_PASSWORD);
+
+            if (!$password) {
+                return null;
+            }
+
+            return $password;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 }

@@ -14,8 +14,7 @@ class Templates
 {
     private $locations = [];
 
-
-    function __construct()
+    public function __construct()
     {
         $this->locations = [ $this->system() ];
 
@@ -33,7 +32,7 @@ class Templates
     {
         $result = [];
 
-        foreach(File::directories($basepath) as $directory) {
+        foreach (File::directories($basepath) as $directory) {
             $result[basename($directory)] = TemplateData::from($directory);
         }
 

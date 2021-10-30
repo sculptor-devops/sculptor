@@ -3,20 +3,14 @@
 namespace Sculptor\Agent;
 
 use Exception;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Artisan;
+use Sculptor\Agent\Support\CommandHide;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
-use Sculptor\Agent\Backup\Archives\Dropbox;
-use Sculptor\Agent\Backup\Archives\Local;
-use Sculptor\Agent\Backup\Archives\S3;
 use Sculptor\Agent\Backup\Compression\Zip;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use Sculptor\Agent\Backup\Contracts\Compressor;
 use Sculptor\Agent\Backup\Contracts\Rotation;
-use Sculptor\Agent\Enums\BackupArchiveType;
-use Sculptor\Agent\Enums\BackupRotationType;
 use Sculptor\Agent\Logs\Logs;
 use Sculptor\Foundation\Contracts\Database;
 use Sculptor\Foundation\Contracts\Runner;
@@ -26,8 +20,9 @@ use Sculptor\Agent\Facades\Configuration as ConfigurationFacade;
 use Sculptor\Agent\Facades\Logs as LogsFacade;
 use Sculptor\Agent\Support\PhpVersions;
 use Sculptor\Agent\Enums\DaemonGroupType;
-use Sculptor\Agent\Backup\Rotations\Days;
-use Sculptor\Agent\Backup\Rotations\Number;
+use Sculptor\Agent\Backup\Factory;
+use Sculptor\Agent\Monitors\System;
+use Sculptor\Agent\LookupResolver;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -37,55 +32,6 @@ use Sculptor\Agent\Backup\Rotations\Number;
 
 class SculptorServiceProvider extends ServiceProvider
 {
-    private $hidden = [
-        'vendor:publish',
-        'inspire',
-        'serve',
-        'tinker',
-        'db:seed',
-        'db:wipe',
-        'make:bindings',
-        'make:cast',
-        'make:channel',
-        'make:command',
-        'make:component',
-        'make:controller',
-        'make:criteria',
-        'make:entity',
-        'make:event',
-        'make:exception',
-        'make:factory',
-        'make:job',
-        'make:listener',
-        'make:mail',
-        'make:middleware',
-        'make:migration',
-        'make:model',
-        'make:notification',
-        'make:observer',
-        'make:policy',
-        'make:presenter',
-        'make:provider',
-        'make:repository',
-        'make:request',
-        'make:resource',
-        'make:rest-controller',
-        'make:rule',
-        'make:seeder',
-        'make:test',
-        'make:transformer',
-        'make:validator',
-        'notifications:table',
-        'schema:dump',
-        'session:table',
-        'storage:link',
-        'stub:publish',
-        'cache:table',
-        'queue:batches-table',
-        'queue:failed-table',
-        'queue:table'
-    ];
-
     /**
      * Register services.
      *
@@ -93,50 +39,27 @@ class SculptorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        app()->bind(ConfigurationFacade::class, Configuration::class);
+        $this->app->bind(ConfigurationFacade::class, Configuration::class);
 
-        app()->bind(LogsFacade::class, Logs::class);
+        $this->app->bind(LogsFacade::class, Logs::class);
 
-        app()->bind(Runner::class, RunnerImplementation::class);
+        $this->app->bind(Runner::class, RunnerImplementation::class);
 
-        app()->bind(Database::class, function () {
-            return new MySql();
-        });
+        $this->app->bind(Database::class, MySql::class);
 
-        app()->bind(Compressor::class, Zip::class);
+        $this->app->bind(Compressor::class, Zip::class);
 
-        app()->bind(Rotation::class, function() {
-            $type = ConfigurationFacade::get('sculptor.backup.rotation');
-            
-            switch ($type) {
-                case BackupRotationType::NUMBER:
-                    return resolve(Number::class);
+        $this->app->bind(Rotation::class, fn($app) => LookupResolver::driver($app, 'sculptor.backup.rotations', 'sculptor.backup.rotation'));
 
-                case BackupRotationType::DAYS:
-                    return resolve(Days::class);
+        $this->app->bind(Archive::class, fn($app) => LookupResolver::driver($app, 'sculptor.backup.drivers.available', 'sculptor.backup.drivers.default'));
 
-                default:
-                    throw new Exception("Invalid {$type} rotation type");
-            }
-        });        
+        $this->app->when(Factory::class)
+            ->needs('$lookup')
+            ->give((fn($app) => LookupResolver::array($app, 'sculptor.backup.strategies')));
 
-        app()->bind(Archive::class, function () {
-            $driver = ConfigurationFacade::get('sculptor.backup.drivers.default');
-
-            switch ($driver) {
-                case BackupArchiveType::LOCAL:
-                    return resolve(Local::class);
-
-                case BackupArchiveType::S3:
-                    return resolve(S3::class);
-
-                case BackupArchiveType::DROPBOX:
-                    return resolve(Dropbox::class);
-
-                default:
-                    throw new Exception("Invalid {$driver} archive driver");
-            }
-        });
+        $this->app->when(System::class)
+            ->needs('$monitors')
+            ->give((fn($app) => LookupResolver::array($app, 'sculptor.monitors.drivers')));
     }
 
     /**
@@ -148,11 +71,11 @@ class SculptorServiceProvider extends ServiceProvider
     {
         $this->versions();
 
-        $this->hideCommands();
-
         $this->connection();
 
         $this->validation();
+
+        CommandHide::hide();        
     }
 
     private function validation(): void
@@ -170,50 +93,22 @@ class SculptorServiceProvider extends ServiceProvider
         Validator::extend('cron', 'App\Rules\Cron');
     }
 
-    private function password(): ?string
-    {
-        try {
-            $password = File::get(DB_SERVER_PASSWORD);
-
-            if (!$password) {
-                return null;
-            }
-
-            return $password;
-        } catch (Exception $e) {
-            return null;
-        }
-    }
-
     private function connection(): void
     {
         $driver = ConfigurationFacade::get('sculptor.database.default');
 
         $database = config("sculptor.database.drivers.{$driver}");
 
-        $database['password'] = $this->password();
+        $database['password'] = ConfigurationFacade::password();
 
         ConfigurationFacade::database($database);
-    }
-
-    private function hideCommands(): void
-    {
-        if (!App::environment('production')) {
-            return;
-        }
-
-        foreach (Artisan::all() as $key => $command) {
-            if (in_array($key, $this->hidden)) {
-                $command->setHidden(true);
-            }
-        }
     }
 
     private function versions(): void
     {
         $key = 'sculptor.services.' . DaemonGroupType::WEB;
 
-        $versions = resolve(PhpVersions::class);
+        $versions = $this->app->get(PhpVersions::class);
 
         $services = config($key);
 
@@ -225,6 +120,6 @@ class SculptorServiceProvider extends ServiceProvider
             }
         }
 
-        config([ $key => $services ]);
+        config([$key => $services]);
     }
 }

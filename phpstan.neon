@@ -13,7 +13,7 @@ parameters:
         # - '#Unsafe usage of new static#'
         - '#@property has invalid value#'
 
-    excludes_analyse:
+    excludePaths:
         - ./*/*/FileToBeExcluded.php
 
     checkMissingIterableValueType: false

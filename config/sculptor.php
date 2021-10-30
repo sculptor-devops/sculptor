@@ -1,6 +1,26 @@
 <?php
 
 use Sculptor\Agent\Enums\DaemonGroupType;
+use Sculptor\Agent\Enums\BackupType;
+use Sculptor\Agent\Enums\BackupRotationType;
+use Sculptor\Agent\Enums\BackupArchiveType;
+
+use Sculptor\Agent\Backup\Subjects\Blueprint as BackupBlueprint;
+use Sculptor\Agent\Backup\Subjects\Database as BackupDatabase;
+use Sculptor\Agent\Backup\Subjects\Domain as BackupDomain;
+
+use Sculptor\Agent\Backup\Rotations\Number;
+use Sculptor\Agent\Backup\Rotations\Days;
+
+use Sculptor\Agent\Backup\Archives\Local;
+use Sculptor\Agent\Backup\Archives\S3;
+use Sculptor\Agent\Backup\Archives\Dropbox;
+
+use Sculptor\Agent\Monitors\System\Cpu;
+use Sculptor\Agent\Monitors\System\Disk;
+use Sculptor\Agent\Monitors\System\Io;
+use Sculptor\Agent\Monitors\System\Memory;
+use Sculptor\Agent\Monitors\System\Uptime;
 
 return [
     'domains' => [
@@ -55,6 +75,13 @@ return [
     ],
 
     'monitors' => [
+        'drivers' => [
+            Cpu::class,
+            Disk::class,
+            Io::class,
+            Memory::class,
+            Uptime::class,
+        ],
         'rotate' => env('MONITOR_ROTATE', 60),
         'disks' => [
             env('MONITOR_DISK_DEVICE', 'sda') => [
@@ -65,11 +92,26 @@ return [
 
     'backup' => [
         'archive' => env('BACKUP_ARCHIVE', 'local'),
-        'rotation' => env('BACKUP_ROTATION', 'number'),
+        'rotation' => env('BACKUP_ROTATION', 'days'),
+        'rotations' => [
+            BackupRotationType::NUMBER => Number::class,
+            BackupRotationType::DAYS => Days::class
+        ],
         'temp' => env('BACKUP_TMP', '/tmp'),
         'compression' => env('BACKUP_COMPRESSION', 'zip'),
 
+        'strategies' => [
+            BackupType::DATABASE => BackupDatabase::class,
+            BackupType::DOMAIN => BackupDomain::class,
+            BackupType::BLUEPRINT =>BackupBlueprint::class
+        ],
+
         'drivers' => [
+            'available' => [
+                BackupArchiveType::LOCAL => Local::class,
+                BackupArchiveType::S3 => S3::class,
+                BackupArchiveType::DROPBOX => Dropbox::class   
+            ],
             'default' => 'local',
 
             'local' => [

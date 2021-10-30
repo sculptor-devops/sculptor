@@ -16,6 +16,7 @@ define('SITES_INSTALL', 'deploy:install');
 define('PHP_AGENT_VERSION', '8.0');
 define('ENGINE_VERSION', '8.0');
 define('ENGINE_PATH', '/usr/bin/php');
+define('BLUEPRINT_VERSION', 1);
 
 define('BACKUP_CRON', '0 0 * * *');
 define('BACKUP_ROTATE', 7);

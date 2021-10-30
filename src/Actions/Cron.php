@@ -29,8 +29,7 @@ class Cron implements ActionInterface
     public function __construct(
         Action $action,
         DomainRepository $domains
-    )
-    {
+    ) {
         $this->action = $action;
 
         $this->domains = $domains;

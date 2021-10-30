@@ -55,7 +55,6 @@ class SystemUpgradeCheck implements ShouldQueue
 
                 Logs::security()->alert("System unattended upgrades {$packages}");
             }
-
         } catch (Exception | Error $e) {
             report($e);
         }

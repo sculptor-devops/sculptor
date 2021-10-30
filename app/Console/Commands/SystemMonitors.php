@@ -51,6 +51,7 @@ class SystemMonitors extends CommandBase
 
         $this->startTask("Actions {$operation}");
 
+
         switch ($operation) {
             case 'reset':
                 $monitors->reset();;
@@ -64,6 +65,8 @@ class SystemMonitors extends CommandBase
 
             case 'show':
                 $this->completeTask();
+                
+                $this->info('You can also use all, reset and write');
 
                 $values = $this->toKeyValue($monitors->last());
 
@@ -95,6 +98,8 @@ class SystemMonitors extends CommandBase
 
                     return $items;
                 }));
+
+                $this->info(count($values) . ' samples of ' . $monitors->rotation());
 
                 return 0;
         }

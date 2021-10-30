@@ -160,12 +160,16 @@ class Database implements BackupInterface
 
     /**
      * @param Item $backup
-     * @return bool
+     * @return array
      * @throws Exception
      */
-    public function rotate(Item $backup): bool
+    public function rotate(Item $backup, bool $dry = false): array
     {
-        throw new Exception("Not implemented");
+        $archives = $this->archives($backup);
+
+        $purged = $this->rotation->rotate($archives, $backup->rotate, $backup->destination, $dry);
+
+        return $purged;
     }
 
     /**
@@ -175,9 +179,13 @@ class Database implements BackupInterface
      */
     public function archives(Item $backup): array
     {
-        return $this->archive
+        $all = $this->archive
             ->create($backup->destination)
             ->list('/');
+
+        return collect($all)
+            ->filter(fn($item) => $this->tag->match($backup->database->name, $item['basename']))
+            ->toArray();
     }
 
     /**

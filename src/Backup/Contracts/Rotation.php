@@ -12,5 +12,5 @@ interface Rotation
 {
     public function name(): string;
 
-    public function rotate(array $catalogs, int $number): array;
+    public function rotate(array $catalogs, int $number, string $destination, bool $dry = false): array;
 }

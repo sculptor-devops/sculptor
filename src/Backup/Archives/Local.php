@@ -2,6 +2,7 @@
 
 namespace Sculptor\Agent\Backup\Archives;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use Sculptor\Agent\Backup\Contracts\Archive;
 use League\Flysystem\FileExistsException;
@@ -67,7 +68,7 @@ class Local implements Archive
     public function delete(string $file): Archive
     {
         if (!$this->filesystem->delete($file)) {
-            throw new \Exception("Cannot delete file {$file}");
+            throw new Exception("Cannot delete file {$file}");
         }
 
         return $this;

@@ -6,11 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
 use Sculptor\Agent\Configuration;
 use Sculptor\Agent\Facades\Logs;
-use Sculptor\Agent\Monitors\System\Cpu;
-use Sculptor\Agent\Monitors\System\Disk;
-use Sculptor\Agent\Monitors\System\Io;
-use Sculptor\Agent\Monitors\System\Memory;
-use Sculptor\Agent\Monitors\System\Uptime;
 
 /*
  * (c) Alessandro Cappellozza <alessandro.cappellozza@gmail.com>
@@ -21,23 +16,15 @@ use Sculptor\Agent\Monitors\System\Uptime;
 class System
 {
     /**
-     * @var string[]
-     */
-    private $system = [
-        Cpu::class,
-        Disk::class,
-        Io::class,
-        Memory::class,
-        Uptime::class,
-    ];
-    /**
      * @var Configuration
      */
     private $configuration;
 
-    public function __construct(Configuration $configuration)
+    public function __construct(Configuration $configuration, array $monitors)
     {
         $this->configuration = $configuration;
+
+        $this->monitors = $monitors;
     }
 
     /**
@@ -85,9 +72,7 @@ class System
 
         $disks = $this->configuration->monitors('disks');
 
-        foreach ($this->system as $reader) {
-            $monitor = resolve($reader);
-
+        foreach ($this->monitors as $$monitor) {
             foreach ($disks as $device => $root) {
                 $values = $monitor->values([
                     'device' => $device,
@@ -115,5 +100,10 @@ class System
         $new = $all->push($values);
 
         Redis::set('monitors', json_encode($new->toArray()));
+    }
+
+    public function rotation(): int
+    {
+        return $this->configuration->getInt('sculptor.monitors.rotate');
     }
 }
