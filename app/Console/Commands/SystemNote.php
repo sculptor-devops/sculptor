@@ -59,6 +59,8 @@ class SystemNote extends CommandBase
         $level = $this->argument('level');
 
         $this->startTask("Adding note level {$level}");
+        
+        
 
         $this->events->create([
             'message' => $note,

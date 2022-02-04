@@ -1,4 +1,5 @@
 {
     "name": "Standard Laravel application",
-    "type": "php"
+    "type": "php",
+    "public": "public"
 }

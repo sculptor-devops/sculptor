@@ -1,4 +1,5 @@
 {
     "name": "Generic PHP application",
-    "type": "php"
+    "type": "php",
+    "public": ""
 }

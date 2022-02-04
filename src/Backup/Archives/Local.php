@@ -63,7 +63,7 @@ class Local implements Archive
      * @param string $file
      * @return Archive
      * @throws FileNotFoundException
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(string $file): Archive
     {

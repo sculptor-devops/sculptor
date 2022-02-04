@@ -107,6 +107,7 @@ class Domain implements BackupInterface
 
     /**
      * @param Item $backup
+     * @param bool $dry
      * @return array
      * @throws Exception
      */

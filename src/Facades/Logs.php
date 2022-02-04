@@ -22,7 +22,7 @@ use Sculptor\Agent\Logs\Logs as LogsClass;
  */
 class Logs extends Facade
 {
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return LogsClass::class;
     }

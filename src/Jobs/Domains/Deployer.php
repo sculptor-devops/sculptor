@@ -121,14 +121,14 @@ class Deployer implements DomainAction
      * @param string $command
      * @param Domain $domain
      * @param bool $worker
-     * @return bool
+     * @return void
      * @throws Exception
      */
-    private function deploy(string $command, Domain $domain, bool $worker = false): bool
+    private function deploy(string $command, Domain $domain): void
     {
         if ($domain->vcs == null) {
             Logs::actions()->info("Deploy {$domain->name} skipped, no vcs defined");
-            return true;
+            return;
         }
 
         Logs::actions()->info("Deploy run {$command} on {$domain->name}");
@@ -154,8 +154,6 @@ class Deployer implements DomainAction
                     Logs::job()->notice("Deployer ({$type}): {$buffer}");
                 }
             );
-
-        return true;
     }
 
     /**
